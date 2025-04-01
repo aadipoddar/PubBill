@@ -1,6 +1,6 @@
 ﻿namespace PubBillLibrary.Models;
 
-public class SaleModel
+public class BillModel
 {
 	public string ProductName { get; set; }
 	public double Quantity { get; set; }

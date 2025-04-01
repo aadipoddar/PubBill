@@ -2,29 +2,32 @@
 using System.Text.RegularExpressions;
 using System.Windows;
 
-namespace PubBill;
+namespace PubBill.Billing;
 
 /// <summary>
 /// Interaction logic for MainWindow.xaml
 /// </summary>
-public partial class SalesPage : Window
+public partial class BillWindow : Window
 {
-	private static readonly ObservableCollection<SaleModel> _sales =
+	private readonly UserModel _user;
+
+	private static readonly ObservableCollection<BillModel> _bill =
 	[
-		new SaleModel { ProductName = "Chips", Quantity = 3, Price = 1.5, Instructions = "" },
-		new SaleModel { ProductName = "Peanuts", Quantity = 1, Price = 1.0, Instructions = "" },
-		new SaleModel { ProductName = "Pretzels", Quantity = 2, Price = 1.5, Instructions = "" },
-		new SaleModel { ProductName = "Soda", Quantity = 2, Price = 1.5, Instructions = "" },
-		new SaleModel { ProductName = "Water", Quantity = 1, Price = 1.0, Instructions = "" },
-		new SaleModel { ProductName = "Juice", Quantity = 1, Price = 2.0, Instructions = "" },
-		new SaleModel { ProductName = "Candy", Quantity = 2, Price = 1.0, Instructions = "" },
-		new SaleModel { ProductName = "Gum", Quantity = 1, Price = 0.5, Instructions = "" }
+		new BillModel { ProductName = "Chips", Quantity = 3, Price = 1.5, Instructions = "" },
+		new BillModel { ProductName = "Peanuts", Quantity = 1, Price = 1.0, Instructions = "" },
+		new BillModel { ProductName = "Pretzels", Quantity = 2, Price = 1.5, Instructions = "" },
+		new BillModel { ProductName = "Soda", Quantity = 2, Price = 1.5, Instructions = "" },
+		new BillModel { ProductName = "Water", Quantity = 1, Price = 1.0, Instructions = "" },
+		new BillModel { ProductName = "Juice", Quantity = 1, Price = 2.0, Instructions = "" },
+		new BillModel { ProductName = "Candy", Quantity = 2, Price = 1.0, Instructions = "" },
+		new BillModel { ProductName = "Gum", Quantity = 1, Price = 0.5, Instructions = "" }
 	];
 
-	public SalesPage()
+	public BillWindow(UserModel user)
 	{
 		InitializeComponent();
-		billDataGrid.ItemsSource = _sales;
+		billDataGrid.ItemsSource = _bill;
+		_user = user;
 		RefreshTotal();
 	}
 
@@ -35,7 +38,7 @@ public partial class SalesPage : Window
 		billDataGrid.Items.Refresh();
 
 		double total = 0;
-		foreach (SaleModel sale in _sales)
+		foreach (BillModel sale in _bill)
 			total += sale.Total;
 
 		totalAmountTextBox.Text = total.ToString();
@@ -63,7 +66,7 @@ public partial class SalesPage : Window
 
 	private void billDataGrid_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
 	{
-		if (billDataGrid.SelectedItem is SaleModel selectedSale)
+		if (billDataGrid.SelectedItem is BillModel selectedSale)
 		{
 			quantityTextBox.Text = selectedSale.Quantity.ToString();
 			instructionsTextBox.Text = selectedSale.Instructions;
@@ -75,7 +78,7 @@ public partial class SalesPage : Window
 	{
 		if (billDataGrid is null) return;
 
-		if (billDataGrid.SelectedItem is SaleModel selectedSale)
+		if (billDataGrid.SelectedItem is BillModel selectedSale)
 		{
 			selectedSale.Instructions = instructionsTextBox.Text;
 			RefreshTotal();
@@ -87,7 +90,7 @@ public partial class SalesPage : Window
 	{
 		if (billDataGrid is null) return;
 
-		if (billDataGrid.SelectedItem is SaleModel selectedSale)
+		if (billDataGrid.SelectedItem is BillModel selectedSale)
 		{
 			selectedSale.Quantity = double.Parse(quantityTextBox.Text);
 			RefreshTotal();

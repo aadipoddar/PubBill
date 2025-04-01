@@ -18,6 +18,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Using Include="PubBillLibrary.Data" />
+    <Using Include="PubBillLibrary.DataAccess" />
     <Using Include="PubBillLibrary.Models" />
   </ItemGroup>
 
