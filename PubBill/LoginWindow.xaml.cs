@@ -1,8 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 using System.Windows;
 
-using PubBill.Billing;
-
 namespace PubBill;
 
 /// <summary>
@@ -29,26 +27,9 @@ public partial class LoginWindow : Window
 					return;
 				}
 
-				if (user.Admin || (user.KOT && user.Bill))
-				{
-					Dashboard dashboard = new(user, this);
-					dashboard.Show();
-					Hide();
-					return;
-				}
-
-				if (user.Bill)
-				{
-					BillWindow billWindow = new(user);
-					billWindow.Show();
-					Hide();
-					return;
-				}
-
-				if (user.KOT)
-				{
-					// TODO
-				}
+				Dashboard dashboard = new(user, this);
+				dashboard.Show();
+				Hide();
 			}
 		}
 	}
