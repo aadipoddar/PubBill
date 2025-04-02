@@ -6,9 +6,10 @@
 	@Status BIT,
 	@Bill BIT,
 	@KOT BIT,
+	@Inventory BIT,
 	@Admin BIT
 AS
 BEGIN
-	INSERT INTO [dbo].[User] (Name, Password, LocationId, Status, Bill, KOT, Admin)
-	VALUES (@Name, @Password, @LocationId, @Status, @Bill, @KOT, @Admin)
+	INSERT INTO [dbo].[User] (Name, Password, LocationId, Status, Bill, KOT, Inventory, Admin)
+	VALUES (@Name, @Password, @LocationId, @Status, @Bill, @KOT, @Inventory, @Admin)
 END;

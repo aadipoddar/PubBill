@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Text.RegularExpressions;
+using System.Windows;
 
 using PubBill.Billing;
 
@@ -20,6 +21,8 @@ public partial class LoginWindow : Window
 			var user = await UserData.LoadUserByPassword(userPasswordBox.Password);
 			if (user is not null)
 			{
+				userPasswordBox.Clear();
+
 				if (user.Status is false)
 				{
 					MessageBox.Show("User is inactive. Please contact the administrator.", "Inactive User", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -28,9 +31,9 @@ public partial class LoginWindow : Window
 
 				if (user.Admin || (user.KOT && user.Bill))
 				{
-					Dashboard dashboard = new(user);
+					Dashboard dashboard = new(user, this);
 					dashboard.Show();
-					Close();
+					Hide();
 					return;
 				}
 
@@ -38,7 +41,7 @@ public partial class LoginWindow : Window
 				{
 					BillWindow billWindow = new(user);
 					billWindow.Show();
-					Close();
+					Hide();
 					return;
 				}
 
@@ -48,5 +51,11 @@ public partial class LoginWindow : Window
 				}
 			}
 		}
+	}
+
+	private void numberTextBox_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
+	{
+		Regex regex = new("[^0-9]+");
+		e.Handled = regex.IsMatch(e.Text);
 	}
 }

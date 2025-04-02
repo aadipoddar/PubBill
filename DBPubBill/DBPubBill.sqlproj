@@ -62,6 +62,7 @@
     <Folder Include="Stored Procedures\Update" />
     <Folder Include="PublishLocations\" />
     <Folder Include="Stored Procedures\LoadData" />
+    <Folder Include="Views" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\User.sql" />
@@ -78,6 +79,7 @@
     <Build Include="Stored Procedures\LoadData\Load_TableData_By_Id.sql" />
     <Build Include="Stored Procedures\LoadData\Load_TableData_By_Status.sql" />
     <Build Include="Stored Procedures\LoadData\Load_User_By_Password.sql" />
+    <Build Include="Views\User_Location.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="DBPubBill.refactorlog" />

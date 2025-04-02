@@ -7,5 +7,6 @@
     [Status] BIT NOT NULL DEFAULT 1,
     [Bill]       BIT           NOT NULL DEFAULT 0, 
     [KOT] BIT NOT NULL DEFAULT 0, 
+    [Inventory] BIT NOT NULL DEFAULT 0, 
     [Admin] BIT NOT NULL DEFAULT 0, 
 )

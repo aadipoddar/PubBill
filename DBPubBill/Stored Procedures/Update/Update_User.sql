@@ -6,6 +6,7 @@
 	@Status BIT,
 	@Bill BIT,
 	@KOT BIT,
+	@Inventory BIT,
 	@Admin BIT
 AS
 BEGIN
@@ -17,6 +18,7 @@ BEGIN
 		Status = @Status,
 		Bill = @Bill,
 		KOT = @KOT,
+		Inventory = @Inventory,
 		Admin = @Admin
 	WHERE Id = @Id
 END;

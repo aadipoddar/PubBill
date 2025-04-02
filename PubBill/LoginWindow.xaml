@@ -21,7 +21,8 @@
 			</Grid.RowDefinitions>
 
 			<TextBlock Grid.Row="0" Margin="10" Padding="5" Text="Enter Password" TextAlignment="Center" />
-			<PasswordBox x:Name="userPasswordBox" Grid.Row="1" Margin="10" Padding="5" HorizontalContentAlignment="Center" MaxLength="4" MaxWidth="100" PasswordChanged="userPasswordBox_PasswordChanged" />
+			<PasswordBox x:Name="userPasswordBox" Grid.Row="1" Margin="10" Padding="5" HorizontalContentAlignment="Center" MaxLength="4" MaxWidth="100"
+						 PasswordChanged="userPasswordBox_PasswordChanged" PreviewTextInput="numberTextBox_PreviewTextInput" />
 		</Grid>
 
 		<common:FooterControl Grid.Row="1"/>

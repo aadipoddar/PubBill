@@ -7,6 +7,11 @@ public static class TableNames
 	public static string User => "User";
 }
 
+public static class ViewNames
+{
+	public static string UserLocation => "User_Location";
+}
+
 public static class StoredProcedureNames
 {
 	public static string InsertLocation => "Insert_Location";

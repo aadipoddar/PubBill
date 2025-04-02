@@ -11,11 +11,13 @@ namespace PubBill;
 public partial class Dashboard : Window
 {
 	private readonly UserModel _user;
+	private readonly LoginWindow _loginWindow;
 
-	public Dashboard(UserModel user)
+	public Dashboard(UserModel user, LoginWindow loginWindow)
 	{
 		InitializeComponent();
 		_user = user;
+		_loginWindow = loginWindow;
 	}
 
 	private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -37,11 +39,17 @@ public partial class Dashboard : Window
 		}
 	}
 
+	private void Window_Closed(object sender, EventArgs e)
+	{
+		_loginWindow.Show();
+		Close();
+	}
+
 	private void billButton_Click(object sender, RoutedEventArgs e)
 	{
 		BillWindow billWindow = new(_user);
 		billWindow.Show();
-		Close();
+		Hide();
 	}
 
 	private void kotButton_Click(object sender, RoutedEventArgs e)
@@ -51,8 +59,8 @@ public partial class Dashboard : Window
 
 	private void adminButton_Click(object sender, RoutedEventArgs e)
 	{
-		AdminPanel adminPanel = new();
+		AdminPanel adminPanel = new(this);
 		adminPanel.Show();
-		Close();
+		Hide();
 	}
 }
