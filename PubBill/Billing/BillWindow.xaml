@@ -6,7 +6,8 @@
         xmlns:local="clr-namespace:PubBill.Billing"
 		xmlns:common="clr-namespace:PubBill.Common"
         mc:Ignorable="d" WindowState="Maximized"
-        Title="Sales" Height="450" Width="800">
+        Title="Sales" Height="450" Width="800"
+		Closed="Window_Closed">
 
 	<Grid>
 		<Grid.RowDefinitions>

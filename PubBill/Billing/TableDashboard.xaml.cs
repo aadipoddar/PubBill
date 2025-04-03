@@ -10,8 +10,8 @@ public partial class TableDashboard : Window
 {
 	#region Timers
 
-	private readonly DispatcherTimer _inactivityTimer = new() { Interval = TimeSpan.FromSeconds(5) };
-	private readonly DispatcherTimer _timer = new() { Interval = TimeSpan.FromSeconds(10) };
+	private readonly DispatcherTimer _inactivityTimer = new() { Interval = TimeSpan.FromSeconds(60) };
+	private readonly DispatcherTimer _timer = new() { Interval = TimeSpan.FromSeconds(30) };
 
 	private void InitializeTimers()
 	{
@@ -31,14 +31,12 @@ public partial class TableDashboard : Window
 	#endregion
 
 	private readonly UserModel _user;
-	private readonly Dashboard _dashboard;
 	private readonly LoginWindow _loginWindow;
 
-	public TableDashboard(UserModel user, Dashboard dashboard, LoginWindow loginWindow)
+	public TableDashboard(UserModel user, LoginWindow loginWindow)
 	{
 		InitializeComponent();
 		_user = user;
-		_dashboard = dashboard;
 		_loginWindow = loginWindow;
 	}
 
@@ -61,20 +59,13 @@ public partial class TableDashboard : Window
 		locationTextBlock.Text = location.Name;
 
 		dateTimeTextBlock.Text = DateTime.Now.ToString("HH:mm tt");
+
+		_loginWindow.Hide();
+
+		var diningAreas = await DiningAreaData.LoadDiningAreaByLocation(location.Id);
+
+		await DiningAreaExpanders.CreateExpanders(areasStackPanel, diningAreas, _user, _loginWindow, this);
 	}
 
-	private void Window_Closed(object sender, EventArgs e)
-	{
-		if (_user.Bill && !_user.KOT && !_user.Inventory)
-		{
-			_loginWindow.Show();
-			Close();
-		}
-
-		else
-		{
-			_dashboard.Show();
-			Close();
-		}
-	}
+	private void Window_Closed(object sender, EventArgs e) => _loginWindow.Show();
 }

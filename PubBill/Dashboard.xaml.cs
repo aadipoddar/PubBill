@@ -73,7 +73,7 @@ public partial class Dashboard : Window
 
 			if (isBill && !isKOT && !isInventory)
 			{
-				TableDashboard tableDashboard = new(_user, this, _loginWindow);
+				TableDashboard tableDashboard = new(_user, _loginWindow);
 				tableDashboard.Show();
 				Close();
 			}
@@ -98,9 +98,9 @@ public partial class Dashboard : Window
 
 	private void billButton_Click(object sender, RoutedEventArgs e)
 	{
-		TableDashboard tableDashboard = new(_user, this, _loginWindow);
+		TableDashboard tableDashboard = new(_user, _loginWindow);
 		tableDashboard.Show();
-		Hide();
+		Close();
 	}
 
 	private void kotButton_Click(object sender, RoutedEventArgs e)

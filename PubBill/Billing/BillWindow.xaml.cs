@@ -10,6 +10,8 @@ namespace PubBill.Billing;
 public partial class BillWindow : Window
 {
 	private readonly UserModel _user;
+	private readonly LoginWindow _loginWindow;
+	private readonly TableDashboard _tableDashboard;
 
 	private static readonly ObservableCollection<BillModel> _bill =
 	[
@@ -23,11 +25,13 @@ public partial class BillWindow : Window
 		new BillModel { ProductName = "Gum", Quantity = 1, Price = 0.5, Instructions = "" }
 	];
 
-	public BillWindow(UserModel user)
+	public BillWindow(UserModel user, LoginWindow loginWindow, TableDashboard tableDashboard)
 	{
 		InitializeComponent();
 		billDataGrid.ItemsSource = _bill;
 		_user = user;
+		_loginWindow = loginWindow;
+		_tableDashboard = tableDashboard;
 		RefreshTotal();
 	}
 
@@ -103,4 +107,6 @@ public partial class BillWindow : Window
 	private void quantityPlusButton_Click(object sender, RoutedEventArgs e) => quantityTextBox.Text = (int.Parse(quantityTextBox.Text) + 1).ToString();
 
 	#endregion
+
+	private void Window_Closed(object sender, EventArgs e) => _tableDashboard.Show();
 }

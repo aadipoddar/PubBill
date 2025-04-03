@@ -15,7 +15,7 @@
 			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
 
-		<ScrollViewer HorizontalScrollBarVisibility="Visible">
+		<ScrollViewer>
 			<Grid Grid.Row="0">
 				<Grid.RowDefinitions>
 					<RowDefinition Height="Auto"/>
@@ -34,27 +34,7 @@
 					<TextBlock x:Name="userTextBlock" Text="User" Grid.Column="2" Margin="10" Padding="5" />
 				</Grid>
 
-				<Grid Grid.Row="1">
-					<StackPanel Orientation="Vertical">
-						<Expander Header="Area1" IsExpanded="True" Margin="10">
-							<ListView Margin="10" Padding="5">
-								<ListViewItem Content="Table 1" />
-								<ListViewItem Content="Table 1" />
-								<ListViewItem Content="Table 1" />
-								<ListViewItem Content="Table 1" />
-							</ListView>
-						</Expander>
-
-						<Expander Header="Area2" IsExpanded="True" Margin="10">
-							<ListView Margin="10" Padding="5">
-								<ListViewItem Content="Table 1" />
-								<ListViewItem Content="Table 1" />
-								<ListViewItem Content="Table 1" />
-								<ListViewItem Content="Table 1" />
-							</ListView>
-						</Expander>
-					</StackPanel>
-				</Grid>
+				<StackPanel x:Name="areasStackPanel" Grid.Row="1" Orientation="Vertical" />
 			</Grid>
 		</ScrollViewer>
 

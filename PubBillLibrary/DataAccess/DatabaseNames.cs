@@ -5,6 +5,8 @@ public static class TableNames
 	public static string Location => "Location";
 	public static string Person => "Person";
 	public static string User => "User";
+	public static string DiningArea => "DiningArea";
+	public static string DiningTable => "DiningTable";
 }
 
 public static class ViewNames
