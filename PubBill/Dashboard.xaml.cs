@@ -13,7 +13,7 @@ public partial class Dashboard : Window
 {
 	#region Timers
 
-	private readonly DispatcherTimer _inactivityTimer = new() { Interval = TimeSpan.FromSeconds(10) };
+	private readonly DispatcherTimer _inactivityTimer = new() { Interval = TimeSpan.FromSeconds(60) };
 
 	private void InitializeTimers()
 	{
@@ -73,9 +73,9 @@ public partial class Dashboard : Window
 
 			if (isBill && !isKOT && !isInventory)
 			{
-				BillWindow billWindow = new(_user);
-				billWindow.Show();
-				Hide();
+				TableDashboard tableDashboard = new(_user, this, _loginWindow);
+				tableDashboard.Show();
+				Close();
 			}
 
 			else if (isKOT && !isBill && !isInventory)
@@ -98,8 +98,8 @@ public partial class Dashboard : Window
 
 	private void billButton_Click(object sender, RoutedEventArgs e)
 	{
-		BillWindow billWindow = new(_user);
-		billWindow.Show();
+		TableDashboard tableDashboard = new(_user, this, _loginWindow);
+		tableDashboard.Show();
 		Hide();
 	}
 
