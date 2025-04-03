@@ -79,7 +79,14 @@
     <Build Include="Stored Procedures\LoadData\Load_TableData_By_Id.sql" />
     <Build Include="Stored Procedures\LoadData\Load_TableData_By_Status.sql" />
     <Build Include="Stored Procedures\LoadData\Load_User_By_Password.sql" />
-    <Build Include="Views\User_Location.sql" />
+    <Build Include="Tables\DiningArea.sql" />
+    <Build Include="Tables\DiningTable.sql" />
+    <Build Include="Stored Procedures\Insert\Insert_DiningArea.sql" />
+    <Build Include="Stored Procedures\Insert\Insert_DiningTable.sql" />
+    <Build Include="Stored Procedures\Update\Update_DiningArea.sql" />
+    <Build Include="Stored Procedures\Update\Update_DiningTable.sql" />
+    <Build Include="Stored Procedures\LoadData\Load_DiningArea_By_Location.sql" />
+    <Build Include="Stored Procedures\LoadData\Load_DIningTable_By_DiningArea.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="DBPubBill.refactorlog" />

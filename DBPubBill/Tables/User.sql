@@ -9,4 +9,5 @@
     [KOT] BIT NOT NULL DEFAULT 0, 
     [Inventory] BIT NOT NULL DEFAULT 0, 
     [Admin] BIT NOT NULL DEFAULT 0, 
+    CONSTRAINT [FK_User_ToLocation] FOREIGN KEY (LocationId) REFERENCES [Location](Id), 
 )

@@ -20,7 +20,7 @@ public partial class UserPage : Page
 		searchLocationComboBox.ItemsSource = locations;
 		searchLocationComboBox.DisplayMemberPath = nameof(LocationModel.Name);
 		searchLocationComboBox.SelectedValuePath = nameof(LocationModel.Id);
-		searchLocationComboBox.SelectedIndex = -1;
+		searchLocationComboBox.SelectedIndex = 0;
 
 		locationComboBox.ItemsSource = locations;
 		locationComboBox.DisplayMemberPath = nameof(LocationModel.Name);
@@ -67,9 +67,9 @@ public partial class UserPage : Page
 		bool showInventory = showInventoryCheckBox?.IsChecked ?? false;
 		bool showNonInventory = true;
 
-		userDataGrid.ItemsSource = (await CommonData.LoadTableData<UserLocationModel>(ViewNames.UserLocation))
+		userDataGrid.ItemsSource = (await CommonData.LoadTableData<UserModel>(TableNames.User))
 			.Where(item => string.IsNullOrEmpty(nameSearch) || item.Name.Contains(nameSearch, StringComparison.CurrentCultureIgnoreCase))
-			.Where(item => searchLocationComboBox.SelectedIndex == -1 || item.LocationId == (int)searchLocationComboBox.SelectedValue)
+			.Where(item => item.LocationId == (int)searchLocationComboBox.SelectedValue)
 			.Where(item => (showActive && item.Status) || (showInactive && !item.Status))
 			.Where(item => (showAdmin && item.Admin) || (showNonAdmin && !item.Admin))
 			.Where(item => (showBill && item.Bill) || (showNonBill && !item.Bill))
@@ -95,7 +95,7 @@ public partial class UserPage : Page
 
 	private void UpdateFields()
 	{
-		if (userDataGrid.SelectedItem is UserLocationModel selectedUser)
+		if (userDataGrid.SelectedItem is UserModel selectedUser)
 		{
 			nameTextBox.Text = selectedUser.Name;
 			passwordBox.Password = selectedUser.Password.ToString();
@@ -185,7 +185,7 @@ public partial class UserPage : Page
 			Status = (bool)statusCheckBox.IsChecked
 		};
 
-		if (userDataGrid.SelectedItem is UserLocationModel selectedUser)
+		if (userDataGrid.SelectedItem is UserModel selectedUser)
 		{
 			userModel.Id = selectedUser.Id;
 			await UserData.UpdateUser(userModel);

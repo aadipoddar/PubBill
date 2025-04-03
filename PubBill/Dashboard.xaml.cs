@@ -21,18 +21,10 @@ public partial class Dashboard : Window
 		_inactivityTimer.Start();
 	}
 
-	private void ResetInactivityTimer(object sender, EventArgs e)
+	private void Dashboard_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
 	{
-		_inactivityTimer.Stop();
-		_inactivityTimer.Start();
-	}
-
-	private void SubscribeToTextChangedEvents()
-	{
-		billButton.Click += ResetInactivityTimer;
-		kotButton.Click += ResetInactivityTimer;
-		inventoryButton.Click += ResetInactivityTimer;
-		adminButton.Click += ResetInactivityTimer;
+		if (IsVisible) _inactivityTimer.Start();
+		else _inactivityTimer.Stop();
 	}
 
 	#endregion
@@ -50,7 +42,7 @@ public partial class Dashboard : Window
 	private void Window_Loaded(object sender, RoutedEventArgs e)
 	{
 		InitializeTimers();
-		SubscribeToTextChangedEvents();
+		IsVisibleChanged += Dashboard_IsVisibleChanged;
 
 		if (_user is null) Close();
 		else

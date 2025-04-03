@@ -38,6 +38,8 @@
 					</Grid.RowDefinitions>
 
 					<!-- Buttons set to stretch horizontally -->
+					<Button Content="Dining Areas" Grid.Row="0" Margin="10" Padding="5" MinWidth="120" MinHeight="40" HorizontalAlignment="Stretch" Click="manageDiningAreasButton_Click" />
+					<Button Content="Dining Tables" Grid.Row="1" Margin="10" Padding="5" MinWidth="120" MinHeight="40" HorizontalAlignment="Stretch" Click="manageDiningTablesButton_Click" />
 					<Button Content="Users" Grid.Row="2" Margin="10" Padding="5" MinWidth="120" MinHeight="40" HorizontalAlignment="Stretch" Click="manageUsersButton_Click" />
 					<Button Content="Locations" Grid.Row="3" Margin="10" Padding="5" MinWidth="120" MinHeight="40" HorizontalAlignment="Stretch" Click="manageLocationsButton_Click" />
 					<Button Content="Persons" Grid.Row="6" Margin="10" Padding="5" MinWidth="120" MinHeight="40" HorizontalAlignment="Stretch" Click="managePersonButton_Click" />
