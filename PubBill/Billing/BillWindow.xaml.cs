@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Text.RegularExpressions;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace PubBill.Billing;
 
@@ -35,7 +36,52 @@ public partial class BillWindow : Window
 		RefreshTotal();
 	}
 
-	#region LoadData
+	private async void Window_Loaded(object sender, RoutedEventArgs e)
+	{
+		groupComboBox.ItemsSource = await CommonData.LoadTableData<ProductGroupModel>(TableNames.ProductGroup);
+		groupComboBox.DisplayMemberPath = nameof(ProductGroupModel.Name);
+		groupComboBox.SelectedValuePath = nameof(ProductGroupModel.Id);
+		groupComboBox.SelectedIndex = 0;
+	}
+
+	private async void groupComboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+	{
+		if (groupComboBox.SelectedValue is int selectedGroupId)
+		{
+			categoryListBox.ItemsSource = await ProductCategoryData.LoadProductCategoryByProductGroup(selectedGroupId);
+			categoryListBox.DisplayMemberPath = nameof(ProductCategoryModel.Name);
+			categoryListBox.SelectedValuePath = nameof(ProductCategoryModel.Id);
+			categoryListBox.SelectedIndex = 0;
+		}
+	}
+
+	private async void categoryListBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+	{
+		if (categoryListBox.SelectedValue is int selectedCategoryId)
+		{
+			productsGrid.Children.Clear();
+			itemsContol.Items.Clear();
+
+			var products = await ProductData.LoadProductByProductCategory(selectedCategoryId);
+
+			foreach (var product in products)
+			{
+				var button = new Button
+				{
+					Name = $"{product.Name.RemoveSpace()}{product.Id}Button",
+					Content = product.Name,
+					MinWidth = 120,
+					MinHeight = 60,
+					Margin = new Thickness(10),
+					Padding = new Thickness(5),
+				};
+
+				itemsContol.Items.Add(button);
+			}
+
+			productsGrid.Children.Add(itemsContol);
+		}
+	}
 
 	private void RefreshTotal()
 	{
@@ -47,8 +93,6 @@ public partial class BillWindow : Window
 
 		totalAmountTextBox.Text = total.ToString();
 	}
-
-	#endregion
 
 	#region Validation
 

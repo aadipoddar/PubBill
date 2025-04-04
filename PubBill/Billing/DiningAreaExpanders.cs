@@ -15,7 +15,7 @@ static class DiningAreaExpanders
 
 			var expander = new Expander
 			{
-				Name = $"{diningArea.Name.RemoveSpace()}Expander",
+				Name = $"{diningArea.Name.RemoveSpace()}{diningArea.Id}Expander",
 				Header = diningArea.Name,
 				IsExpanded = diningTables.Count > 0,
 				Margin = new Thickness(10),
@@ -36,7 +36,7 @@ static class DiningAreaExpanders
 			{
 				var button = new Button
 				{
-					Name = $"{tables.Name.RemoveSpace()}Button",
+					Name = $"{tables.Name.RemoveSpace()}{tables.Id}Button",
 					Content = tables.Name,
 					MinWidth = 120,
 					MinHeight = 60,
