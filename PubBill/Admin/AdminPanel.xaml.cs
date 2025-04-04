@@ -15,13 +15,19 @@ public partial class AdminPanel : Window
 		_dashboard = dashboard;
 	}
 
-	private void Window_Loaded(object sender, RoutedEventArgs e) => mainFrame.Content = new DiningAreaPage();
-
 	private void Window_Closed(object sender, EventArgs e)
 	{
 		_dashboard.Show();
 		Close();
 	}
+
+	private void Window_Loaded(object sender, RoutedEventArgs e) => mainFrame.Content = new ProductGroupPage();
+
+	private void manageProductGroupButton_Click(object sender, RoutedEventArgs e) => mainFrame.Content = new ProductGroupPage();
+
+	private void manageProductButton_Click(object sender, RoutedEventArgs e) => mainFrame.Content = new ProductPage();
+
+	private void manageProductCategoryButton_Click(object sender, RoutedEventArgs e) => mainFrame.Content = new ProductCategoryPage();
 
 	private void manageDiningAreasButton_Click(object sender, RoutedEventArgs e) => mainFrame.Content = new DiningAreaPage();
 

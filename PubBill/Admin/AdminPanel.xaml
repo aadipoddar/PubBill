@@ -32,17 +32,21 @@
 						<RowDefinition Height="Auto"/>
 						<RowDefinition Height="Auto"/>
 						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
 						<RowDefinition Height="*"/>
 						<RowDefinition Height="Auto"/>
 						<RowDefinition Height="Auto"/>
 					</Grid.RowDefinitions>
 
 					<!-- Buttons set to stretch horizontally -->
-					<Button Content="Dining Areas" Grid.Row="0" Margin="10" Padding="5" MinWidth="120" MinHeight="40" HorizontalAlignment="Stretch" Click="manageDiningAreasButton_Click" />
-					<Button Content="Dining Tables" Grid.Row="1" Margin="10" Padding="5" MinWidth="120" MinHeight="40" HorizontalAlignment="Stretch" Click="manageDiningTablesButton_Click" />
-					<Button Content="Users" Grid.Row="2" Margin="10" Padding="5" MinWidth="120" MinHeight="40" HorizontalAlignment="Stretch" Click="manageUsersButton_Click" />
-					<Button Content="Locations" Grid.Row="3" Margin="10" Padding="5" MinWidth="120" MinHeight="40" HorizontalAlignment="Stretch" Click="manageLocationsButton_Click" />
-					<Button Content="Persons" Grid.Row="6" Margin="10" Padding="5" MinWidth="120" MinHeight="40" HorizontalAlignment="Stretch" Click="managePersonButton_Click" />
+					<Button Content="Product Groups" Grid.Row="0" Margin="10" Padding="5" MinWidth="120" MinHeight="40" HorizontalAlignment="Stretch" Click="manageProductGroupButton_Click" />
+					<Button Content="Product Category" Grid.Row="1" Margin="10" Padding="5" MinWidth="120" MinHeight="40" HorizontalAlignment="Stretch" Click="manageProductCategoryButton_Click" />
+					<Button Content="Products" Grid.Row="2" Margin="10" Padding="5" MinWidth="120" MinHeight="40" HorizontalAlignment="Stretch" Click="manageProductButton_Click" />
+					<Button Content="Dining Areas" Grid.Row="3" Margin="10" Padding="5" MinWidth="120" MinHeight="40" HorizontalAlignment="Stretch" Click="manageDiningAreasButton_Click" />
+					<Button Content="Dining Tables" Grid.Row="4" Margin="10" Padding="5" MinWidth="120" MinHeight="40" HorizontalAlignment="Stretch" Click="manageDiningTablesButton_Click" />
+					<Button Content="Users" Grid.Row="5" Margin="10" Padding="5" MinWidth="120" MinHeight="40" HorizontalAlignment="Stretch" Click="manageUsersButton_Click" />
+					<Button Content="Locations" Grid.Row="6" Margin="10" Padding="5" MinWidth="120" MinHeight="40" HorizontalAlignment="Stretch" Click="manageLocationsButton_Click" />
+					<Button Content="Persons" Grid.Row="7" Margin="10" Padding="5" MinWidth="120" MinHeight="40" HorizontalAlignment="Stretch" Click="managePersonButton_Click" />
 
 					<Button Content="SQL Editor" Grid.Row="8" Margin="10" Padding="5" MinWidth="120" HorizontalAlignment="Stretch" Click="sqlEditorButton_Click" />
 					<Button Content="Settings" Grid.Row="9" Margin="10" Padding="5" MinWidth="120" HorizontalAlignment="Stretch" Click="settingsButton_Click" VerticalAlignment="Bottom"/>

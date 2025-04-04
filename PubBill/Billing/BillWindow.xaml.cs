@@ -60,7 +60,7 @@ public partial class BillWindow : Window
 
 	private void decimalTextBox_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
 	{
-		Regex regex = new Regex(@"^\d*\.?\d{0,2}$");
+		Regex regex = new(@"^\d*\.?\d{0,2}$");
 		e.Handled = !regex.IsMatch((sender as System.Windows.Controls.TextBox).Text + e.Text);
 	}
 
