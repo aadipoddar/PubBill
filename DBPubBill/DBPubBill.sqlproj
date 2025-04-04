@@ -87,6 +87,17 @@
     <Build Include="Stored Procedures\Update\Update_DiningTable.sql" />
     <Build Include="Stored Procedures\LoadData\Load_DiningArea_By_Location.sql" />
     <Build Include="Stored Procedures\LoadData\Load_DIningTable_By_DiningArea.sql" />
+    <Build Include="Tables\ProductCategory.sql" />
+    <Build Include="Tables\ProductGroup.sql" />
+    <Build Include="Tables\Product.sql" />
+    <Build Include="Stored Procedures\Insert\Insert_ProductGroup.sql" />
+    <Build Include="Stored Procedures\Insert\Insert_ProductCategory.sql" />
+    <Build Include="Stored Procedures\Insert\Insert_Product.sql" />
+    <Build Include="Stored Procedures\Update\Update_ProductGroup.sql" />
+    <Build Include="Stored Procedures\Update\Update_ProductCategory.sql" />
+    <Build Include="Stored Procedures\Update\Update_Product.sql" />
+    <Build Include="Stored Procedures\LoadData\Load_ProductCategory_By_ProductGroup.sql" />
+    <Build Include="Stored Procedures\LoadData\Load_Product_By_ProductCategory.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="DBPubBill.refactorlog" />
