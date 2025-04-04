@@ -97,6 +97,8 @@ public partial class ProductPage : Page
 		if (productDataGrid.SelectedItem is ProductModel selectedProduct)
 		{
 			nameTextBox.Text = selectedProduct.Name;
+			codeTextBox.Text = selectedProduct.Code;
+			rateTextBox.Text = selectedProduct.Rate.ToString();
 			productGroupComboBox.SelectedValue = searchProductGroupComboBox.SelectedValue;
 			statusCheckBox.IsChecked = selectedProduct.Status;
 			saveButton.Content = "Update";
@@ -111,7 +113,8 @@ public partial class ProductPage : Page
 		else
 		{
 			nameTextBox.Clear();
-			prizeTextBox.Clear();
+			codeTextBox.Clear();
+			rateTextBox.Clear();
 			statusCheckBox.IsChecked = true;
 			saveButton.Content = "Save";
 			saveButton.IsEnabled = false;
@@ -122,10 +125,12 @@ public partial class ProductPage : Page
 
 	private void UpdateButtonField()
 	{
+		if (productDataGrid is null) return;
+
 		if (productDataGrid.SelectedItem is null) saveButton.Content = "Save";
 		else saveButton.Content = "Update";
 
-		if (!string.IsNullOrEmpty(nameTextBox.Text) && !string.IsNullOrEmpty(prizeTextBox.Text)) saveButton.IsEnabled = true;
+		if (!string.IsNullOrEmpty(nameTextBox.Text) && !string.IsNullOrEmpty(codeTextBox.Text) && !string.IsNullOrEmpty(rateTextBox.Text)) saveButton.IsEnabled = true;
 		else saveButton.IsEnabled = false;
 	}
 
@@ -143,9 +148,15 @@ public partial class ProductPage : Page
 			return false;
 		}
 
-		if (string.IsNullOrEmpty(prizeTextBox.Text.Trim()))
+		if (string.IsNullOrEmpty(codeTextBox.Text.Trim()))
 		{
-			MessageBox.Show("Please enter a Prize", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+			MessageBox.Show("Please enter a Code", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+			return false;
+		}
+
+		if (string.IsNullOrEmpty(rateTextBox.Text.Trim()))
+		{
+			MessageBox.Show("Please enter a Rate", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
 			return false;
 		}
 
@@ -171,7 +182,8 @@ public partial class ProductPage : Page
 		ProductModel productModel = new()
 		{
 			Name = nameTextBox.Text,
-			Prize = Decimal.Parse(prizeTextBox.Text),
+			Code = codeTextBox.Text.RemoveSpace(),
+			Rate = Decimal.Parse(rateTextBox.Text),
 			ProductCategoryId = (int)productCategoryComboBox.SelectedValue,
 			Status = (bool)statusCheckBox.IsChecked
 		};

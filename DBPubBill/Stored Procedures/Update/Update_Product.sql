@@ -1,7 +1,8 @@
 ﻿CREATE PROCEDURE [dbo].[Update_Product]
 	@Id INT,
 	@Name VARCHAR(250),
-	@Prize MONEY,
+	@Code VARCHAR(50),
+	@Rate MONEY,
 	@ProductCategoryId INT,
 	@Status BIT
 AS
@@ -9,7 +10,8 @@ BEGIN
 	UPDATE [Product]
 	SET
 		Name = @Name,
-		Prize = @Prize,
+		Code = @Code,
+		Rate = @Rate,
 		ProductCategoryId = @ProductCategoryId,
 		Status = @Status
 	WHERE Id = @Id;

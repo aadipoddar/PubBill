@@ -48,8 +48,8 @@
 					<Button Content="Locations" Grid.Row="6" Margin="10" Padding="5" MinWidth="120" MinHeight="40" HorizontalAlignment="Stretch" Click="manageLocationsButton_Click" />
 					<Button Content="Persons" Grid.Row="7" Margin="10" Padding="5" MinWidth="120" MinHeight="40" HorizontalAlignment="Stretch" Click="managePersonButton_Click" />
 
-					<Button Content="SQL Editor" Grid.Row="8" Margin="10" Padding="5" MinWidth="120" HorizontalAlignment="Stretch" Click="sqlEditorButton_Click" />
-					<Button Content="Settings" Grid.Row="9" Margin="10" Padding="5" MinWidth="120" HorizontalAlignment="Stretch" Click="settingsButton_Click" VerticalAlignment="Bottom"/>
+					<Button Content="SQL Editor" Grid.Row="9" Margin="10" Padding="5" MinWidth="120" HorizontalAlignment="Stretch" Click="sqlEditorButton_Click" />
+					<Button Content="Settings" Grid.Row="10" Margin="10" Padding="5" MinWidth="120" HorizontalAlignment="Stretch" Click="settingsButton_Click" VerticalAlignment="Bottom"/>
 				</Grid>
 			</ScrollViewer>
 
