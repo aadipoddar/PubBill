@@ -38,13 +38,20 @@ public partial class BillWindow : Window
 
 	private async void Window_Loaded(object sender, RoutedEventArgs e)
 	{
+		await LoadProductGroupComboBox();
+	}
+
+	#region LoadProducts
+
+	private async Task LoadProductGroupComboBox()
+	{
 		groupComboBox.ItemsSource = await CommonData.LoadTableData<ProductGroupModel>(TableNames.ProductGroup);
 		groupComboBox.DisplayMemberPath = nameof(ProductGroupModel.Name);
 		groupComboBox.SelectedValuePath = nameof(ProductGroupModel.Id);
 		groupComboBox.SelectedIndex = 0;
 	}
 
-	private async void groupComboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+	private async void groupComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 	{
 		if (groupComboBox.SelectedValue is int selectedGroupId)
 		{
@@ -55,33 +62,46 @@ public partial class BillWindow : Window
 		}
 	}
 
-	private async void categoryListBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+	private async void categoryListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 	{
-		if (categoryListBox.SelectedValue is int selectedCategoryId)
+		if (categoryListBox.SelectedValue is int)
 		{
-			productsGrid.Children.Clear();
-			itemsContol.Items.Clear();
-
-			var products = await ProductData.LoadProductByProductCategory(selectedCategoryId);
-
-			foreach (var product in products)
-			{
-				var button = new Button
-				{
-					Name = $"{product.Name.RemoveSpace()}{product.Id}Button",
-					Content = product.Name,
-					MinWidth = 120,
-					MinHeight = 60,
-					Margin = new Thickness(10),
-					Padding = new Thickness(5),
-				};
-
-				itemsContol.Items.Add(button);
-			}
-
-			productsGrid.Children.Add(itemsContol);
+			searchProductNameTextBox.Clear();
+			await CreateProductButtons();
 		}
 	}
+
+	private async void searchProductNameTextBox_TextChanged(object sender, TextChangedEventArgs e)
+	{
+		if (!string.IsNullOrEmpty(searchProductNameTextBox.Text))
+		{
+			categoryListBox.SelectedValue = null;
+			await CreateProductButtons();
+		}
+	}
+
+	private async Task CreateProductButtons()
+	{
+		itemsContol.Items.Clear();
+
+		List<ProductModel> products = [];
+
+		if (string.IsNullOrEmpty(searchProductNameTextBox.Text))
+			products = await ProductData.LoadProductByProductCategory((int)categoryListBox.SelectedValue);
+		else
+		{
+			products = await CommonData.LoadTableDataByStatus<ProductModel>(TableNames.Product);
+			products = [.. products.Where(p => p.Name.Contains(searchProductNameTextBox.Text, StringComparison.CurrentCultureIgnoreCase))];
+		}
+
+		foreach (var product in products)
+		{
+			var button = CreateComponents.BuildProductButton(product);
+			itemsContol.Items.Add(button);
+		}
+	}
+
+	#endregion
 
 	private void RefreshTotal()
 	{
@@ -105,14 +125,14 @@ public partial class BillWindow : Window
 	private void decimalTextBox_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
 	{
 		Regex regex = new(@"^\d*\.?\d{0,2}$");
-		e.Handled = !regex.IsMatch((sender as System.Windows.Controls.TextBox).Text + e.Text);
+		e.Handled = !regex.IsMatch((sender as TextBox).Text + e.Text);
 	}
 
 	#endregion
 
 	#region DataGridEvents
 
-	private void billDataGrid_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+	private void billDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
 	{
 		if (billDataGrid.SelectedItem is BillModel selectedSale)
 		{
@@ -122,7 +142,7 @@ public partial class BillWindow : Window
 		}
 	}
 
-	private void instructionsTextBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+	private void instructionsTextBox_TextChanged(object sender, TextChangedEventArgs e)
 	{
 		if (billDataGrid is null) return;
 
@@ -134,7 +154,7 @@ public partial class BillWindow : Window
 		else instructionsTextBox.Clear();
 	}
 
-	private void quantityTextBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+	private void quantityTextBox_TextChanged(object sender, TextChangedEventArgs e)
 	{
 		if (billDataGrid is null) return;
 

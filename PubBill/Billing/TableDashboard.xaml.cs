@@ -64,7 +64,7 @@ public partial class TableDashboard : Window
 
 		var diningAreas = await DiningAreaData.LoadDiningAreaByLocation(location.Id);
 
-		await DiningAreaExpanders.CreateExpanders(areasStackPanel, diningAreas, _user, _loginWindow, this);
+		await CreateComponents.CreateDiningAreaExpanders(areasStackPanel, diningAreas, _user, _loginWindow, this);
 	}
 
 	private void Window_Closed(object sender, EventArgs e) => _loginWindow.Show();
