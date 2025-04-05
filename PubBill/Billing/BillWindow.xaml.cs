@@ -14,22 +14,12 @@ public partial class BillWindow : Window
 	private readonly LoginWindow _loginWindow;
 	private readonly TableDashboard _tableDashboard;
 
-	private static readonly ObservableCollection<BillModel> _bill =
-	[
-		new BillModel { ProductName = "Chips", Quantity = 3, Price = 1.5, Instructions = "" },
-		new BillModel { ProductName = "Peanuts", Quantity = 1, Price = 1.0, Instructions = "" },
-		new BillModel { ProductName = "Pretzels", Quantity = 2, Price = 1.5, Instructions = "" },
-		new BillModel { ProductName = "Soda", Quantity = 2, Price = 1.5, Instructions = "" },
-		new BillModel { ProductName = "Water", Quantity = 1, Price = 1.0, Instructions = "" },
-		new BillModel { ProductName = "Juice", Quantity = 1, Price = 2.0, Instructions = "" },
-		new BillModel { ProductName = "Candy", Quantity = 2, Price = 1.0, Instructions = "" },
-		new BillModel { ProductName = "Gum", Quantity = 1, Price = 0.5, Instructions = "" }
-	];
+	private static readonly ObservableCollection<CartModel> _cart = [];
 
 	public BillWindow(UserModel user, LoginWindow loginWindow, TableDashboard tableDashboard)
 	{
 		InitializeComponent();
-		billDataGrid.ItemsSource = _bill;
+		cartDataGrid.ItemsSource = _cart;
 		_user = user;
 		_loginWindow = loginWindow;
 		_tableDashboard = tableDashboard;
@@ -97,6 +87,25 @@ public partial class BillWindow : Window
 		foreach (var product in products)
 		{
 			var button = CreateComponents.BuildProductButton(product);
+
+			button.Click += (sender, e) =>
+			{
+				if (cartDataGrid.ItemsSource is ObservableCollection<CartModel> cart)
+				{
+					var existingCart = cart.FirstOrDefault(c => c.ProductId == product.Id);
+					if (existingCart is not null) existingCart.Quantity++;
+					else cart.Add(new CartModel
+					{
+						ProductId = product.Id,
+						ProductName = product.Name,
+						Quantity = 1,
+						Rate = product.Rate,
+						Instructions = string.Empty
+					});
+				}
+				RefreshTotal();
+			};
+
 			itemsContol.Items.Add(button);
 		}
 	}
@@ -105,13 +114,24 @@ public partial class BillWindow : Window
 
 	private void RefreshTotal()
 	{
-		billDataGrid.Items.Refresh();
+		cartDataGrid.Items.Refresh();
 
-		double total = 0;
-		foreach (BillModel sale in _bill)
-			total += sale.Total;
+		decimal total = 0;
+		foreach (CartModel cart in _cart)
+			total += cart.Total;
 
-		totalAmountTextBox.Text = total.ToString();
+		foreach (var column in cartDataGrid.Columns)
+		{
+			if (column is DataGridTextColumn textColumn)
+			{
+				textColumn.ElementStyle = new Style(typeof(TextBlock))
+				{
+					Setters = { new Setter(TextBlock.TextAlignmentProperty, TextAlignment.Right) }
+				};
+			}
+		}
+
+		totalAmountTextBox.Text = total.FormatIndianCurrency();
 	}
 
 	#region Validation
@@ -132,9 +152,9 @@ public partial class BillWindow : Window
 
 	#region DataGridEvents
 
-	private void billDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+	private void cartDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
 	{
-		if (billDataGrid.SelectedItem is BillModel selectedSale)
+		if (cartDataGrid.SelectedItem is CartModel selectedSale)
 		{
 			quantityTextBox.Text = selectedSale.Quantity.ToString();
 			instructionsTextBox.Text = selectedSale.Instructions;
@@ -144,9 +164,9 @@ public partial class BillWindow : Window
 
 	private void instructionsTextBox_TextChanged(object sender, TextChangedEventArgs e)
 	{
-		if (billDataGrid is null) return;
+		if (cartDataGrid is null) return;
 
-		if (billDataGrid.SelectedItem is BillModel selectedSale)
+		if (cartDataGrid.SelectedItem is CartModel selectedSale)
 		{
 			selectedSale.Instructions = instructionsTextBox.Text;
 			RefreshTotal();
@@ -156,11 +176,11 @@ public partial class BillWindow : Window
 
 	private void quantityTextBox_TextChanged(object sender, TextChangedEventArgs e)
 	{
-		if (billDataGrid is null) return;
+		if (cartDataGrid is null) return;
 
-		if (billDataGrid.SelectedItem is BillModel selectedSale)
+		if (cartDataGrid.SelectedItem is CartModel selectedSale)
 		{
-			selectedSale.Quantity = double.Parse(quantityTextBox.Text);
+			selectedSale.Quantity = int.Parse(quantityTextBox.Text);
 			RefreshTotal();
 		}
 		else quantityTextBox.Text = "0";
