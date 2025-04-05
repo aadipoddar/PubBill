@@ -28,6 +28,11 @@ public partial class BillWindow : Window
 
 	private async void Window_Loaded(object sender, RoutedEventArgs e)
 	{
+		paymentModeComboBox.ItemsSource = await CommonData.LoadTableDataByStatus<PaymentModeModel>(TableNames.PaymentMode);
+		paymentModeComboBox.DisplayMemberPath = nameof(PaymentModeModel.Name);
+		paymentModeComboBox.SelectedValuePath = nameof(PaymentModeModel.Id);
+		paymentModeComboBox.SelectedIndex = 0;
+
 		await LoadProductGroupComboBox();
 	}
 
@@ -111,6 +116,24 @@ public partial class BillWindow : Window
 	}
 
 	#endregion
+
+	private async void personNumberTextBox_TextChanged(object sender, TextChangedEventArgs e)
+	{
+		var foundPerson = await PersonData.LoadPersonByNumber(personNumberTextBox.Text);
+
+		if (foundPerson is not null)
+		{
+			personNameTextBox.Text = foundPerson.Name;
+			personNameTextBox.IsReadOnly = true;
+			loyaltyCheckBox.IsChecked = foundPerson.Loyalty;
+		}
+		else
+		{
+			personNameTextBox.Clear();
+			personNameTextBox.IsReadOnly = false;
+			loyaltyCheckBox.IsChecked = false;
+		}
+	}
 
 	private void RefreshTotal()
 	{

@@ -45,7 +45,6 @@
 									<RowDefinition Height="Auto" />
 									<RowDefinition Height="Auto" />
 									<RowDefinition Height="Auto" />
-									<RowDefinition Height="Auto" />
 								</Grid.RowDefinitions>
 
 								<TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="Table Information" Margin="10" Padding="5" HorizontalAlignment="Center" />
@@ -58,9 +57,6 @@
 
 								<TextBlock Grid.Row="3" Grid.Column="0" Text="Table" Margin="10" Padding="5" />
 								<TextBox Grid.Row="3" Grid.Column="1" Margin="10" Padding="5" MinWidth="100" IsReadOnly="True" Text="1" />
-
-								<TextBlock Grid.Row="4" Grid.Column="0" Text="Total People" Margin="10" Padding="5" />
-								<TextBox Grid.Row="4" Grid.Column="1" Margin="10" Padding="5" MinWidth="100" Text="1" />
 							</Grid>
 						</Border>
 						<!--#endregion-->
@@ -78,17 +74,21 @@
 									<RowDefinition Height="Auto" />
 									<RowDefinition Height="Auto" />
 									<RowDefinition Height="Auto" />
+									<RowDefinition Height="Auto" />
 								</Grid.RowDefinitions>
 
 								<TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="Person Information" Margin="10" Padding="5" HorizontalAlignment="Center" />
 
 								<TextBlock Grid.Row="1" Grid.Column="0" Text="Number" Margin="10" Padding="5" />
-								<TextBox Grid.Row="1" Grid.Column="1" Margin="10" Padding="5" MinWidth="100" MaxLength="10" PreviewTextInput="numberTextBox_PreviewTextInput" />
+								<TextBox x:Name="personNumberTextBox" Grid.Row="1" Grid.Column="1" Margin="10" Padding="5" MinWidth="100" MaxLength="10" PreviewTextInput="numberTextBox_PreviewTextInput" TextChanged="personNumberTextBox_TextChanged" />
 
 								<TextBlock Grid.Row="2" Grid.Column="0" Text="Name" Margin="10" Padding="5" />
-								<TextBox Grid.Row="2" Grid.Column="1" Margin="10" Padding="5" MinWidth="100" />
+								<TextBox x:Name="personNameTextBox" Grid.Row="2" Grid.Column="1" Margin="10" Padding="5" MinWidth="100" />
 
 								<CheckBox x:Name="loyaltyCheckBox" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="10" Padding="5" Content="Loyalty" HorizontalAlignment="Center"/>
+
+								<TextBlock Grid.Row="4" Grid.Column="0" Text="Total People" Margin="10" Padding="5" />
+								<TextBox Grid.Row="4" Grid.Column="1" Margin="10" Padding="5" MinWidth="100" Text="1" />
 							</Grid>
 						</Border>
 						<!--#endregion-->
@@ -111,10 +111,10 @@
 								<TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="Adjustments" Margin="10" Padding="5" HorizontalAlignment="Center" />
 
 								<TextBlock Grid.Row="1" Grid.Column="0" Text="Adj %" Margin="10" Padding="5" />
-								<TextBox Grid.Row="1" Grid.Column="1" Margin="10" Padding="5" MinWidth="100" TextAlignment="Right" Text="0.00" PreviewTextInput="decimalTextBox_PreviewTextInput" />
+								<TextBox Grid.Row="1" Grid.Column="1" Margin="10" Padding="5" MinWidth="100" TextAlignment="Right" Text="0" PreviewTextInput="decimalTextBox_PreviewTextInput" />
 
 								<TextBlock Grid.Row="2" Grid.Column="0" Text="Adj Amt" Margin="10" Padding="5" />
-								<TextBox Grid.Row="2" Grid.Column="1" Margin="10" Padding="5" MinWidth="100" TextAlignment="Right" Text="0.00" PreviewTextInput="decimalTextBox_PreviewTextInput"/>
+								<TextBox Grid.Row="2" Grid.Column="1" Margin="10" Padding="5" MinWidth="100" TextAlignment="Right" Text="0" PreviewTextInput="decimalTextBox_PreviewTextInput"/>
 
 								<TextBlock Grid.Row="3" Grid.Column="0" Text="Adj Reason" Margin="10" Padding="5" />
 								<TextBox Grid.Row="3" Grid.Column="1" Margin="10" Padding="5" MinWidth="100" TextWrapping="Wrap" MaxWidth="150" />
@@ -135,6 +135,7 @@
 									<RowDefinition Height="Auto" />
 									<RowDefinition Height="Auto" />
 									<RowDefinition Height="Auto" />
+									<RowDefinition Height="Auto" />
 								</Grid.RowDefinitions>
 
 								<TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="Bill Information" Margin="10" Padding="5" HorizontalAlignment="Center" />
@@ -145,8 +146,10 @@
 								<TextBlock Grid.Row="2" Grid.Column="0" Text="Total" Margin="10" Padding="5" />
 								<TextBox Grid.Row="2" Grid.Column="1" Margin="10" Padding="5" x:Name="totalAmountTextBox" MinWidth="100" TextAlignment="Right" Text="0.00" IsReadOnly="True" />
 
-								<Button Grid.Row="3" Grid.Column="0" Content="KOT" Margin="10" Padding="5" MinWidth="100" MinHeight="40" Background="Red" />
-								<Button Grid.Row="3" Grid.Column="1" Content="Save" Margin="10" Padding="5" MinWidth="100" MinHeight="40" Style="{DynamicResource AccentButtonStyle}" />
+								<ComboBox x:Name="paymentModeComboBox" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" MinWidth="100" Margin="10" Padding="5" />
+
+								<Button Grid.Row="4" Grid.Column="0" Content="KOT" Margin="10" Padding="5" MinWidth="100" MinHeight="40" Background="Red" />
+								<Button Grid.Row="4" Grid.Column="1" Content="Save" Margin="10" Padding="5" MinWidth="100" MinHeight="40" Style="{DynamicResource AccentButtonStyle}" />
 							</Grid>
 						</Border>
 						<!--#endregion-->
