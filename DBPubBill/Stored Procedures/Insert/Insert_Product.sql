@@ -1,4 +1,4 @@
-﻿------CREATE PROCEDURE [dbo].[Insert_Product]
+﻿CREATE PROCEDURE [dbo].[Insert_Product]
 	@Id INT,
 	@Name VARCHAR(250),
 	@Code VARCHAR(50),

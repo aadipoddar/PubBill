@@ -10,6 +10,9 @@ public static class TableNames
 	public static string ProductGroup => "ProductGroup";
 	public static string ProductCategory => "ProductCategory";
 	public static string Product => "Product";
+	public static string PaymentMode => "PaymentMode";
+	public static string Bill => "Bill";
+	public static string BillDetail => "BillDetail";
 }
 
 public static class ViewNames
@@ -26,6 +29,7 @@ public static class StoredProcedureNames
 	public static string InsertProductGroup => "Insert_ProductGroup";
 	public static string InsertProductCategory => "Insert_ProductCategory";
 	public static string InsertProduct => "Insert_Product";
+	public static string InsertPaymentMode => "Insert_PaymentMode";
 	public static string InsertBill => "Insert_Bill";
 	public static string InsertBillDetail => "Insert_BillDetail";
 

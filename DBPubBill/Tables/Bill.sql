@@ -11,10 +11,12 @@
     [AdjReason] VARCHAR(250) NOT NULL, 
     [Remakrs] VARCHAR(250) NOT NULL, 
     [Total] MONEY NOT NULL, 
+    [PaymentModeId] INT NOT NULL, 
     [BillDateTime] DATETIME NOT NULL DEFAULT (((getdate() AT TIME ZONE 'UTC') AT TIME ZONE 'India Standard Time')), 
     CONSTRAINT [FK_Bill_ToUser] FOREIGN KEY (UserId) REFERENCES [User](Id), 
     CONSTRAINT [FK_Bill_ToLocation] FOREIGN KEY (LocationId) REFERENCES [Location](Id), 
     CONSTRAINT [FK_Bill_ToDiningAreaId] FOREIGN KEY (DiningAreaId) REFERENCES [DiningArea](Id), 
     CONSTRAINT [FK_Bill_ToDiningTable] FOREIGN KEY (DiningTableId) REFERENCES [DiningTable](Id), 
-    CONSTRAINT [FK_Bill_ToPerson] FOREIGN KEY (PersonId) REFERENCES [Person](Id)
+    CONSTRAINT [FK_Bill_ToPerson] FOREIGN KEY (PersonId) REFERENCES [Person](Id), 
+    CONSTRAINT [FK_Bill_ToPaymentMode] FOREIGN KEY (PaymentModeId) REFERENCES [PaymentMode](Id)
 )

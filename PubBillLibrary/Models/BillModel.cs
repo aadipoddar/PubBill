@@ -13,6 +13,7 @@ public class BillModel
 	public string AdjReason { get; set; }
 	public string Remarks { get; set; }
 	public decimal Total { get; set; }
+	public int PaymentModeId { get; set; }
 	public DateTime BillDateTime { get; set; }
 }
 

@@ -39,6 +39,8 @@ public partial class AdminPanel : Window
 
 	private void managePersonButton_Click(object sender, RoutedEventArgs e) => mainFrame.Content = new PersonPage();
 
+	private void managePaymentModeButton_Click(object sender, RoutedEventArgs e) => mainFrame.Content = new PaymentModePage();
+
 	private void sqlEditorButton_Click(object sender, RoutedEventArgs e) => mainFrame.Content = new SqlEditorPage();
 
 	private void settingsButton_Click(object sender, RoutedEventArgs e) => mainFrame.Content = new SettingsPage();
