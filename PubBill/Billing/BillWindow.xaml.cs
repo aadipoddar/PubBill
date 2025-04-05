@@ -100,7 +100,7 @@ public partial class BillWindow : Window
 						ProductName = product.Name,
 						Quantity = 1,
 						Rate = product.Rate,
-						Instructions = string.Empty
+						Instruction = string.Empty
 					});
 				}
 				RefreshTotal();
@@ -157,7 +157,7 @@ public partial class BillWindow : Window
 		if (cartDataGrid.SelectedItem is CartModel selectedSale)
 		{
 			quantityTextBox.Text = selectedSale.Quantity.ToString();
-			instructionsTextBox.Text = selectedSale.Instructions;
+			instructionsTextBox.Text = selectedSale.Instruction;
 			instructionsTextBox.Focus();
 		}
 	}
@@ -168,7 +168,7 @@ public partial class BillWindow : Window
 
 		if (cartDataGrid.SelectedItem is CartModel selectedSale)
 		{
-			selectedSale.Instructions = instructionsTextBox.Text;
+			selectedSale.Instruction = instructionsTextBox.Text;
 			RefreshTotal();
 		}
 		else instructionsTextBox.Clear();

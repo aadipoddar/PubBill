@@ -157,17 +157,13 @@ public partial class DiningTablePage : Page
 
 		DiningTableModel diningTableModel = new()
 		{
+			Id = diningTableDataGrid.SelectedItem is DiningTableModel selectedDiningTable ? selectedDiningTable.Id : 0,
 			Name = nameTextBox.Text,
 			DiningAreaId = (int)diningAreaComboBox.SelectedValue,
 			Status = (bool)statusCheckBox.IsChecked
 		};
 
-		if (diningTableDataGrid.SelectedItem is DiningTableModel selectedDiningTable)
-		{
-			diningTableModel.Id = selectedDiningTable.Id;
-			await DiningTableData.UpdateDiningTable(diningTableModel);
-		}
-		else await DiningTableData.InsertDiningTable(diningTableModel);
+		await DiningTableData.InsertDiningTable(diningTableModel);
 
 		await ApplySearchFilter();
 	}

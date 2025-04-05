@@ -5,6 +5,16 @@
 	@Status BIT
 AS
 BEGIN
-	INSERT INTO [dbo].[ProductCategory] (Name, ProductGroupId, Status)
-	VALUES (@Name, @ProductGroupId, @Status);
+	IF @Id = 0
+	BEGIN
+		INSERT INTO [dbo].[ProductCategory] (Name, ProductGroupId, Status)
+		VALUES (@Name, @ProductGroupId, @Status);
+	END
+
+	ELSE
+	BEGIN
+		UPDATE [dbo].[ProductCategory]
+		SET Name = @Name, ProductGroupId = @ProductGroupId, Status = @Status
+		WHERE Id = @Id;
+	END
 END;

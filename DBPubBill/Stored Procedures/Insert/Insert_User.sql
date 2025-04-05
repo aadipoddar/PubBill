@@ -10,6 +10,23 @@
 	@Admin BIT
 AS
 BEGIN
-	INSERT INTO [dbo].[User] (Name, Password, LocationId, Status, Bill, KOT, Inventory, Admin)
-	VALUES (@Name, @Password, @LocationId, @Status, @Bill, @KOT, @Inventory, @Admin)
+	IF @Id = 0
+	BEGIN
+		INSERT INTO [dbo].[User] (Name, Password, LocationId, Status, Bill, KOT, Inventory, Admin)
+		VALUES (@Name, @Password, @LocationId, @Status, @Bill, @KOT, @Inventory, @Admin);
+	END
+
+	ELSE
+	BEGIN
+		UPDATE [dbo].[User]
+		SET Name = @Name,
+			Password = @Password,
+			LocationId = @LocationId,
+			Status = @Status,
+			Bill = @Bill,
+			KOT = @KOT,
+			Inventory = @Inventory,
+			Admin = @Admin
+		WHERE Id = @Id;
+	END
 END;

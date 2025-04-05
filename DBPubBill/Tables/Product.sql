@@ -2,7 +2,7 @@
 (
 	[Id] INT NOT NULL PRIMARY KEY IDENTITY, 
     [Name] VARCHAR(250) NOT NULL, 
-    [Code] VARCHAR(50) NOT NULL, 
+    [Code] VARCHAR(50) NOT NULL UNIQUE, 
     [Rate] MONEY NOT NULL, 
     [ProductCategoryId] INT NOT NULL, 
     [Status] BIT NOT NULL DEFAULT 1, 

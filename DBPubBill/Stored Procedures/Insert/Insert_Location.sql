@@ -4,6 +4,16 @@
 	@Status BIT
 AS
 BEGIN
-	INSERT INTO [dbo].[Location] (Name, Status)
-	VALUES (@Name, @Status)
+	IF @Id = 0
+	BEGIN
+		INSERT INTO [dbo].[Location] (Name, Status)
+		VALUES (@Name, @Status);
+	END
+
+	ELSE
+	BEGIN
+		UPDATE [dbo].[Location]
+		SET Name = @Name, Status = @Status
+		WHERE Id = @Id;
+	END
 END;

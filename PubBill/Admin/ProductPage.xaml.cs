@@ -181,6 +181,7 @@ public partial class ProductPage : Page
 
 		ProductModel productModel = new()
 		{
+			Id = productDataGrid.SelectedItem is ProductModel selectedProduct ? selectedProduct.Id : 0,
 			Name = nameTextBox.Text,
 			Code = codeTextBox.Text.RemoveSpace(),
 			Rate = Decimal.Parse(rateTextBox.Text),
@@ -188,12 +189,7 @@ public partial class ProductPage : Page
 			Status = (bool)statusCheckBox.IsChecked
 		};
 
-		if (productDataGrid.SelectedItem is ProductModel productTable)
-		{
-			productModel.Id = productTable.Id;
-			await ProductData.UpdateProduct(productModel);
-		}
-		else await ProductData.InsertProduct(productModel);
+		await ProductData.InsertProduct(productModel);
 
 		await ApplySearchFilter();
 	}

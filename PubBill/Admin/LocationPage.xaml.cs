@@ -80,16 +80,12 @@ public partial class LocationPage : Page
 
 		LocationModel locationModel = new()
 		{
+			Id = locationDataGrid.SelectedItem is LocationModel selectedLocation ? selectedLocation.Id : 0,
 			Name = nameTextBox.Text,
 			Status = (bool)statusCheckBox.IsChecked
 		};
 
-		if (locationDataGrid.SelectedItem is LocationModel selectedLocation)
-		{
-			locationModel.Id = selectedLocation.Id;
-			await LocationData.UpdateLocation(locationModel);
-		}
-		else await LocationData.InsertLocation(locationModel);
+		await LocationData.InsertLocation(locationModel);
 
 		await LoadData();
 	}

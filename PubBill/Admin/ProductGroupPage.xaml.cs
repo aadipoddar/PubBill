@@ -80,16 +80,12 @@ public partial class ProductGroupPage : Page
 
 		ProductGroupModel productGroupModel = new()
 		{
+			Id = productGroupDataGrid.SelectedItem is ProductGroupModel selectedProductGroup ? selectedProductGroup.Id : 0,
 			Name = nameTextBox.Text,
 			Status = (bool)statusCheckBox.IsChecked
 		};
 
-		if (productGroupDataGrid.SelectedItem is ProductGroupModel selectedProductGroup)
-		{
-			productGroupModel.Id = selectedProductGroup.Id;
-			await ProductGroupData.UpdateProductGroup(productGroupModel);
-		}
-		else await ProductGroupData.InsertProductGroup(productGroupModel);
+		await ProductGroupData.InsertProductGroup(productGroupModel);
 
 		await LoadData();
 	}

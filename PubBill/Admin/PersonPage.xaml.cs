@@ -113,22 +113,20 @@ public partial class PersonPage : Page
 
 		PersonModel personModel = new()
 		{
+			Id = personDataGrid.SelectedItem is PersonModel selectedPerson ? selectedPerson.Id : 0,
 			Name = nameTextBox.Text,
 			Number = numberTextBox.Text,
 			Loyalty = (bool)loyaltyCheckBox.IsChecked
 		};
 
-		if (personDataGrid.SelectedItem is PersonModel selectedPerson)
+		if (personDataGrid.SelectedItem is PersonModel personModel1)
 		{
 			var foundPerson = await PersonData.LoadPersonByNumber(personModel.Number);
-			if (foundPerson is not null && foundPerson.Id != selectedPerson.Id)
+			if (foundPerson is not null && foundPerson.Id != personModel1.Id)
 			{
 				MessageBox.Show("Number already exists", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
 				return;
 			}
-
-			personModel.Id = selectedPerson.Id;
-			await PersonData.UpdatePerson(personModel);
 		}
 		else
 		{
@@ -137,9 +135,9 @@ public partial class PersonPage : Page
 				MessageBox.Show("Number already exists", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
 				return;
 			}
-
-			await PersonData.InsertPerson(personModel);
 		}
+
+		await PersonData.InsertPerson(personModel);
 
 		await LoadData();
 	}

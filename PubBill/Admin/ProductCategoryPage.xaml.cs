@@ -114,17 +114,13 @@ public partial class ProductCategoryPage : Page
 
 		ProductCategoryModel productCategory = new()
 		{
+			Id = productCategoryDataGrid.SelectedItem is ProductCategoryModel selectedProductCategory ? selectedProductCategory.Id : 0,
 			Name = nameTextBox.Text,
 			ProductGroupId = (int)productGroupComboBox.SelectedValue,
 			Status = (bool)statusCheckBox.IsChecked
 		};
 
-		if (productCategoryDataGrid.SelectedItem is ProductCategoryModel selectedProductCategory)
-		{
-			productCategory.Id = selectedProductCategory.Id;
-			await ProductCategoryData.UpdateProductCategory(productCategory);
-		}
-		else await ProductCategoryData.InsertProductCategory(productCategory);
+		await ProductCategoryData.InsertProductCategory(productCategory);
 
 		await ApplySearchFilter();
 	}

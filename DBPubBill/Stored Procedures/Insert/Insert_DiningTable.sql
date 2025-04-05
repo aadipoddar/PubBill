@@ -5,6 +5,16 @@
 	@Status BIT = 1
 AS
 BEGIN
-	INSERT INTO [dbo].[DiningTable] (Name, DiningAreaId, Status)
-	VALUES (@Name, @DiningAreaId, @Status);
-END
+	IF @Id = 0
+	BEGIN
+		INSERT INTO DiningTable (Name, DiningAreaId, Status)
+		VALUES (@Name, @DiningAreaId, @Status);
+	END
+
+	ELSE
+	BEGIN
+		UPDATE DiningTable
+		SET Name = @Name, DiningAreaId = @DiningAreaId, Status = @Status
+		WHERE Id = @Id;
+	END
+END;

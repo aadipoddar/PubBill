@@ -111,17 +111,13 @@ public partial class DiningAreaPage : Page
 
 		DiningAreaModel diningAreaModel = new()
 		{
+			Id = diningAreaDataGrid.SelectedItem is DiningAreaModel selectedDiningArea ? selectedDiningArea.Id : 0,
 			Name = nameTextBox.Text,
 			LocationId = (int)locationComboBox.SelectedValue,
 			Status = (bool)statusCheckBox.IsChecked
 		};
 
-		if (diningAreaDataGrid.SelectedItem is DiningAreaModel selectedDiningArea)
-		{
-			diningAreaModel.Id = selectedDiningArea.Id;
-			await DiningAreaData.UpdateDiningArea(diningAreaModel);
-		}
-		else await DiningAreaData.InsertDiningArea(diningAreaModel);
+		await DiningAreaData.InsertDiningArea(diningAreaModel);
 
 		await ApplySearchFilter();
 	}

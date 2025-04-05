@@ -26,15 +26,8 @@ public static class StoredProcedureNames
 	public static string InsertProductGroup => "Insert_ProductGroup";
 	public static string InsertProductCategory => "Insert_ProductCategory";
 	public static string InsertProduct => "Insert_Product";
-
-	public static string UpdateLocation => "Update_Location";
-	public static string UpdatePerson => "Update_Person";
-	public static string UpdateUser => "Update_User";
-	public static string UpdateDiningArea => "Update_DiningArea";
-	public static string UpdateDiningTable => "Update_DiningTable";
-	public static string UpdateProductGroup => "Update_ProductGroup";
-	public static string UpdateProductCategory => "Update_ProductCategory";
-	public static string UpdateProduct => "Update_Product";
+	public static string InsertBill => "Insert_Bill";
+	public static string InsertBillDetail => "Insert_BillDetail";
 
 	public static string LoadTableData => "Load_TableData";
 	public static string LoadTableDataById => "Load_TableData_By_Id";

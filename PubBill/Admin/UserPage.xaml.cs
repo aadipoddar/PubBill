@@ -175,6 +175,7 @@ public partial class UserPage : Page
 
 		UserModel userModel = new()
 		{
+			Id = userDataGrid.SelectedItem is UserModel selectedUser ? selectedUser.Id : 0,
 			Name = nameTextBox.Text,
 			Password = short.Parse(passwordBox.Password),
 			Bill = (bool)billCheckBox.IsChecked,
@@ -185,12 +186,7 @@ public partial class UserPage : Page
 			Status = (bool)statusCheckBox.IsChecked
 		};
 
-		if (userDataGrid.SelectedItem is UserModel selectedUser)
-		{
-			userModel.Id = selectedUser.Id;
-			await UserData.UpdateUser(userModel);
-		}
-		else await UserData.InsertUser(userModel);
+		await UserData.InsertUser(userModel);
 
 		await ApplySearchFilter();
 	}
