@@ -34,12 +34,12 @@ static class CreateComponents
 			itemsPanelTemplate.VisualTree = wrapPanelFactory;
 			itemsControl.ItemsPanel = itemsPanelTemplate;
 
-			foreach (var tables in diningTables)
+			foreach (var table in diningTables)
 			{
 				var button = new Button
 				{
-					Name = $"{tables.Name.RemoveSpace()}{tables.Id}Button",
-					Content = tables.Name,
+					Name = $"{table.Name.RemoveSpace()}{table.Id}Button",
+					Content = table.Name,
 					MinWidth = 120,
 					MinHeight = 60,
 					Margin = new Thickness(10),
@@ -48,7 +48,7 @@ static class CreateComponents
 
 				button.Click += (sender, e) =>
 				{
-					BillWindow billWindow = new(userModel, loginWindow, tableDashboard);
+					BillWindow billWindow = new(userModel, loginWindow, tableDashboard, table, diningArea);
 					billWindow.Show();
 					tableDashboard.Hide();
 				};

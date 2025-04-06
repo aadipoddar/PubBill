@@ -8,7 +8,7 @@
 	@TotalPeople INT,
 	@AdjAmount MONEY,
 	@AdjReason VARCHAR(250),
-	@Remakrs VARCHAR(250),
+	@Remarks VARCHAR(250),
 	@Total MONEY,
 	@PaymentModeId INT,
 	@BillDateTime DATETIME
@@ -26,7 +26,7 @@ BEGIN
 			TotalPeople,
 			AdjAmount,
 			AdjReason,
-			Remakrs,
+			Remarks,
 			Total,
 			PaymentModeId
 		) VALUES
@@ -39,7 +39,7 @@ BEGIN
 			@TotalPeople,
 			@AdjAmount,
 			@AdjReason,
-			@Remakrs,
+			@Remarks,
 			@Total,
 			@PaymentModeId
 		);
@@ -59,9 +59,11 @@ BEGIN
 			TotalPeople = @TotalPeople,
 			AdjAmount = @AdjAmount,
 			AdjReason = @AdjReason,
-			Remakrs = @Remakrs,
+			Remarks = @Remarks,
 			Total = @Total,
 			PaymentModeId = @PaymentModeId
 		WHERE Id = @Id;
 	END
-END;
+
+	SELECT @Id AS Id;
+END

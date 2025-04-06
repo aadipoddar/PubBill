@@ -9,7 +9,7 @@
     [TotalPeople] INT NOT NULL DEFAULT 1, 
     [AdjAmount] MONEY NOT NULL DEFAULT 0, 
     [AdjReason] VARCHAR(250) NOT NULL, 
-    [Remakrs] VARCHAR(250) NOT NULL, 
+    [Remarks] VARCHAR(250) NOT NULL, 
     [Total] MONEY NOT NULL, 
     [PaymentModeId] INT NOT NULL, 
     [BillDateTime] DATETIME NOT NULL DEFAULT (((getdate() AT TIME ZONE 'UTC') AT TIME ZONE 'India Standard Time')), 

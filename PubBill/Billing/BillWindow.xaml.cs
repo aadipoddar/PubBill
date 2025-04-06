@@ -13,21 +13,31 @@ public partial class BillWindow : Window
 	private readonly UserModel _user;
 	private readonly LoginWindow _loginWindow;
 	private readonly TableDashboard _tableDashboard;
+	private readonly DiningTableModel _diningTableModel;
+	private readonly DiningAreaModel _diningAreaModel;
 
 	private static readonly ObservableCollection<CartModel> _cart = [];
 
-	public BillWindow(UserModel user, LoginWindow loginWindow, TableDashboard tableDashboard)
+	public BillWindow(UserModel user, LoginWindow loginWindow, TableDashboard tableDashboard, DiningTableModel diningTableModel, DiningAreaModel diningAreaModel)
 	{
 		InitializeComponent();
+
+		_cart.Clear();
 		cartDataGrid.ItemsSource = _cart;
 		_user = user;
 		_loginWindow = loginWindow;
 		_tableDashboard = tableDashboard;
+		_diningTableModel = diningTableModel;
+		_diningAreaModel = diningAreaModel;
+
 		RefreshTotal();
 	}
 
 	private async void Window_Loaded(object sender, RoutedEventArgs e)
 	{
+		diningAreaTextBox.Text = _diningAreaModel.Name;
+		diningTableTextBox.Text = _diningTableModel.Name;
+
 		paymentModeComboBox.ItemsSource = await CommonData.LoadTableDataByStatus<PaymentModeModel>(TableNames.PaymentMode);
 		paymentModeComboBox.DisplayMemberPath = nameof(PaymentModeModel.Name);
 		paymentModeComboBox.SelectedValuePath = nameof(PaymentModeModel.Id);
@@ -154,24 +164,8 @@ public partial class BillWindow : Window
 			}
 		}
 
-		totalAmountTextBox.Text = total.FormatIndianCurrency();
+		totalAmountTextBox.Text = total.ToString();
 	}
-
-	#region Validation
-
-	private void numberTextBox_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
-	{
-		Regex regex = new("[^0-9]+");
-		e.Handled = regex.IsMatch(e.Text);
-	}
-
-	private void decimalTextBox_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
-	{
-		Regex regex = new(@"^\d*\.?\d{0,2}$");
-		e.Handled = !regex.IsMatch((sender as TextBox).Text + e.Text);
-	}
-
-	#endregion
 
 	#region DataGridEvents
 
@@ -212,6 +206,128 @@ public partial class BillWindow : Window
 	private void quantityMinusButton_Click(object sender, RoutedEventArgs e) => quantityTextBox.Text = (int.Parse(quantityTextBox.Text) - 1).ToString();
 
 	private void quantityPlusButton_Click(object sender, RoutedEventArgs e) => quantityTextBox.Text = (int.Parse(quantityTextBox.Text) + 1).ToString();
+
+	#endregion
+
+	#region Validation
+
+	private void numberTextBox_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
+	{
+		Regex regex = new("[^0-9]+");
+		e.Handled = regex.IsMatch(e.Text);
+	}
+
+	private void decimalTextBox_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
+	{
+		Regex regex = new(@"^\d*\.?\d{0,2}$");
+		e.Handled = !regex.IsMatch((sender as TextBox).Text + e.Text);
+	}
+
+	private bool ValidateFields()
+	{
+		if (string.IsNullOrEmpty(personNumberTextBox.Text))
+		{
+			MessageBox.Show("Please enter a valid number.", "Invalid Number", MessageBoxButton.OK, MessageBoxImage.Warning);
+			personNumberTextBox.Focus();
+			return false;
+		}
+
+		if (string.IsNullOrEmpty(personNameTextBox.Text))
+		{
+			MessageBox.Show("Please enter a valid name.", "Invalid Name", MessageBoxButton.OK, MessageBoxImage.Warning);
+			personNameTextBox.Focus();
+			return false;
+		}
+
+		if (cartDataGrid.Items.Count == 0)
+		{
+			MessageBox.Show("Please add at least one product to the cart.", "Empty Cart", MessageBoxButton.OK, MessageBoxImage.Warning);
+			return false;
+		}
+		return true;
+	}
+
+	#endregion
+
+	#region Saving
+
+	private async void billButton_Click(object sender, RoutedEventArgs e)
+	{
+		if (!ValidateFields()) return;
+
+		int personId = await InsertPerson();
+		if (personId == 0)
+		{
+			MessageBox.Show("Failed to insert person data.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+			return;
+		}
+
+		int billId = await InsertBill(personId);
+		if (billId == 0)
+		{
+			MessageBox.Show("Failed to insert bill data.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+			return;
+		}
+
+		await InsertBillDetails(billId);
+		Close();
+	}
+
+	private async Task<int> InsertPerson()
+	{
+		PersonModel person = new()
+		{
+			Id = 0,
+			Name = personNameTextBox.Text,
+			Number = personNumberTextBox.Text,
+			Loyalty = (bool)loyaltyCheckBox.IsChecked
+		};
+
+		if (personNameTextBox.IsReadOnly)
+			person.Id = (await PersonData.LoadPersonByNumber(person.Number)).Id;
+
+		return await PersonData.InsertPerson(person);
+	}
+
+	private async Task<int> InsertBill(int personId)
+	{
+		BillModel bill = new()
+		{
+			Id = 0,
+			UserId = _user.Id,
+			LocationId = _user.LocationId,
+			DiningAreaId = _diningAreaModel.Id,
+			DiningTableId = _diningTableModel.Id,
+			PersonId = personId,
+			TotalPeople = int.Parse(totalPeopleTextBox.Text),
+			AdjAmount = decimal.Parse(adjAmountTextBox.Text),
+			AdjReason = adjReasonTextBox.Text,
+			Remarks = remarkTextBox.Text,
+			Total = decimal.Parse(totalAmountTextBox.Text),
+			PaymentModeId = (int)paymentModeComboBox.SelectedValue,
+			BillDateTime = DateTime.Now
+		};
+		if (string.IsNullOrEmpty(bill.AdjReason)) bill.AdjReason = string.Empty;
+		if (string.IsNullOrEmpty(bill.Remarks)) bill.Remarks = string.Empty;
+		if (string.IsNullOrEmpty(bill.AdjAmount.ToString())) bill.AdjAmount = 0;
+		if (string.IsNullOrEmpty(bill.TotalPeople.ToString())) bill.TotalPeople = 0;
+
+		return await BillData.InsertBill(bill);
+	}
+
+	private static async Task InsertBillDetails(int billId)
+	{
+		foreach (CartModel cart in _cart)
+			await BillData.InsertBillDetail(new BillDetailModel
+			{
+				Id = 0,
+				BillId = billId,
+				ProductId = cart.ProductId,
+				Quantity = cart.Quantity,
+				Rate = cart.Rate,
+				Instruction = cart.Instruction
+			});
+	}
 
 	#endregion
 
