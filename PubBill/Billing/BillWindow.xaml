@@ -109,12 +109,12 @@
 								</Grid.RowDefinitions>
 
 								<TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="Adjustments" Margin="10" Padding="5" HorizontalAlignment="Center" />
-
+								
 								<TextBlock Grid.Row="1" Grid.Column="0" Text="Adj %" Margin="10" Padding="5" />
-								<TextBox x:Name="adjPercentTextBox" Grid.Row="1" Grid.Column="1" Margin="10" Padding="5" MinWidth="100" TextAlignment="Right" Text="0" MaxLength="3" PreviewTextInput="decimalTextBox_PreviewTextInput" />
+								<TextBox x:Name="adjPercentTextBox" Grid.Row="1" Grid.Column="1" Margin="10" Padding="5" MinWidth="100" TextAlignment="Right" Text="0" MaxLength="3" TextChanged="adjPercentTextBox_TextChanged" PreviewTextInput="decimalTextBox_PreviewTextInput" />
 
 								<TextBlock Grid.Row="2" Grid.Column="0" Text="Adj Amt" Margin="10" Padding="5" />
-								<TextBox x:Name="adjAmountTextBox" Grid.Row="2" Grid.Column="1" Margin="10" Padding="5" MinWidth="100" TextAlignment="Right" Text="0" MaxLength="10" PreviewTextInput="decimalTextBox_PreviewTextInput"/>
+								<TextBox x:Name="adjAmountTextBox" Grid.Row="2" Grid.Column="1" Margin="10" Padding="5" MinWidth="100" TextAlignment="Right" Text="0" MaxLength="10" TextChanged="adjAmountTextBox_TextChanged" PreviewTextInput="decimalTextBox_PreviewTextInput"/>
 
 								<TextBlock Grid.Row="3" Grid.Column="0" Text="Adj Reason" Margin="10" Padding="5" />
 								<TextBox x:Name="adjReasonTextBox" Grid.Row="3" Grid.Column="1" Margin="10" Padding="5" MinWidth="100" TextWrapping="Wrap" MaxWidth="150" />

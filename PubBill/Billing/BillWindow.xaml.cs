@@ -1,5 +1,4 @@
 ﻿using System.Collections.ObjectModel;
-using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -145,28 +144,6 @@ public partial class BillWindow : Window
 		}
 	}
 
-	private void RefreshTotal()
-	{
-		cartDataGrid.Items.Refresh();
-
-		decimal total = 0;
-		foreach (CartModel cart in _cart)
-			total += cart.Total;
-
-		foreach (var column in cartDataGrid.Columns)
-		{
-			if (column is DataGridTextColumn textColumn)
-			{
-				textColumn.ElementStyle = new Style(typeof(TextBlock))
-				{
-					Setters = { new Setter(TextBlock.TextAlignmentProperty, TextAlignment.Right) }
-				};
-			}
-		}
-
-		totalAmountTextBox.Text = total.ToString();
-	}
-
 	#region DataGridEvents
 
 	private void cartDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -209,19 +186,97 @@ public partial class BillWindow : Window
 
 	#endregion
 
+	#region Calculate Totals
+
+	private decimal _originalTotal;
+	private bool _isUpdating = false;
+
+	private void RefreshTotal()
+	{
+		cartDataGrid.Items.Refresh();
+
+		_originalTotal = 0;
+		foreach (CartModel cart in _cart) _originalTotal += cart.Total;
+
+		foreach (var column in cartDataGrid.Columns)
+			if (column is DataGridTextColumn textColumn)
+				textColumn.ElementStyle = new Style(typeof(TextBlock))
+				{
+					Setters = { new Setter(TextBlock.TextAlignmentProperty, TextAlignment.Right) }
+				};
+
+		decimal adjPercent = 0;
+		if (decimal.TryParse(adjPercentTextBox.Text, out decimal parsedPercent))
+		{
+			adjPercent = Math.Clamp(parsedPercent, 0, 100);
+			if (parsedPercent != adjPercent) adjPercentTextBox.Text = adjPercent.ToString("N2");
+		}
+
+		else adjPercentTextBox.Text = "0.00";
+
+		decimal adjAmount = _originalTotal * (adjPercent / 100);
+		decimal finalTotal = _originalTotal - adjAmount;
+
+		adjAmountTextBox.Text = adjAmount.ToString("N2");
+		totalAmountTextBox.Text = finalTotal.ToString("N2");
+	}
+
+	private void adjPercentTextBox_TextChanged(object sender, TextChangedEventArgs e)
+	{
+		if (_isUpdating || adjPercentTextBox is null || adjAmountTextBox is null || totalAmountTextBox is null) return;
+
+		_isUpdating = true;
+
+		if (!decimal.TryParse(adjPercentTextBox.Text, out decimal percent))
+		{
+			adjPercentTextBox.Text = "0.00";
+			percent = 0;
+		}
+
+		percent = Math.Clamp(percent, 0, 100);
+		if (percent != decimal.Parse(adjPercentTextBox.Text))
+			adjPercentTextBox.Text = percent.ToString("N2");
+
+		decimal adjAmount = _originalTotal * (percent / 100);
+		decimal finalTotal = _originalTotal - adjAmount;
+
+		adjAmountTextBox.Text = adjAmount.ToString("N2");
+		totalAmountTextBox.Text = finalTotal.ToString("N2");
+
+		_isUpdating = false;
+	}
+
+	private void adjAmountTextBox_TextChanged(object sender, TextChangedEventArgs e)
+	{
+		if (_isUpdating || adjAmountTextBox is null || adjPercentTextBox is null || totalAmountTextBox is null) return;
+
+		_isUpdating = true;
+
+		if (!decimal.TryParse(adjAmountTextBox.Text, out decimal amount))
+		{
+			adjAmountTextBox.Text = "0.00";
+			amount = 0;
+		}
+
+		amount = Math.Clamp(amount, 0, _originalTotal);
+		if (amount != decimal.Parse(adjAmountTextBox.Text))
+			adjAmountTextBox.Text = amount.ToString("N2");
+
+		decimal adjPercent = _originalTotal != 0 ? (amount / _originalTotal) * 100 : 0;
+		adjPercentTextBox.Text = adjPercent.ToString("N2");
+
+		totalAmountTextBox.Text = (_originalTotal - amount).ToString("N2");
+
+		_isUpdating = false;
+	}
+
+	#endregion
+
 	#region Validation
 
-	private void numberTextBox_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
-	{
-		Regex regex = new("[^0-9]+");
-		e.Handled = regex.IsMatch(e.Text);
-	}
+	private void numberTextBox_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e) => e.Handled = !int.TryParse(e.Text, out _);
 
-	private void decimalTextBox_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
-	{
-		Regex regex = new(@"^\d*\.?\d{0,2}$");
-		e.Handled = !regex.IsMatch((sender as TextBox).Text + e.Text);
-	}
+	private void decimalTextBox_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e) => e.Handled = !decimal.TryParse(e.Text, out _);
 
 	private bool ValidateFields()
 	{
