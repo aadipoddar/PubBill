@@ -18,7 +18,6 @@ public partial class AdminPanel : Window
 	private void Window_Closed(object sender, EventArgs e)
 	{
 		_dashboard.Show();
-		Close();
 	}
 
 	private void Window_Loaded(object sender, RoutedEventArgs e) => mainFrame.Content = new ProductGroupPage();

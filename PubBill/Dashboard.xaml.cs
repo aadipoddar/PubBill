@@ -1,5 +1,4 @@
 ﻿using System.Windows;
-using System.Windows.Threading;
 
 using PubBill.Admin;
 using PubBill.Billing;
@@ -11,24 +10,6 @@ namespace PubBill;
 /// </summary>
 public partial class Dashboard : Window
 {
-	#region Timers
-
-	private readonly DispatcherTimer _inactivityTimer = new() { Interval = TimeSpan.FromSeconds(60) };
-
-	private void InitializeTimers()
-	{
-		_inactivityTimer.Tick += (sender, e) => Close();
-		_inactivityTimer.Start();
-	}
-
-	private void Dashboard_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
-	{
-		if (IsVisible) _inactivityTimer.Start();
-		else _inactivityTimer.Stop();
-	}
-
-	#endregion
-
 	private readonly UserModel _user;
 	private readonly LoginWindow _loginWindow;
 
@@ -41,9 +22,6 @@ public partial class Dashboard : Window
 
 	private void Window_Loaded(object sender, RoutedEventArgs e)
 	{
-		InitializeTimers();
-		IsVisibleChanged += Dashboard_IsVisibleChanged;
-
 		if (_user is null) Close();
 		else
 		{
@@ -93,7 +71,6 @@ public partial class Dashboard : Window
 	private void Window_Closed(object sender, EventArgs e)
 	{
 		_loginWindow.Show();
-		Close();
 	}
 
 	private void billButton_Click(object sender, RoutedEventArgs e)

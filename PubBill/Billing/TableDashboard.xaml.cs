@@ -10,22 +10,12 @@ public partial class TableDashboard : Window
 {
 	#region Timers
 
-	private readonly DispatcherTimer _inactivityTimer = new() { Interval = TimeSpan.FromSeconds(60) };
 	private readonly DispatcherTimer _timer = new() { Interval = TimeSpan.FromSeconds(30) };
 
 	private void InitializeTimers()
 	{
 		_timer.Tick += async (sender, e) => await RefreshScreen();
 		_timer.Start();
-
-		_inactivityTimer.Tick += (sender, e) => Close();
-		_inactivityTimer.Start();
-	}
-
-	private void Dashboard_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
-	{
-		if (IsVisible) _inactivityTimer.Start();
-		else _inactivityTimer.Stop();
 	}
 
 	#endregion
@@ -45,7 +35,6 @@ public partial class TableDashboard : Window
 	private async Task LoadData()
 	{
 		InitializeTimers();
-		IsVisibleChanged += Dashboard_IsVisibleChanged;
 
 		if (_user is null)
 		{
