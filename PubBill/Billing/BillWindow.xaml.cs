@@ -124,6 +124,31 @@ public partial class BillWindow : Window
 		}
 	}
 
+	private async void searchCodeTextBox_TextChanged(object sender, TextChangedEventArgs e)
+	{
+		if (string.IsNullOrEmpty(searchCodeTextBox.Text)) return;
+
+		var products = await CommonData.LoadTableDataByStatus<ProductModel>(TableNames.Product);
+		var foundProduct = products.FirstOrDefault(p => p.Code == searchCodeTextBox.Text);
+
+		if (foundProduct is not null)
+		{
+			var existingCart = _cart.FirstOrDefault(c => c.ProductId == foundProduct.Id);
+			if (existingCart is not null) existingCart.Quantity++;
+			else _cart.Add(new CartModel
+			{
+				ProductId = foundProduct.Id,
+				ProductName = foundProduct.Name,
+				Quantity = 1,
+				Rate = foundProduct.Rate,
+				Instruction = string.Empty
+			});
+			RefreshTotal();
+
+			searchCodeTextBox.Clear();
+		}
+	}
+
 	#endregion
 
 	private async void personNumberTextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -325,6 +350,7 @@ public partial class BillWindow : Window
 		}
 
 		await InsertBillDetails(billId);
+		await ChangeTableStatus();
 		Close();
 	}
 
@@ -383,6 +409,16 @@ public partial class BillWindow : Window
 				Instruction = cart.Instruction
 			});
 	}
+
+	private async Task ChangeTableStatus() =>
+		await DiningTableData.InsertDiningTable(new DiningTableModel()
+		{
+			Id = _diningTableModel.Id,
+			Name = _diningTableModel.Name,
+			DiningAreaId = _diningTableModel.DiningAreaId,
+			Running = false,
+			Status = _diningTableModel.Status
+		});
 
 	#endregion
 

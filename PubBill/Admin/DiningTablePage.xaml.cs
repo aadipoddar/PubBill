@@ -160,6 +160,7 @@ public partial class DiningTablePage : Page
 			Id = diningTableDataGrid.SelectedItem is DiningTableModel selectedDiningTable ? selectedDiningTable.Id : 0,
 			Name = nameTextBox.Text,
 			DiningAreaId = (int)diningAreaComboBox.SelectedValue,
+			Running = false,
 			Status = (bool)statusCheckBox.IsChecked
 		};
 

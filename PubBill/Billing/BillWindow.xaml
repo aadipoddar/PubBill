@@ -199,7 +199,7 @@
 							<TextBlock Grid.Row="0" Grid.Column="1" Text="Search by Code" Margin="10" Padding="5" />
 
 							<TextBox x:Name="searchProductNameTextBox" Grid.Row="1" Grid.Column="0" Margin="10" Padding="5" MinWidth="150" TextChanged="searchProductNameTextBox_TextChanged" />
-							<TextBox Grid.Row="1" Grid.Column="1" Margin="10" Padding="5" MinWidth="150" />
+							<TextBox x:Name="searchCodeTextBox" Grid.Row="1" Grid.Column="1" Margin="10" Padding="5" MinWidth="150" TextChanged="searchCodeTextBox_TextChanged" />
 						</Grid>
 
 						<!--#endregion-->

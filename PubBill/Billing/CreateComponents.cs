@@ -40,8 +40,12 @@ static class CreateComponents
 				{
 					Name = $"{table.Name.RemoveSpace()}{table.Id}Button",
 					Content = table.Name,
+					FontWeight = FontWeights.SemiBold,
+					FontSize = 20,
+					Foreground = Brushes.Black,
 					MinWidth = 120,
-					MinHeight = 60,
+					MinHeight = 100,
+					Background = table.Running ? Brushes.IndianRed : Brushes.LightGreen,
 					Margin = new Thickness(10),
 					Padding = new Thickness(5),
 				};
