@@ -45,15 +45,8 @@ static class CreateComponents
 				var runningTable = runningTables.FirstOrDefault(b => b.DiningTableId == table.Id);
 
 				Button button;
-				if (runningTable is null) button = MakeTableButton(table);
-				else button = await MakeRunningTableButton(table, runningTable);
-
-				button.Click += (sender, e) =>
-				{
-					BillWindow billWindow = new(userModel, loginWindow, tableDashboard, table, diningArea);
-					billWindow.Show();
-					tableDashboard.Hide();
-				};
+				if (runningTable is null) button = MakeTableButton(userModel, loginWindow, tableDashboard, diningArea, table);
+				else button = await MakeRunningTableButton(userModel, loginWindow, tableDashboard, diningArea, table, runningTable);
 
 				itemsControl.Items.Add(button);
 			}
@@ -64,21 +57,33 @@ static class CreateComponents
 		}
 	}
 
-	private static Button MakeTableButton(DiningTableModel table) => new()
+	private static Button MakeTableButton(UserModel userModel, LoginWindow loginWindow, TableDashboard tableDashboard, DiningAreaModel diningArea, DiningTableModel table)
 	{
-		Name = $"{table.Name.RemoveSpace()}{table.Id}Button",
-		Content = table.Name,
-		FontWeight = FontWeights.SemiBold,
-		FontSize = 20,
-		Foreground = Brushes.Black,
-		MinWidth = 120,
-		MinHeight = 100,
-		Background = Brushes.LightGreen,
-		Margin = new Thickness(10),
-		Padding = new Thickness(5),
-	};
+		Button button = new()
+		{
+			Name = $"{table.Name.RemoveSpace()}{table.Id}Button",
+			Content = table.Name,
+			FontWeight = FontWeights.SemiBold,
+			FontSize = 20,
+			Foreground = Brushes.Black,
+			MinWidth = 120,
+			MinHeight = 100,
+			Background = Brushes.LightGreen,
+			Margin = new Thickness(10),
+			Padding = new Thickness(5),
+		};
 
-	private static async Task<Button> MakeRunningTableButton(DiningTableModel table, RunningBillModel runningTable)
+		button.Click += (sender, e) =>
+		{
+			BillWindow billWindow = new(userModel, loginWindow, tableDashboard, table, diningArea);
+			billWindow.Show();
+			tableDashboard.Hide();
+		};
+
+		return button;
+	}
+
+	private static async Task<Button> MakeRunningTableButton(UserModel userModel, LoginWindow loginWindow, TableDashboard tableDashboard, DiningAreaModel diningArea, DiningTableModel table, RunningBillModel runningTable)
 	{
 		var user = await CommonData.LoadTableDataById<UserModel>(TableNames.User, runningTable.UserId);
 		var totalTime = DateTime.Now - runningTable.BillStartDateTime;
@@ -150,7 +155,7 @@ static class CreateComponents
 		Grid.SetColumnSpan(totalPeopleTextBlock, 3);
 		grid.Children.Add(totalPeopleTextBlock);
 
-		return new Button
+		Button button = new()
 		{
 			Name = $"{table.Name.RemoveSpace()}{table.Id}Button",
 			Content = grid,
@@ -163,6 +168,15 @@ static class CreateComponents
 			Margin = new Thickness(10),
 			Padding = new Thickness(5),
 		};
+
+		button.Click += (sender, e) =>
+		{
+			BillWindow billWindow = new(userModel, loginWindow, tableDashboard, table, diningArea, runningTable);
+			billWindow.Show();
+			tableDashboard.Hide();
+		};
+
+		return button;
 	}
 
 	internal static Button BuildProductButton(ProductModel product)

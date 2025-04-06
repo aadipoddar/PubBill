@@ -49,4 +49,9 @@ public static class StoredProcedureNames
 
 	public static string LoadProductByProductCategory => "Load_Product_By_ProductCategory";
 	public static string LoadProductCategoryByProductGroup => "Load_ProductCategory_By_ProductGroup";
+
+	public static string LoadRunningTabeDetailByRunningBillId => "Load_RunningTabeDetail_By_RunningBillId";
+
+	public static string DeleteRunningBill => "Delete_RunningBill";
+	public static string DeleteRunningBillDetail => "Delete_RunningBillDetail";
 }

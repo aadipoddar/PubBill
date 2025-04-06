@@ -50,7 +50,7 @@
 								<TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="Table Information" Margin="10" Padding="5" HorizontalAlignment="Center" />
 
 								<TextBlock Grid.Row="1" Grid.Column="0" Text="Running Time" Margin="10" Padding="5" />
-								<TextBox Grid.Row="1" Grid.Column="1" Margin="10" Padding="5" MinWidth="100" IsReadOnly="True" Text="1h 23mins" />
+								<TextBox x:Name="runningTimeTextBox" Grid.Row="1" Grid.Column="1" Margin="10" Padding="5" MinWidth="100" IsReadOnly="True" Text="00h 00mins" />
 
 								<TextBlock Grid.Row="2" Grid.Column="0" Text="Area" Margin="10" Padding="5" />
 								<TextBox x:Name="diningAreaTextBox" Grid.Row="2" Grid.Column="1" Margin="10" Padding="5" MinWidth="100" IsReadOnly="True" Text="Indoor" />

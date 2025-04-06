@@ -9,11 +9,14 @@ namespace PubBill.Billing;
 /// </summary>
 public partial class BillWindow : Window
 {
+	#region Initial Loading
+
 	private readonly UserModel _user;
 	private readonly LoginWindow _loginWindow;
 	private readonly TableDashboard _tableDashboard;
 	private readonly DiningTableModel _diningTableModel;
 	private readonly DiningAreaModel _diningAreaModel;
+	private readonly RunningBillModel _runningBillModel;
 
 	private static readonly ObservableCollection<CartModel> _cart = [];
 	private static readonly ObservableCollection<CartModel> _kotCart = [];
@@ -33,10 +36,27 @@ public partial class BillWindow : Window
 		RefreshTotal();
 	}
 
+	public BillWindow(UserModel user, LoginWindow loginWindow, TableDashboard tableDashboard, DiningTableModel diningTableModel, DiningAreaModel diningAreaModel, RunningBillModel runningBillModel)
+	{
+		InitializeComponent();
+
+		_cart.Clear();
+		cartDataGrid.ItemsSource = _cart;
+		_user = user;
+		_loginWindow = loginWindow;
+		_tableDashboard = tableDashboard;
+		_diningTableModel = diningTableModel;
+		_diningAreaModel = diningAreaModel;
+		_runningBillModel = runningBillModel;
+
+		RefreshTotal();
+	}
+
 	private async void Window_Loaded(object sender, RoutedEventArgs e)
 	{
 		diningAreaTextBox.Text = _diningAreaModel.Name;
 		diningTableTextBox.Text = _diningTableModel.Name;
+		runningTimeTextBox.Text = "0";
 
 		paymentModeComboBox.ItemsSource = await CommonData.LoadTableDataByStatus<PaymentModeModel>(TableNames.PaymentMode);
 		paymentModeComboBox.DisplayMemberPath = nameof(PaymentModeModel.Name);
@@ -44,7 +64,61 @@ public partial class BillWindow : Window
 		paymentModeComboBox.SelectedIndex = 0;
 
 		await LoadProductGroupComboBox();
+
+		await LoadComponentsFromRunningBill();
 	}
+
+	private async Task LoadComponentsFromRunningBill()
+	{
+		if (_runningBillModel is null) return;
+
+		var runningTime = DateTime.Now - _runningBillModel.BillStartDateTime;
+
+		runningTimeTextBox.Text = runningTime.ToString("hh\\:mm");
+
+		var person = await CommonData.LoadTableDataById<PersonModel>(TableNames.Person, _runningBillModel.PersonId);
+		if (person is not null)
+		{
+			personNameTextBox.Text = person.Name;
+			personNumberTextBox.Text = person.Number;
+			loyaltyCheckBox.IsChecked = person.Loyalty;
+		}
+
+		var adjAmount = _runningBillModel.AdjAmount;
+		var total = _runningBillModel.Total;
+		var percent = adjAmount / (total + adjAmount) * 100;
+
+		totalPeopleTextBox.Text = _runningBillModel.TotalPeople.ToString();
+		adjAmountTextBox.Text = _runningBillModel.AdjAmount.ToString();
+		adjPercentTextBox.Text = percent.ToString();
+		adjReasonTextBox.Text = _runningBillModel.AdjReason;
+		remarkTextBox.Text = _runningBillModel.Remarks;
+		totalAmountTextBox.Text = _runningBillModel.Total.ToString();
+		paymentModeComboBox.SelectedValue = _runningBillModel.PaymentModeId;
+
+		_cart.Clear();
+
+		var runningTableDetails = await RunningBillData.LoadRunningBillDetailByRunningBillId(_runningBillModel.Id);
+		foreach (var item in runningTableDetails)
+		{
+			var product = await CommonData.LoadTableDataById<ProductModel>(TableNames.Product, item.ProductId);
+			if (product is not null)
+			{
+				_cart.Add(new CartModel
+				{
+					ProductId = product.Id,
+					ProductName = product.Name,
+					Quantity = item.Quantity,
+					Rate = item.Rate,
+					Instruction = item.Instruction
+				});
+			}
+		}
+
+		RefreshTotal();
+	}
+
+	#endregion
 
 	#region LoadProducts
 
@@ -330,6 +404,76 @@ public partial class BillWindow : Window
 
 	#endregion
 
+	#region KOT
+
+	private async void kotButton_Click(object sender, RoutedEventArgs e)
+	{
+		if (cartDataGrid.Items.Count == 0)
+		{
+			MessageBox.Show("Please add at least one product to the cart", "Empty Cart", MessageBoxButton.OK, MessageBoxImage.Warning);
+			return;
+		}
+
+		int personId = await InsertPerson();
+		if (personId == 0)
+		{
+			MessageBox.Show("Failed to insert person data.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+			return;
+		}
+
+		int runningBillId = await InsertRunningBill(personId);
+		if (runningBillId == 0)
+		{
+			MessageBox.Show("Failed to insert running bill data.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+			return;
+		}
+
+		await InsertRunningBillDetails(runningBillId);
+		Close();
+	}
+
+	private async Task<int> InsertRunningBill(int personId)
+	{
+		RunningBillModel runningBill = new()
+		{
+			Id = _runningBillModel?.Id ?? 0,
+			UserId = _user.Id,
+			LocationId = _user.LocationId,
+			DiningAreaId = _diningAreaModel.Id,
+			DiningTableId = _diningTableModel.Id,
+			PersonId = personId,
+			TotalPeople = int.Parse(totalPeopleTextBox.Text),
+			AdjAmount = decimal.Parse(adjAmountTextBox.Text),
+			AdjReason = adjReasonTextBox.Text,
+			Remarks = remarkTextBox.Text,
+			Total = decimal.Parse(totalAmountTextBox.Text),
+			PaymentModeId = (int)paymentModeComboBox.SelectedValue,
+			BillStartDateTime = _runningBillModel?.BillStartDateTime ?? DateTime.Now
+		};
+		if (string.IsNullOrEmpty(runningBill.AdjAmount.ToString())) runningBill.AdjAmount = 0;
+		if (string.IsNullOrEmpty(runningBill.TotalPeople.ToString())) runningBill.TotalPeople = 0;
+
+		return await RunningBillData.InsertRunningBill(runningBill);
+	}
+
+	private async Task InsertRunningBillDetails(int runningBillId)
+	{
+		if (_runningBillModel is not null) await RunningBillData.DeleteRunningBillDetail(_runningBillModel.Id);
+
+		foreach (CartModel cart in _cart)
+			await RunningBillData.InsertRunningBillDetail(new RunningBillDetailModel
+			{
+				Id = 0,
+				RunningBillId = runningBillId,
+				ProductId = cart.ProductId,
+				Quantity = cart.Quantity,
+				Rate = cart.Rate,
+				Instruction = cart.Instruction
+			});
+	}
+
+	#endregion
+
 	#region Saving
 
 	private async void billButton_Click(object sender, RoutedEventArgs e)
@@ -351,7 +495,7 @@ public partial class BillWindow : Window
 		}
 
 		await InsertBillDetails(billId);
-		//await ChangeTableStatus();
+		await ChangeTableStatus();
 		Close();
 	}
 
@@ -411,81 +555,15 @@ public partial class BillWindow : Window
 
 	private async Task ChangeTableStatus()
 	{
-		//await DiningTableData.InsertDiningTable(new DiningTableModel()
-		//{
-		//	Id = _diningTableModel.Id,
-		//	Name = _diningTableModel.Name,
-		//	DiningAreaId = _diningTableModel.DiningAreaId,
-		//	Running = false,
-		//	Status = _diningTableModel.Status
-		//});
+		if (_runningBillModel is not null) await RunningBillData.DeleteRunningBillDetail(_runningBillModel.Id);
+		await RunningBillData.DeleteRunningBill(_runningBillModel.Id);
 	}
 
 	#endregion
 
-	private void Window_Closed(object sender, EventArgs e) => _tableDashboard.Show();
-
-	private async void kotButton_Click(object sender, RoutedEventArgs e)
+	private async void Window_Closed(object sender, EventArgs e)
 	{
-		if (cartDataGrid.Items.Count == 0)
-		{
-			MessageBox.Show("Please add at least one product to the cart", "Empty Cart", MessageBoxButton.OK, MessageBoxImage.Warning);
-			return;
-		}
-
-		int personId = await InsertPerson();
-		if (personId == 0)
-		{
-			MessageBox.Show("Failed to insert person data.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-			return;
-		}
-
-		int runningBillId = await InsertRunningBill(personId);
-		if (runningBillId == 0)
-		{
-			MessageBox.Show("Failed to insert running bill data.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-			return;
-		}
-
-		await InsertRunningBillDetails(runningBillId);
-		Close();
-	}
-
-	private async Task<int> InsertRunningBill(int personId)
-	{
-		RunningBillModel runningBill = new()
-		{
-			Id = 0,
-			UserId = _user.Id,
-			LocationId = _user.LocationId,
-			DiningAreaId = _diningAreaModel.Id,
-			DiningTableId = _diningTableModel.Id,
-			PersonId = personId,
-			TotalPeople = int.Parse(totalPeopleTextBox.Text),
-			AdjAmount = decimal.Parse(adjAmountTextBox.Text),
-			AdjReason = adjReasonTextBox.Text,
-			Remarks = remarkTextBox.Text,
-			Total = decimal.Parse(totalAmountTextBox.Text),
-			PaymentModeId = (int)paymentModeComboBox.SelectedValue,
-			BillStartDateTime = DateTime.Now
-		};
-		if (string.IsNullOrEmpty(runningBill.AdjAmount.ToString())) runningBill.AdjAmount = 0;
-		if (string.IsNullOrEmpty(runningBill.TotalPeople.ToString())) runningBill.TotalPeople = 0;
-
-		return await RunningBillData.InsertRunningBill(runningBill);
-	}
-
-	private async Task InsertRunningBillDetails(int runningBillId)
-	{
-		foreach (CartModel cart in _cart)
-			await RunningBillData.InsertRunningBillDetail(new RunningBillDetailModel
-			{
-				Id = 0,
-				RunningBillId = runningBillId,
-				ProductId = cart.ProductId,
-				Quantity = cart.Quantity,
-				Rate = cart.Rate,
-				Instruction = cart.Instruction
-			});
+		await _tableDashboard.RefreshScreen();
+		_tableDashboard.Show();
 	}
 }

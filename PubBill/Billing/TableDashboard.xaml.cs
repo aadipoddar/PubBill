@@ -15,17 +15,11 @@ public partial class TableDashboard : Window
 
 	private void InitializeTimers()
 	{
-		_timer.Tick += RefreshTimer;
+		_timer.Tick += async (sender, e) => await RefreshScreen();
 		_timer.Start();
 
 		_inactivityTimer.Tick += (sender, e) => Close();
 		_inactivityTimer.Start();
-	}
-
-	private async void RefreshTimer(object sender, EventArgs e)
-	{
-		dateTimeTextBlock.Text = DateTime.Now.ToString("HH:mm tt");
-		await CreateComponents.CreateDiningAreaExpanders(areasStackPanel, _user, _loginWindow, this);
 	}
 
 	private void Dashboard_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -64,10 +58,14 @@ public partial class TableDashboard : Window
 		var location = await CommonData.LoadTableDataById<LocationModel>(TableNames.Location, _user.LocationId);
 		locationTextBlock.Text = location.Name;
 
-		dateTimeTextBlock.Text = DateTime.Now.ToString("HH:mm tt");
-
 		_loginWindow.Hide();
 
+		await RefreshScreen();
+	}
+
+	public async Task RefreshScreen()
+	{
+		dateTimeTextBlock.Text = DateTime.Now.ToString("HH:mm tt");
 		await CreateComponents.CreateDiningAreaExpanders(areasStackPanel, _user, _loginWindow, this);
 	}
 
