@@ -1,6 +1,6 @@
-﻿CREATE PROCEDURE [dbo].[Insert_BillDetail]
+﻿CREATE PROCEDURE [dbo].[Insert_RunningBillDetail]
 	@Id INT,
-	@BillId INT,
+	@RunningBillId INT,
 	@ProductId INT,
 	@Quantity INT,
 	@Rate MONEY,
@@ -9,16 +9,16 @@ AS
 BEGIN
 	IF @Id = 0
 	BEGIN
-		INSERT INTO [dbo].[BillDetail]
+		INSERT INTO [dbo].[RunningBillDetail]
 		(
-			BillId,
+			RunningBillId,
 			ProductId,
 			Quantity,
 			Rate,
 			Instruction
 		) VALUES
 		(
-			@BillId,
+			@RunningBillId,
 			@ProductId,
 			@Quantity,
 			@Rate,
@@ -28,9 +28,9 @@ BEGIN
 
 	ELSE
 	BEGIN
-		UPDATE [dbo].[BillDetail]
+		UPDATE [dbo].[RunningBillDetail]
 		SET
-			BillId = @BillId,
+			RunningBillId = @RunningBillId,
 			ProductId = @ProductId,
 			Quantity = @Quantity,
 			Rate = @Rate,

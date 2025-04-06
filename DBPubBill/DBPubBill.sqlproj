@@ -95,6 +95,10 @@
     <Build Include="Stored Procedures\Insert\Insert_BillDetail.sql" />
     <Build Include="Tables\PaymentMode.sql" />
     <Build Include="Stored Procedures\Insert\Insert_PaymentMode.sql" />
+    <Build Include="Tables\RunningBill.sql" />
+    <Build Include="Tables\RunningBillDetail.sql" />
+    <Build Include="Stored Procedures\Insert\Insert_RunningBill.sql" />
+    <Build Include="Stored Procedures\Insert\Insert_RunningBillDetail.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="DBPubBill.refactorlog" />

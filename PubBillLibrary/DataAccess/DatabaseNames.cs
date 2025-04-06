@@ -13,6 +13,8 @@ public static class TableNames
 	public static string PaymentMode => "PaymentMode";
 	public static string Bill => "Bill";
 	public static string BillDetail => "BillDetail";
+	public static string RunningBill => "RunningBill";
+	public static string RunningBillDetail => "RunningBillDetail";
 }
 
 public static class ViewNames
@@ -32,6 +34,8 @@ public static class StoredProcedureNames
 	public static string InsertPaymentMode => "Insert_PaymentMode";
 	public static string InsertBill => "Insert_Bill";
 	public static string InsertBillDetail => "Insert_BillDetail";
+	public static string InsertRunningBill => "Insert_RunningBill";
+	public static string InsertRunningBillDetail => "Insert_RunningBillDetail";
 
 	public static string LoadTableData => "Load_TableData";
 	public static string LoadTableDataById => "Load_TableData_By_Id";

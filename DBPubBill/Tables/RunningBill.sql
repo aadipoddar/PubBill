@@ -1,0 +1,21 @@
+﻿CREATE TABLE [dbo].[RunningBill]
+(
+	[Id] INT NOT NULL PRIMARY KEY IDENTITY, 
+    [UserId] INT NOT NULL, 
+    [LocationId] INT NOT NULL, 
+    [DiningAreaId] INT NOT NULL, 
+    [DiningTableId] INT NOT NULL, 
+    [PersonId] INT NOT NULL, 
+    [TotalPeople] INT NOT NULL DEFAULT 1, 
+    [AdjAmount] MONEY NOT NULL DEFAULT 0, 
+    [AdjReason] VARCHAR(250) NOT NULL, 
+    [Remarks] VARCHAR(250) NOT NULL, 
+    [Total] MONEY NOT NULL, 
+    [PaymentModeId] INT NOT NULL, 
+    [BillStartDateTime] DATETIME NOT NULL DEFAULT (((getdate() AT TIME ZONE 'UTC') AT TIME ZONE 'India Standard Time')), 
+    CONSTRAINT [FK_RunningTable_ToUser] FOREIGN KEY (UserId) REFERENCES [User](Id), 
+    CONSTRAINT [FK_RunningTable_ToLocation] FOREIGN KEY (LocationId) REFERENCES [Location](Id), 
+    CONSTRAINT [FK_RunningTable_ToDiningAreaId] FOREIGN KEY (DiningAreaId) REFERENCES [DiningArea](Id), 
+    CONSTRAINT [FK_RunningTable_ToDiningTable] FOREIGN KEY (DiningTableId) REFERENCES [DiningTable](Id), 
+    CONSTRAINT [FK_RunningTable_ToPerson] FOREIGN KEY (PersonId) REFERENCES [Person](Id), 
+)

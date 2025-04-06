@@ -7,13 +7,19 @@ namespace PubBill.Billing;
 
 static class CreateComponents
 {
-	internal static async Task CreateDiningAreaExpanders(StackPanel areaStackPanel, List<DiningAreaModel> diningAreaModels, UserModel userModel, LoginWindow loginWindow, TableDashboard tableDashboard)
+	internal static async Task CreateDiningAreaExpanders(StackPanel areaStackPanel, UserModel userModel, LoginWindow loginWindow, TableDashboard tableDashboard)
 	{
+		var location = await CommonData.LoadTableDataById<LocationModel>(TableNames.Location, userModel.LocationId);
+		var diningAreas = await DiningAreaData.LoadDiningAreaByLocation(location.Id);
+		var runningBills = await CommonData.LoadTableData<RunningBillModel>(TableNames.RunningBill);
+		runningBills = [.. runningBills.Where(b => b.LocationId == location.Id)];
+
 		areaStackPanel.Children.Clear();
 
-		foreach (var diningArea in diningAreaModels)
+		foreach (var diningArea in diningAreas)
 		{
 			var diningTables = await DiningTableData.LoadDiningTableByDiningArea(diningArea.Id);
+			var runningTables = runningBills.Where(b => b.DiningAreaId == diningArea.Id).ToList();
 
 			var expander = new Expander
 			{
@@ -36,19 +42,11 @@ static class CreateComponents
 
 			foreach (var table in diningTables)
 			{
-				var button = new Button
-				{
-					Name = $"{table.Name.RemoveSpace()}{table.Id}Button",
-					Content = table.Name,
-					FontWeight = FontWeights.SemiBold,
-					FontSize = 20,
-					Foreground = Brushes.Black,
-					MinWidth = 120,
-					MinHeight = 100,
-					Background = table.Running ? Brushes.IndianRed : Brushes.LightGreen,
-					Margin = new Thickness(10),
-					Padding = new Thickness(5),
-				};
+				var runningTable = runningTables.FirstOrDefault(b => b.DiningTableId == table.Id);
+
+				Button button;
+				if (runningTable is null) button = MakeTableButton(table);
+				else button = await MakeRunningTableButton(table, runningTable);
 
 				button.Click += (sender, e) =>
 				{
@@ -66,6 +64,107 @@ static class CreateComponents
 		}
 	}
 
+	private static Button MakeTableButton(DiningTableModel table) => new()
+	{
+		Name = $"{table.Name.RemoveSpace()}{table.Id}Button",
+		Content = table.Name,
+		FontWeight = FontWeights.SemiBold,
+		FontSize = 20,
+		Foreground = Brushes.Black,
+		MinWidth = 120,
+		MinHeight = 100,
+		Background = Brushes.LightGreen,
+		Margin = new Thickness(10),
+		Padding = new Thickness(5),
+	};
+
+	private static async Task<Button> MakeRunningTableButton(DiningTableModel table, RunningBillModel runningTable)
+	{
+		var user = await CommonData.LoadTableDataById<UserModel>(TableNames.User, runningTable.UserId);
+		var totalTime = DateTime.Now - runningTable.BillStartDateTime;
+
+		var grid = new Grid();
+		grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+		grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto, MinWidth = 20 });
+		grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+
+		grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+		grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto, MinHeight = 7 });
+		grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
+		grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto, MinHeight = 7 });
+		grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+		grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+
+		var userNameTextBlock = new TextBlock
+		{
+			Text = $"{user.Name}",
+			FontSize = 12,
+			Foreground = Brushes.Black,
+			HorizontalAlignment = HorizontalAlignment.Left
+		};
+		Grid.SetRow(userNameTextBlock, 0);
+		Grid.SetColumn(userNameTextBlock, 0);
+		grid.Children.Add(userNameTextBlock);
+
+		var totalTimeTextBlock = new TextBlock
+		{
+			Text = $"{totalTime:hh\\:mm}",
+			FontSize = 12,
+			HorizontalAlignment = HorizontalAlignment.Right
+		};
+		Grid.SetRow(totalTimeTextBlock, 0);
+		Grid.SetColumn(totalTimeTextBlock, 2);
+		grid.Children.Add(totalTimeTextBlock);
+
+		var tableNameTextBlock = new TextBlock
+		{
+			Text = $"{table.Name}",
+			FontWeight = FontWeights.Bold,
+			FontSize = 20,
+			HorizontalAlignment = HorizontalAlignment.Center
+		};
+		Grid.SetRow(tableNameTextBlock, 2);
+		Grid.SetColumn(tableNameTextBlock, 0);
+		Grid.SetColumnSpan(tableNameTextBlock, 3);
+		grid.Children.Add(tableNameTextBlock);
+
+		var totalAmountTextBlock = new TextBlock
+		{
+			Text = $"{runningTable.Total.FormatIndianCurrency()}",
+			FontSize = 12,
+			HorizontalAlignment = HorizontalAlignment.Center
+		};
+		Grid.SetRow(totalAmountTextBlock, 4);
+		Grid.SetColumn(totalAmountTextBlock, 0);
+		Grid.SetColumnSpan(totalAmountTextBlock, 3);
+		grid.Children.Add(totalAmountTextBlock);
+
+		var totalPeopleTextBlock = new TextBlock
+		{
+			Text = $"People: {runningTable.TotalPeople}",
+			FontSize = 12,
+			HorizontalAlignment = HorizontalAlignment.Center
+		};
+		Grid.SetRow(totalPeopleTextBlock, 5);
+		Grid.SetColumn(totalPeopleTextBlock, 0);
+		Grid.SetColumnSpan(totalPeopleTextBlock, 3);
+		grid.Children.Add(totalPeopleTextBlock);
+
+		return new Button
+		{
+			Name = $"{table.Name.RemoveSpace()}{table.Id}Button",
+			Content = grid,
+			FontWeight = FontWeights.SemiBold,
+			FontSize = 20,
+			Foreground = Brushes.Black,
+			MinWidth = 120,
+			MinHeight = 100,
+			Background = Brushes.IndianRed,
+			Margin = new Thickness(10),
+			Padding = new Thickness(5),
+		};
+	}
+
 	internal static Button BuildProductButton(ProductModel product)
 	{
 		var button = new Button
@@ -76,7 +175,7 @@ static class CreateComponents
 			Width = 160,
 			Height = 100,
 			Margin = new Thickness(10),
-			Padding = new Thickness(5),
+			Padding = new Thickness(1),
 			Background = Brushes.Thistle,
 			BorderBrush = Brushes.DarkGray,
 			BorderThickness = new Thickness(5),

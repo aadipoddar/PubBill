@@ -148,7 +148,7 @@
 
 								<ComboBox x:Name="paymentModeComboBox" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" MinWidth="100" Margin="10" Padding="5" />
 
-								<Button Grid.Row="4" Grid.Column="0" Content="KOT" Margin="10" Padding="5" MinWidth="100" MinHeight="40" Background="Red" />
+								<Button x:Name="kotButton" Grid.Row="4" Grid.Column="0" Content="KOT" Margin="10" Padding="5" MinWidth="100" MinHeight="40" Background="Red" Click="kotButton_Click" />
 								<Button x:Name="billButton" Grid.Row="4" Grid.Column="1" Content="Bill" Margin="10" Padding="5" MinWidth="100" MinHeight="40" Style="{DynamicResource AccentButtonStyle}" Click="billButton_Click" />
 							</Grid>
 						</Border>

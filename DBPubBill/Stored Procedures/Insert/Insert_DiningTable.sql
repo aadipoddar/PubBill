@@ -2,20 +2,19 @@
 	@Id INT,
 	@Name VARCHAR(50),
 	@DiningAreaId INT,
-	@Running BIT = 0,
 	@Status BIT = 1
 AS
 BEGIN
 	IF @Id = 0
 	BEGIN
-		INSERT INTO DiningTable (Name, DiningAreaId, Running, Status)
-		VALUES (@Name, @DiningAreaId, @Running, @Status);
+		INSERT INTO DiningTable (Name, DiningAreaId, Status)
+		VALUES (@Name, @DiningAreaId, @Status);
 	END
 
 	ELSE
 	BEGIN
 		UPDATE DiningTable
-		SET Name = @Name, DiningAreaId = @DiningAreaId, Running = @Running, Status = @Status
+		SET Name = @Name, DiningAreaId = @DiningAreaId, Status = @Status
 		WHERE Id = @Id;
 	END
 END;

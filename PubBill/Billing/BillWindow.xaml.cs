@@ -16,6 +16,7 @@ public partial class BillWindow : Window
 	private readonly DiningAreaModel _diningAreaModel;
 
 	private static readonly ObservableCollection<CartModel> _cart = [];
+	private static readonly ObservableCollection<CartModel> _kotCart = [];
 
 	public BillWindow(UserModel user, LoginWindow loginWindow, TableDashboard tableDashboard, DiningTableModel diningTableModel, DiningAreaModel diningAreaModel)
 	{
@@ -350,7 +351,7 @@ public partial class BillWindow : Window
 		}
 
 		await InsertBillDetails(billId);
-		await ChangeTableStatus();
+		//await ChangeTableStatus();
 		Close();
 	}
 
@@ -388,8 +389,6 @@ public partial class BillWindow : Window
 			PaymentModeId = (int)paymentModeComboBox.SelectedValue,
 			BillDateTime = DateTime.Now
 		};
-		if (string.IsNullOrEmpty(bill.AdjReason)) bill.AdjReason = string.Empty;
-		if (string.IsNullOrEmpty(bill.Remarks)) bill.Remarks = string.Empty;
 		if (string.IsNullOrEmpty(bill.AdjAmount.ToString())) bill.AdjAmount = 0;
 		if (string.IsNullOrEmpty(bill.TotalPeople.ToString())) bill.TotalPeople = 0;
 
@@ -410,17 +409,83 @@ public partial class BillWindow : Window
 			});
 	}
 
-	private async Task ChangeTableStatus() =>
-		await DiningTableData.InsertDiningTable(new DiningTableModel()
-		{
-			Id = _diningTableModel.Id,
-			Name = _diningTableModel.Name,
-			DiningAreaId = _diningTableModel.DiningAreaId,
-			Running = false,
-			Status = _diningTableModel.Status
-		});
+	private async Task ChangeTableStatus()
+	{
+		//await DiningTableData.InsertDiningTable(new DiningTableModel()
+		//{
+		//	Id = _diningTableModel.Id,
+		//	Name = _diningTableModel.Name,
+		//	DiningAreaId = _diningTableModel.DiningAreaId,
+		//	Running = false,
+		//	Status = _diningTableModel.Status
+		//});
+	}
 
 	#endregion
 
 	private void Window_Closed(object sender, EventArgs e) => _tableDashboard.Show();
+
+	private async void kotButton_Click(object sender, RoutedEventArgs e)
+	{
+		if (cartDataGrid.Items.Count == 0)
+		{
+			MessageBox.Show("Please add at least one product to the cart", "Empty Cart", MessageBoxButton.OK, MessageBoxImage.Warning);
+			return;
+		}
+
+		int personId = await InsertPerson();
+		if (personId == 0)
+		{
+			MessageBox.Show("Failed to insert person data.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+			return;
+		}
+
+		int runningBillId = await InsertRunningBill(personId);
+		if (runningBillId == 0)
+		{
+			MessageBox.Show("Failed to insert running bill data.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+			return;
+		}
+
+		await InsertRunningBillDetails(runningBillId);
+		Close();
+	}
+
+	private async Task<int> InsertRunningBill(int personId)
+	{
+		RunningBillModel runningBill = new()
+		{
+			Id = 0,
+			UserId = _user.Id,
+			LocationId = _user.LocationId,
+			DiningAreaId = _diningAreaModel.Id,
+			DiningTableId = _diningTableModel.Id,
+			PersonId = personId,
+			TotalPeople = int.Parse(totalPeopleTextBox.Text),
+			AdjAmount = decimal.Parse(adjAmountTextBox.Text),
+			AdjReason = adjReasonTextBox.Text,
+			Remarks = remarkTextBox.Text,
+			Total = decimal.Parse(totalAmountTextBox.Text),
+			PaymentModeId = (int)paymentModeComboBox.SelectedValue,
+			BillStartDateTime = DateTime.Now
+		};
+		if (string.IsNullOrEmpty(runningBill.AdjAmount.ToString())) runningBill.AdjAmount = 0;
+		if (string.IsNullOrEmpty(runningBill.TotalPeople.ToString())) runningBill.TotalPeople = 0;
+
+		return await RunningBillData.InsertRunningBill(runningBill);
+	}
+
+	private async Task InsertRunningBillDetails(int runningBillId)
+	{
+		foreach (CartModel cart in _cart)
+			await RunningBillData.InsertRunningBillDetail(new RunningBillDetailModel
+			{
+				Id = 0,
+				RunningBillId = runningBillId,
+				ProductId = cart.ProductId,
+				Quantity = cart.Quantity,
+				Rate = cart.Rate,
+				Instruction = cart.Instruction
+			});
+	}
 }
