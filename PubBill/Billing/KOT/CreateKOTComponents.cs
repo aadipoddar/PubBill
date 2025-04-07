@@ -1,31 +1,28 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using System.Windows.Media;
 
-namespace PubBill.Billing;
+namespace PubBill.Billing.KOT;
 
-static class CreateComponents
+static class CreateKOTComponents
 {
-	internal static async Task CreateDiningAreaExpanders(StackPanel areaStackPanel, UserModel userModel, TableDashboard tableDashboard)
+	internal static async Task CreateLocationExpanders(StackPanel locationStackPanel, KOTDashboard kOTDashboard)
 	{
-		var location = await CommonData.LoadTableDataById<LocationModel>(TableNames.Location, userModel.LocationId);
-		var diningAreas = await DiningAreaData.LoadDiningAreaByLocation(location.Id);
+		var locations = await CommonData.LoadTableDataByStatus<LocationModel>(TableNames.Location);
 		var runningBills = await CommonData.LoadTableData<RunningBillModel>(TableNames.RunningBill);
-		runningBills = [.. runningBills.Where(b => b.LocationId == location.Id)];
 
-		areaStackPanel.Children.Clear();
+		locationStackPanel.Children.Clear();
 
-		foreach (var diningArea in diningAreas)
+		foreach (var location in locations)
 		{
-			var diningTables = await DiningTableData.LoadDiningTableByDiningArea(diningArea.Id);
-			var runningTables = runningBills.Where(b => b.DiningAreaId == diningArea.Id).ToList();
+			var diningAreas = await DiningAreaData.LoadDiningAreaByLocation(location.Id);
+			var runningTables = runningBills.Where(b => b.LocationId == location.Id).ToList();
 
 			var expander = new Expander
 			{
-				Name = $"{diningArea.Name.RemoveSpace()}{diningArea.Id}Expander",
-				Header = diningArea.Name,
-				IsExpanded = diningTables.Count > 0,
+				Name = $"{location.Name.RemoveSpace()}{location.Id}Expander",
+				Header = location.Name,
+				IsExpanded = runningTables.Count > 0,
 				Margin = new Thickness(10),
 			};
 
@@ -40,53 +37,23 @@ static class CreateComponents
 			itemsPanelTemplate.VisualTree = wrapPanelFactory;
 			itemsControl.ItemsPanel = itemsPanelTemplate;
 
-			foreach (var table in diningTables)
+			foreach (var runningTable in runningTables)
 			{
-				var runningTable = runningTables.FirstOrDefault(b => b.DiningTableId == table.Id);
-
-				Button button;
-				if (runningTable is null) button = MakeTableButton(userModel, tableDashboard, diningArea, table);
-				else button = await MakeRunningTableButton(userModel, tableDashboard, diningArea, table, runningTable);
-
+				Button button = await MakeRunningTableButton(kOTDashboard, runningTable);
 				itemsControl.Items.Add(button);
 			}
-
 			expander.Content = itemsControl;
 
-			areaStackPanel.Children.Add(expander);
+			locationStackPanel.Children.Add(expander);
 		}
 	}
 
-	private static Button MakeTableButton(UserModel userModel, TableDashboard tableDashboard, DiningAreaModel diningArea, DiningTableModel table)
-	{
-		Button button = new()
-		{
-			Name = $"{table.Name.RemoveSpace()}{table.Id}Button",
-			Content = table.Name,
-			FontWeight = FontWeights.SemiBold,
-			FontSize = 20,
-			Foreground = Brushes.Black,
-			MinWidth = 120,
-			MinHeight = 100,
-			Background = Brushes.LightGreen,
-			Margin = new Thickness(10),
-			Padding = new Thickness(5),
-		};
-
-		button.Click += (sender, e) =>
-		{
-			BillWindow billWindow = new(userModel, tableDashboard, table, diningArea);
-			billWindow.Show();
-			tableDashboard.Hide();
-		};
-
-		return button;
-	}
-
-	private static async Task<Button> MakeRunningTableButton(UserModel userModel, TableDashboard tableDashboard, DiningAreaModel diningArea, DiningTableModel table, RunningBillModel runningTable)
+	private static async Task<Button> MakeRunningTableButton(KOTDashboard kOTDashboard, RunningBillModel runningTable)
 	{
 		var user = await CommonData.LoadTableDataById<UserModel>(TableNames.User, runningTable.UserId);
+		var table = await CommonData.LoadTableDataById<DiningTableModel>(TableNames.DiningTable, runningTable.DiningTableId);
 		var totalTime = DateTime.Now - runningTable.BillStartDateTime;
+		var productsCount = (await KOTData.LoadKOTBillDetailByRunningBillId(runningTable.Id)).Count;
 
 		var grid = new Grid();
 		grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
@@ -146,7 +113,7 @@ static class CreateComponents
 
 		var totalPeopleTextBlock = new TextBlock
 		{
-			Text = $"People: {runningTable.TotalPeople}",
+			Text = $"Products: {productsCount}",
 			FontSize = 12,
 			HorizontalAlignment = HorizontalAlignment.Center
 		};
@@ -171,61 +138,9 @@ static class CreateComponents
 
 		button.Click += (sender, e) =>
 		{
-			BillWindow billWindow = new(userModel, tableDashboard, table, diningArea, runningTable);
-			billWindow.Show();
-			tableDashboard.Hide();
-		};
-
-		return button;
-	}
-
-	internal static Button BuildProductButton(ProductModel product)
-	{
-		var button = new Button
-		{
-			Name = $"{product.Name.RemoveSpace()}{product.Id}Button",
-			MinWidth = 140,
-			MinHeight = 80,
-			Width = 160,
-			Height = 100,
-			Margin = new Thickness(10),
-			Padding = new Thickness(1),
-			Background = Brushes.Thistle,
-			BorderBrush = Brushes.DarkGray,
-			BorderThickness = new Thickness(5),
-			Cursor = Cursors.Hand,
-			Content = new StackPanel
-			{
-				Children ={
-						new TextBlock
-						{
-							Text = product.Name,
-							FontWeight = FontWeights.Bold,
-							FontSize = 14,
-							Foreground = Brushes.Black,
-							TextAlignment = TextAlignment.Center,
-							Margin = new Thickness(5)
-						},
-						new TextBlock
-						{
-							Text = $"{product.Code}",
-							FontWeight = FontWeights.Bold,
-							FontSize = 12,
-							Foreground = Brushes.DarkBlue,
-							TextAlignment = TextAlignment.Center,
-							Margin = new Thickness(5)
-						},
-						new TextBlock
-						{
-							Text = $"{product.Rate.FormatIndianCurrency()}",
-							FontWeight = FontWeights.Bold,
-							FontSize = 12,
-							Foreground = Brushes.DarkGreen,
-							TextAlignment = TextAlignment.Center,
-							Margin = new Thickness(5)
-						}
-					}
-			}
+			RunningKOTWindow runningKOTWindow = new(kOTDashboard, table, runningTable);
+			runningKOTWindow.Show();
+			kOTDashboard.Hide();
 		};
 
 		return button;

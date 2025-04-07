@@ -107,6 +107,10 @@
     <Build Include="Tables\Billing\BillDetail.sql" />
     <Build Include="Tables\Billing\RunningBill.sql" />
     <Build Include="Tables\Billing\RunningBillDetail.sql" />
+    <Build Include="Tables\Billing\KOTBillDetail.sql" />
+    <Build Include="Stored Procedures\Delete\Delete_KOTBillDetail.sql" />
+    <Build Include="Stored Procedures\Insert\Billing\Insert_KOTBillDetail.sql" />
+    <Build Include="Stored Procedures\LoadData\Billing\Load_KOTBillDetail_By_RunningBillId.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="DBPubBill.refactorlog" />

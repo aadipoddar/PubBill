@@ -2,9 +2,6 @@
 using System.Windows;
 using System.Windows.Controls;
 
-using PubBillLibrary.Data.Billing;
-using PubBillLibrary.Models.Billing;
-
 namespace PubBill.Billing;
 
 /// <summary>
@@ -20,15 +17,17 @@ public partial class BillWindow : Window
 	private readonly DiningAreaModel _diningAreaModel;
 	private readonly RunningBillModel _runningBillModel;
 
-	private static readonly ObservableCollection<CartModel> _cart = [];
+	private static readonly ObservableCollection<CartModel> _allCart = [];
 	private static readonly ObservableCollection<CartModel> _kotCart = [];
 
 	public BillWindow(UserModel user, TableDashboard tableDashboard, DiningTableModel diningTableModel, DiningAreaModel diningAreaModel)
 	{
 		InitializeComponent();
 
-		_cart.Clear();
-		cartDataGrid.ItemsSource = _cart;
+		_allCart.Clear();
+		_kotCart.Clear();
+		cartDataGrid.ItemsSource = _allCart;
+		kotCartDataGrid.ItemsSource = _kotCart;
 		_user = user;
 		_tableDashboard = tableDashboard;
 		_diningTableModel = diningTableModel;
@@ -41,8 +40,10 @@ public partial class BillWindow : Window
 	{
 		InitializeComponent();
 
-		_cart.Clear();
-		cartDataGrid.ItemsSource = _cart;
+		_allCart.Clear();
+		_kotCart.Clear();
+		cartDataGrid.ItemsSource = _allCart;
+		kotCartDataGrid.ItemsSource = _kotCart;
 		_user = user;
 		_tableDashboard = tableDashboard;
 		_diningTableModel = diningTableModel;
@@ -96,7 +97,7 @@ public partial class BillWindow : Window
 		totalAmountTextBox.Text = _runningBillModel.Total.ToString();
 		paymentModeComboBox.SelectedValue = _runningBillModel.PaymentModeId;
 
-		_cart.Clear();
+		_allCart.Clear();
 
 		var runningTableDetails = await RunningBillData.LoadRunningBillDetailByRunningBillId(_runningBillModel.Id);
 		foreach (var item in runningTableDetails)
@@ -104,7 +105,7 @@ public partial class BillWindow : Window
 			var product = await CommonData.LoadTableDataById<ProductModel>(TableNames.Product, item.ProductId);
 			if (product is not null)
 			{
-				_cart.Add(new CartModel
+				_allCart.Add(new CartModel
 				{
 					ProductId = product.Id,
 					ProductName = product.Name,
@@ -179,19 +180,16 @@ public partial class BillWindow : Window
 
 			button.Click += (sender, e) =>
 			{
-				if (cartDataGrid.ItemsSource is ObservableCollection<CartModel> cart)
+				var existingProduct = _kotCart.FirstOrDefault(c => c.ProductId == product.Id);
+				if (existingProduct is not null) existingProduct.Quantity++;
+				else _kotCart.Add(new CartModel
 				{
-					var existingCart = cart.FirstOrDefault(c => c.ProductId == product.Id);
-					if (existingCart is not null) existingCart.Quantity++;
-					else cart.Add(new CartModel
-					{
-						ProductId = product.Id,
-						ProductName = product.Name,
-						Quantity = 1,
-						Rate = product.Rate,
-						Instruction = string.Empty
-					});
-				}
+					ProductId = product.Id,
+					ProductName = product.Name,
+					Quantity = 1,
+					Rate = product.Rate,
+					Instruction = string.Empty
+				});
 				RefreshTotal();
 			};
 
@@ -208,9 +206,9 @@ public partial class BillWindow : Window
 
 		if (foundProduct is not null)
 		{
-			var existingCart = _cart.FirstOrDefault(c => c.ProductId == foundProduct.Id);
+			var existingCart = _kotCart.FirstOrDefault(c => c.ProductId == foundProduct.Id);
 			if (existingCart is not null) existingCart.Quantity++;
-			else _cart.Add(new CartModel
+			else _kotCart.Add(new CartModel
 			{
 				ProductId = foundProduct.Id,
 				ProductName = foundProduct.Name,
@@ -256,28 +254,64 @@ public partial class BillWindow : Window
 		}
 	}
 
+	private void kotCartDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+	{
+		if (kotCartDataGrid.SelectedItem is CartModel selectedSale)
+		{
+			quantityTextBox.Text = selectedSale.Quantity.ToString();
+			instructionsTextBox.Text = selectedSale.Instruction;
+			instructionsTextBox.Focus();
+		}
+	}
+
 	private void instructionsTextBox_TextChanged(object sender, TextChangedEventArgs e)
 	{
-		if (cartDataGrid is null) return;
+		if (instructionsTextBox is null || allCartTabItem is null || kotCartTabItem is null) return;
 
-		if (cartDataGrid.SelectedItem is CartModel selectedSale)
+		if (cartTabControl.SelectedIndex == 0)
 		{
-			selectedSale.Instruction = instructionsTextBox.Text;
-			RefreshTotal();
+			if (cartDataGrid is null) return;
+
+			if (cartDataGrid.SelectedItem is CartModel selectedSale)
+				selectedSale.Instruction = instructionsTextBox.Text;
+			else instructionsTextBox.Clear();
 		}
-		else instructionsTextBox.Clear();
+
+		else if (cartTabControl.SelectedIndex == 1)
+		{
+			if (kotCartDataGrid is null) return;
+
+			if (kotCartDataGrid.SelectedItem is CartModel selectedSale)
+				selectedSale.Instruction = instructionsTextBox.Text;
+			else instructionsTextBox.Clear();
+		}
+
+		RefreshTotal();
 	}
 
 	private void quantityTextBox_TextChanged(object sender, TextChangedEventArgs e)
 	{
-		if (cartDataGrid is null) return;
+		if (quantityTextBox is null || allCartTabItem is null || kotCartTabItem is null) return;
 
-		if (cartDataGrid.SelectedItem is CartModel selectedSale)
+		if (cartTabControl.SelectedIndex == 0)
 		{
-			selectedSale.Quantity = int.Parse(quantityTextBox.Text);
-			RefreshTotal();
+			if (cartDataGrid is null) return;
+
+			if (cartDataGrid.SelectedItem is CartModel selectedSale)
+				selectedSale.Quantity = int.Parse(quantityTextBox.Text);
+			else quantityTextBox.Text = "0";
 		}
-		else quantityTextBox.Text = "0";
+
+		else if (cartTabControl.SelectedIndex == 1)
+		{
+			if (kotCartDataGrid is null) return;
+
+			if (kotCartDataGrid.SelectedItem is CartModel selectedSale)
+				selectedSale.Quantity = int.Parse(quantityTextBox.Text);
+			else quantityTextBox.Text = "0";
+		}
+
+		RefreshTotal();
 	}
 
 	private void quantityMinusButton_Click(object sender, RoutedEventArgs e) => quantityTextBox.Text = (int.Parse(quantityTextBox.Text) - 1).ToString();
@@ -294,9 +328,11 @@ public partial class BillWindow : Window
 	private void RefreshTotal()
 	{
 		cartDataGrid.Items.Refresh();
+		kotCartDataGrid.Items.Refresh();
 
 		_originalTotal = 0;
-		foreach (CartModel cart in _cart) _originalTotal += cart.Total;
+		foreach (CartModel cart in _allCart) _originalTotal += cart.Total;
+		foreach (CartModel cart in _kotCart) _originalTotal += cart.Total;
 
 		foreach (var column in cartDataGrid.Columns)
 			if (column is DataGridTextColumn textColumn)
@@ -394,11 +430,6 @@ public partial class BillWindow : Window
 			return false;
 		}
 
-		if (cartDataGrid.Items.Count == 0)
-		{
-			MessageBox.Show("Please add at least one product to the cart.", "Empty Cart", MessageBoxButton.OK, MessageBoxImage.Warning);
-			return false;
-		}
 		return true;
 	}
 
@@ -408,7 +439,9 @@ public partial class BillWindow : Window
 
 	private async void kotButton_Click(object sender, RoutedEventArgs e)
 	{
-		if (cartDataGrid.Items.Count == 0)
+		if (!ValidateFields()) return;
+
+		if (kotCartDataGrid.Items.Count == 0)
 		{
 			MessageBox.Show("Please add at least one product to the cart", "Empty Cart", MessageBoxButton.OK, MessageBoxImage.Warning);
 			return;
@@ -428,6 +461,7 @@ public partial class BillWindow : Window
 			return;
 		}
 
+		await InsertKOTBillDetails(runningBillId);
 		await InsertRunningBillDetails(runningBillId);
 		Close();
 	}
@@ -456,11 +490,46 @@ public partial class BillWindow : Window
 		return await RunningBillData.InsertRunningBill(runningBill);
 	}
 
+	private static async Task InsertKOTBillDetails(int runningBillId)
+	{
+		foreach (CartModel cart in _kotCart)
+			await KOTData.InsertKOTBillDetail(new KOTBillDetailModel
+			{
+				Id = 0,
+				RunningBillId = runningBillId,
+				ProductId = cart.ProductId,
+				Quantity = cart.Quantity,
+				Instruction = cart.Instruction
+			});
+	}
+
 	private async Task InsertRunningBillDetails(int runningBillId)
 	{
 		if (_runningBillModel is not null) await RunningBillData.DeleteRunningBillDetail(_runningBillModel.Id);
 
-		foreach (CartModel cart in _cart)
+		foreach (var kotCart in _kotCart)
+		{
+			var allCart = _allCart.FirstOrDefault(c => c.ProductId == kotCart.ProductId);
+			if (allCart != null)
+			{
+				allCart.Quantity += kotCart.Quantity;
+				allCart.Rate = kotCart.Rate;
+				allCart.Instruction = kotCart.Instruction;
+			}
+			else
+			{
+				_allCart.Add(new CartModel
+				{
+					ProductId = kotCart.ProductId,
+					ProductName = kotCart.ProductName,
+					Quantity = kotCart.Quantity,
+					Rate = kotCart.Rate,
+					Instruction = kotCart.Instruction
+				});
+			}
+		}
+
+		foreach (CartModel cart in _allCart)
 			await RunningBillData.InsertRunningBillDetail(new RunningBillDetailModel
 			{
 				Id = 0,
@@ -480,6 +549,12 @@ public partial class BillWindow : Window
 	{
 		if (!ValidateFields()) return;
 
+		if (await CheckKOT())
+		{
+			MessageBox.Show("KOT Items not yet Printed.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+			return;
+		}
+
 		int personId = await InsertPerson();
 		if (personId == 0)
 		{
@@ -497,6 +572,13 @@ public partial class BillWindow : Window
 		await InsertBillDetails(billId);
 		await ChangeTableStatus();
 		Close();
+	}
+
+	private async Task<bool> CheckKOT()
+	{
+		if ((await KOTData.LoadKOTBillDetailByRunningBillId(_runningBillModel.Id)).Count > 0)
+			return true;
+		return false;
 	}
 
 	private async Task<int> InsertPerson()
@@ -541,7 +623,7 @@ public partial class BillWindow : Window
 
 	private static async Task InsertBillDetails(int billId)
 	{
-		foreach (CartModel cart in _cart)
+		foreach (CartModel cart in _allCart)
 			await BillData.InsertBillDetail(new BillDetailModel
 			{
 				Id = 0,
