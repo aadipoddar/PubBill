@@ -7,7 +7,7 @@ namespace PubBill.Billing;
 
 static class CreateComponents
 {
-	internal static async Task CreateDiningAreaExpanders(StackPanel areaStackPanel, UserModel userModel, LoginWindow loginWindow, TableDashboard tableDashboard)
+	internal static async Task CreateDiningAreaExpanders(StackPanel areaStackPanel, UserModel userModel, TableDashboard tableDashboard)
 	{
 		var location = await CommonData.LoadTableDataById<LocationModel>(TableNames.Location, userModel.LocationId);
 		var diningAreas = await DiningAreaData.LoadDiningAreaByLocation(location.Id);
@@ -45,8 +45,8 @@ static class CreateComponents
 				var runningTable = runningTables.FirstOrDefault(b => b.DiningTableId == table.Id);
 
 				Button button;
-				if (runningTable is null) button = MakeTableButton(userModel, loginWindow, tableDashboard, diningArea, table);
-				else button = await MakeRunningTableButton(userModel, loginWindow, tableDashboard, diningArea, table, runningTable);
+				if (runningTable is null) button = MakeTableButton(userModel, tableDashboard, diningArea, table);
+				else button = await MakeRunningTableButton(userModel, tableDashboard, diningArea, table, runningTable);
 
 				itemsControl.Items.Add(button);
 			}
@@ -57,7 +57,7 @@ static class CreateComponents
 		}
 	}
 
-	private static Button MakeTableButton(UserModel userModel, LoginWindow loginWindow, TableDashboard tableDashboard, DiningAreaModel diningArea, DiningTableModel table)
+	private static Button MakeTableButton(UserModel userModel, TableDashboard tableDashboard, DiningAreaModel diningArea, DiningTableModel table)
 	{
 		Button button = new()
 		{
@@ -75,7 +75,7 @@ static class CreateComponents
 
 		button.Click += (sender, e) =>
 		{
-			BillWindow billWindow = new(userModel, loginWindow, tableDashboard, table, diningArea);
+			BillWindow billWindow = new(userModel, tableDashboard, table, diningArea);
 			billWindow.Show();
 			tableDashboard.Hide();
 		};
@@ -83,7 +83,7 @@ static class CreateComponents
 		return button;
 	}
 
-	private static async Task<Button> MakeRunningTableButton(UserModel userModel, LoginWindow loginWindow, TableDashboard tableDashboard, DiningAreaModel diningArea, DiningTableModel table, RunningBillModel runningTable)
+	private static async Task<Button> MakeRunningTableButton(UserModel userModel, TableDashboard tableDashboard, DiningAreaModel diningArea, DiningTableModel table, RunningBillModel runningTable)
 	{
 		var user = await CommonData.LoadTableDataById<UserModel>(TableNames.User, runningTable.UserId);
 		var totalTime = DateTime.Now - runningTable.BillStartDateTime;
@@ -171,7 +171,7 @@ static class CreateComponents
 
 		button.Click += (sender, e) =>
 		{
-			BillWindow billWindow = new(userModel, loginWindow, tableDashboard, table, diningArea, runningTable);
+			BillWindow billWindow = new(userModel, tableDashboard, table, diningArea, runningTable);
 			billWindow.Show();
 			tableDashboard.Hide();
 		};

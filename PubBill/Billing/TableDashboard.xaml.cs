@@ -1,5 +1,6 @@
 ﻿using System.Windows;
-using System.Windows.Threading;
+
+using PubBill.Common;
 
 namespace PubBill.Billing;
 
@@ -10,12 +11,15 @@ public partial class TableDashboard : Window
 {
 	#region Timers
 
-	private readonly DispatcherTimer _timer = new() { Interval = TimeSpan.FromSeconds(30) };
+	private SmartRefreshManager _refreshManager;
 
 	private void InitializeTimers()
 	{
-		_timer.Tick += async (sender, e) => await RefreshScreen();
-		_timer.Start();
+		_refreshManager = new SmartRefreshManager(
+			refreshAction: RefreshScreen,
+			interval: TimeSpan.FromSeconds(20)
+		);
+		_refreshManager.Start();
 	}
 
 	#endregion
@@ -54,9 +58,25 @@ public partial class TableDashboard : Window
 
 	public async Task RefreshScreen()
 	{
-		dateTimeTextBlock.Text = DateTime.Now.ToString("HH:mm tt");
-		await CreateComponents.CreateDiningAreaExpanders(areasStackPanel, _user, _loginWindow, this);
+		try
+		{
+			// Tell the inactivity monitor that we're starting a programmatic refresh
+			InactivityMonitor.Instance.BeginRefreshOperation();
+
+			dateTimeTextBlock.Text = DateTime.Now.ToString("HH:mm tt");
+			await CreateComponents.CreateDiningAreaExpanders(areasStackPanel, _user, this);
+		}
+		finally
+		{
+			// Always make sure to end the refresh operation, even if an error occurs
+			InactivityMonitor.Instance.EndRefreshOperation();
+		}
 	}
 
-	private void Window_Closed(object sender, EventArgs e) => _loginWindow.Show();
+	private void Window_Closed(object sender, EventArgs e)
+	{
+		_refreshManager.Stop();
+		_refreshManager.Dispose();
+		_loginWindow.Show();
+	}
 }

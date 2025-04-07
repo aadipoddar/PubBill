@@ -12,7 +12,6 @@ public partial class BillWindow : Window
 	#region Initial Loading
 
 	private readonly UserModel _user;
-	private readonly LoginWindow _loginWindow;
 	private readonly TableDashboard _tableDashboard;
 	private readonly DiningTableModel _diningTableModel;
 	private readonly DiningAreaModel _diningAreaModel;
@@ -21,14 +20,13 @@ public partial class BillWindow : Window
 	private static readonly ObservableCollection<CartModel> _cart = [];
 	private static readonly ObservableCollection<CartModel> _kotCart = [];
 
-	public BillWindow(UserModel user, LoginWindow loginWindow, TableDashboard tableDashboard, DiningTableModel diningTableModel, DiningAreaModel diningAreaModel)
+	public BillWindow(UserModel user, TableDashboard tableDashboard, DiningTableModel diningTableModel, DiningAreaModel diningAreaModel)
 	{
 		InitializeComponent();
 
 		_cart.Clear();
 		cartDataGrid.ItemsSource = _cart;
 		_user = user;
-		_loginWindow = loginWindow;
 		_tableDashboard = tableDashboard;
 		_diningTableModel = diningTableModel;
 		_diningAreaModel = diningAreaModel;
@@ -36,14 +34,13 @@ public partial class BillWindow : Window
 		RefreshTotal();
 	}
 
-	public BillWindow(UserModel user, LoginWindow loginWindow, TableDashboard tableDashboard, DiningTableModel diningTableModel, DiningAreaModel diningAreaModel, RunningBillModel runningBillModel)
+	public BillWindow(UserModel user, TableDashboard tableDashboard, DiningTableModel diningTableModel, DiningAreaModel diningAreaModel, RunningBillModel runningBillModel)
 	{
 		InitializeComponent();
 
 		_cart.Clear();
 		cartDataGrid.ItemsSource = _cart;
 		_user = user;
-		_loginWindow = loginWindow;
 		_tableDashboard = tableDashboard;
 		_diningTableModel = diningTableModel;
 		_diningAreaModel = diningAreaModel;
