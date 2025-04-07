@@ -1,4 +1,4 @@
-﻿namespace PubBillLibrary.Data;
+﻿namespace PubBillLibrary.Data.Billing;
 
 public static class BillData
 {

@@ -1,4 +1,6 @@
-﻿namespace PubBillLibrary.Data;
+﻿using PubBillLibrary.Models.Billing;
+
+namespace PubBillLibrary.Data.Billing;
 
 public static class RunningBillData
 {

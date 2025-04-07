@@ -2,6 +2,9 @@
 using System.Windows;
 using System.Windows.Controls;
 
+using PubBillLibrary.Data.Billing;
+using PubBillLibrary.Models.Billing;
+
 namespace PubBill.Billing;
 
 /// <summary>

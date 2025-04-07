@@ -63,6 +63,10 @@
     <Folder Include="Stored Procedures\LoadData" />
     <Folder Include="Views" />
     <Folder Include="Stored Procedures\Delete" />
+    <Folder Include="Stored Procedures\Insert\Billing" />
+    <Folder Include="Stored Procedures\LoadData\Billing" />
+    <Folder Include="Stored Procedures\LoadData\Common" />
+    <Folder Include="Tables\Billing" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\User.sql" />
@@ -72,9 +76,6 @@
     <Build Include="Stored Procedures\Insert\Insert_User.sql" />
     <Build Include="Stored Procedures\Insert\Insert_Person.sql" />
     <Build Include="Stored Procedures\LoadData\Load_Person_By_Number.sql" />
-    <Build Include="Stored Procedures\LoadData\Load_TableData.sql" />
-    <Build Include="Stored Procedures\LoadData\Load_TableData_By_Id.sql" />
-    <Build Include="Stored Procedures\LoadData\Load_TableData_By_Status.sql" />
     <Build Include="Stored Procedures\LoadData\Load_User_By_Password.sql" />
     <Build Include="Tables\DiningArea.sql" />
     <Build Include="Tables\DiningTable.sql" />
@@ -90,19 +91,22 @@
     <Build Include="Stored Procedures\Insert\Insert_Product.sql" />
     <Build Include="Stored Procedures\LoadData\Load_ProductCategory_By_ProductGroup.sql" />
     <Build Include="Stored Procedures\LoadData\Load_Product_By_ProductCategory.sql" />
-    <Build Include="Tables\Bill.sql" />
-    <Build Include="Tables\BillDetail.sql" />
-    <Build Include="Stored Procedures\Insert\Insert_Bill.sql" />
-    <Build Include="Stored Procedures\Insert\Insert_BillDetail.sql" />
     <Build Include="Tables\PaymentMode.sql" />
     <Build Include="Stored Procedures\Insert\Insert_PaymentMode.sql" />
-    <Build Include="Tables\RunningBill.sql" />
-    <Build Include="Tables\RunningBillDetail.sql" />
-    <Build Include="Stored Procedures\Insert\Insert_RunningBill.sql" />
-    <Build Include="Stored Procedures\Insert\Insert_RunningBillDetail.sql" />
-    <Build Include="Stored Procedures\LoadData\Load_RunningTabeDetail_By_RunningBillId.sql" />
     <Build Include="Stored Procedures\Delete\Delete_RunningBillDetail.sql" />
     <Build Include="Stored Procedures\Delete\Delete_RunningBill.sql" />
+    <Build Include="Stored Procedures\Insert\Billing\Insert_Bill.sql" />
+    <Build Include="Stored Procedures\Insert\Billing\Insert_BillDetail.sql" />
+    <Build Include="Stored Procedures\Insert\Billing\Insert_RunningBill.sql" />
+    <Build Include="Stored Procedures\Insert\Billing\Insert_RunningBillDetail.sql" />
+    <Build Include="Stored Procedures\LoadData\Billing\Load_RunningTabeDetail_By_RunningBillId.sql" />
+    <Build Include="Stored Procedures\LoadData\Common\Load_TableData.sql" />
+    <Build Include="Stored Procedures\LoadData\Common\Load_TableData_By_Id.sql" />
+    <Build Include="Stored Procedures\LoadData\Common\Load_TableData_By_Status.sql" />
+    <Build Include="Tables\Billing\Bill.sql" />
+    <Build Include="Tables\Billing\BillDetail.sql" />
+    <Build Include="Tables\Billing\RunningBill.sql" />
+    <Build Include="Tables\Billing\RunningBillDetail.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="DBPubBill.refactorlog" />

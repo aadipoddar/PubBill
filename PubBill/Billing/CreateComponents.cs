@@ -3,6 +3,8 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 
+using PubBillLibrary.Models.Billing;
+
 namespace PubBill.Billing;
 
 static class CreateComponents

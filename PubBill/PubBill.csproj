@@ -23,8 +23,10 @@
 
   <ItemGroup>
     <Using Include="PubBillLibrary.Data" />
+    <Using Include="PubBillLibrary.Data.Billing" />
     <Using Include="PubBillLibrary.DataAccess" />
     <Using Include="PubBillLibrary.Models" />
+    <Using Include="PubBillLibrary.Models.Billing" />
   </ItemGroup>
 
 </Project>
