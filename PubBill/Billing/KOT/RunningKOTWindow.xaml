@@ -4,9 +4,64 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PubBill.Billing.KOT"
-        mc:Ignorable="d"
-        Title="RunningKOTWindow" Height="450" Width="800">
-    <Grid>
-        
-    </Grid>
+        xmlns:common="clr-namespace:PubBill.Common"
+		xmlns:main="clr-namespace:PubBill"
+		mc:Ignorable="d" WindowState="Maximized"
+        Title="KOT Window" Height="450" Width="800"
+		Closed="Window_Closed" Loaded="Window_Loaded">
+
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="*"/>
+			<RowDefinition Height="Auto"/>
+		</Grid.RowDefinitions>
+
+		<ScrollViewer>
+			<Grid>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="*"/>
+				</Grid.RowDefinitions>
+
+				<Expander Header="Bill Details" Grid.Row="0" Margin="10" Padding="5" IsExpanded="True">
+					<Border HorizontalAlignment="Center" BorderBrush="Gold" BorderThickness="2" CornerRadius="5" Padding="10" Margin="10">
+						<Grid>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto" />
+								<ColumnDefinition Width="Auto" />
+							</Grid.ColumnDefinitions>
+
+							<Grid.RowDefinitions>
+								<RowDefinition Height="Auto" />
+								<RowDefinition Height="Auto" />
+								<RowDefinition Height="Auto" />
+								<RowDefinition Height="Auto" />
+								<RowDefinition Height="Auto" />
+							</Grid.RowDefinitions>
+
+							<TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="Table Information" Margin="10" Padding="5" HorizontalAlignment="Center" />
+
+							<TextBlock Grid.Row="1" Grid.Column="0" Text="Running Time" Margin="10" Padding="5" />
+							<TextBox x:Name="runningTimeTextBox" Grid.Row="1" Grid.Column="1" Margin="10" Padding="5" MinWidth="100" IsReadOnly="True" Text="00h 00mins" />
+
+							<TextBlock Grid.Row="2" Grid.Column="0" Text="Area" Margin="10" Padding="5" />
+							<TextBox x:Name="diningAreaTextBox" Grid.Row="2" Grid.Column="1" Margin="10" Padding="5" MinWidth="100" IsReadOnly="True" Text="Indoor" />
+
+							<TextBlock Grid.Row="3" Grid.Column="0" Text="Table" Margin="10" Padding="5" />
+							<TextBox x:Name="diningTableTextBox" Grid.Row="3" Grid.Column="1" Margin="10" Padding="5" MinWidth="100" IsReadOnly="True" Text="1" />
+
+							<TextBlock Grid.Row="4" Grid.Column="0" Text="User" Margin="10" Padding="5" />
+							<TextBox x:Name="userTextBox" Grid.Row="4" Grid.Column="1" Margin="10" Padding="5" MinWidth="100" IsReadOnly="True" Text="User" />
+						</Grid>
+					</Border>
+				</Expander>
+
+				<Border Grid.Row="1" BorderBrush="Gold" BorderThickness="2" CornerRadius="5" Padding="10" Margin="10">
+					<DataGrid Margin="10" Padding="5" x:Name="cartDataGrid" IsReadOnly="True" MinColumnWidth="100" />
+				</Border>
+			</Grid>
+		</ScrollViewer>
+
+		<common:FooterControl Grid.Row="1"/>
+	</Grid>
 </Window>

@@ -74,7 +74,6 @@ public partial class BillWindow : Window
 		if (_runningBillModel is null) return;
 
 		var runningTime = DateTime.Now - _runningBillModel.BillStartDateTime;
-
 		runningTimeTextBox.Text = runningTime.ToString("hh\\:mm");
 
 		var person = await CommonData.LoadTableDataById<PersonModel>(TableNames.Person, _runningBillModel.PersonId);
