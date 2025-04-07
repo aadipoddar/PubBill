@@ -1,4 +1,7 @@
-﻿using System.Windows;
+﻿using System.Collections.ObjectModel;
+using System.Windows;
+
+using PubBill.Common;
 
 namespace PubBill.Billing.KOT;
 
@@ -7,9 +10,25 @@ namespace PubBill.Billing.KOT;
 /// </summary>
 public partial class RunningKOTWindow : Window
 {
+	#region Timers
+
+	private SmartRefreshManager _refreshManager;
+
+	private void InitializeTimers()
+	{
+		_refreshManager = new SmartRefreshManager(
+			refreshAction: RefreshScreen,
+			interval: TimeSpan.FromSeconds(20)
+		);
+		_refreshManager.Start();
+	}
+
+	#endregion
+
 	private readonly KOTDashboard _kotDashboard;
 	private readonly DiningTableModel _table;
 	private readonly RunningBillModel _runningTable;
+	private static readonly ObservableCollection<CartModel> _allCart = [];
 
 	public RunningKOTWindow(KOTDashboard kOTDashboard, DiningTableModel table, RunningBillModel runningTable)
 	{
@@ -24,6 +43,8 @@ public partial class RunningKOTWindow : Window
 
 	private async Task LoadData()
 	{
+		InitializeTimers();
+
 		var diningArea = await CommonData.LoadTableDataById<DiningAreaModel>(TableNames.DiningArea, _table.DiningAreaId);
 
 		diningAreaTextBox.Text = diningArea.Name;
@@ -40,11 +61,66 @@ public partial class RunningKOTWindow : Window
 
 	private async Task LoadDataGrid()
 	{
-		cartDataGrid.Items.Clear();
+		_allCart.Clear();
 
 		var runningBillDetails = await RunningBillData.LoadRunningBillDetailByRunningBillId(_runningTable.Id);
-		cartDataGrid.ItemsSource = runningBillDetails;
+		if (runningBillDetails is null || runningBillDetails.Count == 0) Close();
+
+		foreach (var billDetail in runningBillDetails)
+		{
+			var product = await CommonData.LoadTableDataById<ProductModel>(TableNames.Product, billDetail.ProductId);
+			_allCart.Add(new CartModel()
+			{
+				ProductId = billDetail.ProductId,
+				ProductName = product.Name,
+				Quantity = billDetail.Quantity,
+				Rate = product.Rate,
+				Instruction = billDetail.Instruction,
+			});
+		}
+
+		cartDataGrid.ItemsSource = _allCart;
 	}
 
-	private void Window_Closed(object sender, EventArgs e) => _kotDashboard.Show();
+	public async Task RefreshScreen()
+	{
+		try
+		{
+			// Tell the inactivity monitor that we're starting a programmatic refresh
+			InactivityMonitor.Instance.BeginRefreshOperation();
+			await PrintOrders();
+			await LoadDataGrid();
+		}
+		finally
+		{
+			// Always make sure to end the refresh operation, even if an error occurs
+			InactivityMonitor.Instance.EndRefreshOperation();
+		}
+	}
+
+	private async Task PrintOrders()
+	{
+		var runningBills = await CommonData.LoadTableData<RunningBillModel>(TableNames.RunningBill);
+		runningBills = [.. runningBills.Where(b => b.DiningTableId == _runningTable.DiningTableId)];
+
+		foreach (var bill in runningBills)
+		{
+			if (bill == null) continue;
+
+			var kotOrders = await KOTData.LoadKOTBillDetailByRunningBillId(bill.Id);
+			foreach (var kotOrder in kotOrders)
+			{
+				// TODO - Print
+			}
+
+			await KOTData.DeleteKOTBillDetail(bill.Id);
+		}
+	}
+
+	private void Window_Closed(object sender, EventArgs e)
+	{
+		_refreshManager.Stop();
+		_refreshManager.Dispose();
+		_kotDashboard.Show();
+	}
 }

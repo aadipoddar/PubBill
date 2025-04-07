@@ -57,7 +57,7 @@ public partial class KOTDashboard : Window
 		}
 	}
 
-	private async Task PrintOrders()
+	private static async Task PrintOrders()
 	{
 		var runningBills = await CommonData.LoadTableData<RunningBillModel>(TableNames.RunningBill);
 
