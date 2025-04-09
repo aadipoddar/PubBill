@@ -22,6 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Using Include="PubBill.Common" />
     <Using Include="PubBillLibrary.Data" />
     <Using Include="PubBillLibrary.Data.Billing" />
     <Using Include="PubBillLibrary.DataAccess" />

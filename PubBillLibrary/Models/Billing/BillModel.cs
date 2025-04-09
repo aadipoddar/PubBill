@@ -12,8 +12,6 @@ public class BillModel
 	public decimal AdjAmount { get; set; }
 	public string AdjReason { get; set; }
 	public string Remarks { get; set; }
-	public decimal Total { get; set; }
-	public int PaymentModeId { get; set; }
 	public DateTime BillDateTime { get; set; }
 }
 
@@ -35,4 +33,20 @@ public class CartModel
 	public decimal Rate { get; set; }
 	public decimal Total => Quantity * Rate;
 	public string Instruction { get; set; }
+}
+
+public class BillPaymentDetailModel
+{
+	public int Id { get; set; }
+	public int BillId { get; set; }
+	public int PaymentModeId { get; set; }
+	public decimal Amount { get; set; }
+	public bool Status { get; set; }
+}
+
+public class BillPaymentModeModel
+{
+	public int PaymentModeId { get; set; }
+	public string PaymentModeName { get; set; }
+	public decimal Amount { get; set; }
 }

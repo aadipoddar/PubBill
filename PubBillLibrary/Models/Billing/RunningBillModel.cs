@@ -12,9 +12,8 @@ public class RunningBillModel
 	public decimal AdjAmount { get; set; }
 	public string AdjReason { get; set; }
 	public string Remarks { get; set; }
-	public decimal Total { get; set; }
-	public int PaymentModeId { get; set; }
 	public DateTime BillStartDateTime { get; set; }
+	public bool Status { get; set; }
 }
 
 public class RunningBillDetailModel

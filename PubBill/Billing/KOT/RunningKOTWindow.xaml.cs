@@ -1,8 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows;
 
-using PubBill.Common;
-
 namespace PubBill.Billing.KOT;
 
 /// <summary>
@@ -111,10 +109,22 @@ public partial class RunningKOTWindow : Window
 			foreach (var kotOrder in kotOrders)
 			{
 				// TODO - Print
+				await ChangeKOTBillStatus(kotOrder);
 			}
-
-			await KOTData.DeleteKOTBillDetail(bill.Id);
 		}
+	}
+
+	private static async Task ChangeKOTBillStatus(KOTBillDetailModel kOTBillDetail)
+	{
+		await KOTData.InsertKOTBillDetail(new KOTBillDetailModel()
+		{
+			Id = kOTBillDetail.Id,
+			RunningBillId = kOTBillDetail.RunningBillId,
+			ProductId = kOTBillDetail.ProductId,
+			Quantity = kOTBillDetail.Quantity,
+			Instruction = kOTBillDetail.Instruction,
+			Status = false
+		});
 	}
 
 	private void Window_Closed(object sender, EventArgs e)

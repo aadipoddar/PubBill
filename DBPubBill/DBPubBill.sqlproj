@@ -62,11 +62,11 @@
     <Folder Include="PublishLocations\" />
     <Folder Include="Stored Procedures\LoadData" />
     <Folder Include="Views" />
-    <Folder Include="Stored Procedures\Delete" />
     <Folder Include="Stored Procedures\Insert\Billing" />
     <Folder Include="Stored Procedures\LoadData\Billing" />
     <Folder Include="Stored Procedures\LoadData\Common" />
     <Folder Include="Tables\Billing" />
+    <Folder Include="Stored Procedures\Delete" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\User.sql" />
@@ -93,8 +93,6 @@
     <Build Include="Stored Procedures\LoadData\Load_Product_By_ProductCategory.sql" />
     <Build Include="Tables\PaymentMode.sql" />
     <Build Include="Stored Procedures\Insert\Insert_PaymentMode.sql" />
-    <Build Include="Stored Procedures\Delete\Delete_RunningBillDetail.sql" />
-    <Build Include="Stored Procedures\Delete\Delete_RunningBill.sql" />
     <Build Include="Stored Procedures\Insert\Billing\Insert_Bill.sql" />
     <Build Include="Stored Procedures\Insert\Billing\Insert_BillDetail.sql" />
     <Build Include="Stored Procedures\Insert\Billing\Insert_RunningBill.sql" />
@@ -108,9 +106,11 @@
     <Build Include="Tables\Billing\RunningBill.sql" />
     <Build Include="Tables\Billing\RunningBillDetail.sql" />
     <Build Include="Tables\Billing\KOTBillDetail.sql" />
-    <Build Include="Stored Procedures\Delete\Delete_KOTBillDetail.sql" />
     <Build Include="Stored Procedures\Insert\Billing\Insert_KOTBillDetail.sql" />
     <Build Include="Stored Procedures\LoadData\Billing\Load_KOTBillDetail_By_RunningBillId.sql" />
+    <Build Include="Tables\Billing\BillPaymentDetail.sql" />
+    <Build Include="Stored Procedures\Insert\Billing\Insert_BillPaymentDetail.sql" />
+    <Build Include="Stored Procedures\Delete\Delete_RunningBillDetail.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="DBPubBill.refactorlog" />

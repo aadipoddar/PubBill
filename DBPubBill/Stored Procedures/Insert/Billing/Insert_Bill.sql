@@ -9,8 +9,6 @@
 	@AdjAmount MONEY,
 	@AdjReason VARCHAR(250),
 	@Remarks VARCHAR(250),
-	@Total MONEY,
-	@PaymentModeId INT,
 	@BillDateTime DATETIME
 AS
 BEGIN
@@ -26,9 +24,7 @@ BEGIN
 			TotalPeople,
 			AdjAmount,
 			AdjReason,
-			Remarks,
-			Total,
-			PaymentModeId
+			Remarks
 		) VALUES
 		(
 			@UserId,
@@ -39,9 +35,7 @@ BEGIN
 			@TotalPeople,
 			@AdjAmount,
 			@AdjReason,
-			@Remarks,
-			@Total,
-			@PaymentModeId
+			@Remarks
 		);
 		
 		SET @Id = SCOPE_IDENTITY();
@@ -59,9 +53,7 @@ BEGIN
 			TotalPeople = @TotalPeople,
 			AdjAmount = @AdjAmount,
 			AdjReason = @AdjReason,
-			Remarks = @Remarks,
-			Total = @Total,
-			PaymentModeId = @PaymentModeId
+			Remarks = @Remarks
 		WHERE Id = @Id;
 	END
 

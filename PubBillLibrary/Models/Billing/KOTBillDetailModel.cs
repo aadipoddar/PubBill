@@ -7,4 +7,5 @@ public class KOTBillDetailModel
 	public int ProductId { get; set; }
 	public int Quantity { get; set; }
 	public string Instruction { get; set; }
+	public bool Status { get; set; }
 }

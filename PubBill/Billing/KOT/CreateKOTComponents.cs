@@ -9,7 +9,7 @@ static class CreateKOTComponents
 	internal static async Task CreateLocationExpanders(StackPanel locationStackPanel, KOTDashboard kOTDashboard)
 	{
 		var locations = await CommonData.LoadTableDataByStatus<LocationModel>(TableNames.Location);
-		var runningBills = await CommonData.LoadTableData<RunningBillModel>(TableNames.RunningBill);
+		var runningBills = await CommonData.LoadTableDataByStatus<RunningBillModel>(TableNames.RunningBill);
 
 		locationStackPanel.Children.Clear();
 
@@ -48,12 +48,16 @@ static class CreateKOTComponents
 		}
 	}
 
-	private static async Task<Button> MakeRunningTableButton(KOTDashboard kOTDashboard, RunningBillModel runningTable)
+	private static async Task<Button> MakeRunningTableButton(KOTDashboard kOTDashboard, RunningBillModel runningBill)
 	{
-		var user = await CommonData.LoadTableDataById<UserModel>(TableNames.User, runningTable.UserId);
-		var table = await CommonData.LoadTableDataById<DiningTableModel>(TableNames.DiningTable, runningTable.DiningTableId);
-		var totalTime = DateTime.Now - runningTable.BillStartDateTime;
-		var productsCount = (await KOTData.LoadKOTBillDetailByRunningBillId(runningTable.Id)).Count;
+		var user = await CommonData.LoadTableDataById<UserModel>(TableNames.User, runningBill.UserId);
+		var table = await CommonData.LoadTableDataById<DiningTableModel>(TableNames.DiningTable, runningBill.DiningTableId);
+
+		var productsCount = (await KOTData.LoadKOTBillDetailByRunningBillId(runningBill.Id)).Where(x => x.Status).Count();
+
+		var runningBillDetails = await RunningBillData.LoadRunningBillDetailByRunningBillId(runningBill.Id);
+		var total = runningBillDetails.Sum(b => b.Rate * b.Quantity);
+		total -= runningBill.AdjAmount;
 
 		var grid = new Grid();
 		grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
@@ -80,7 +84,7 @@ static class CreateKOTComponents
 
 		var totalTimeTextBlock = new TextBlock
 		{
-			Text = $"{totalTime:hh\\:mm}",
+			Text = $"{DateTime.Now - runningBill.BillStartDateTime:hh\\:mm}",
 			FontSize = 12,
 			HorizontalAlignment = HorizontalAlignment.Right
 		};
@@ -102,7 +106,7 @@ static class CreateKOTComponents
 
 		var totalAmountTextBlock = new TextBlock
 		{
-			Text = $"{runningTable.Total.FormatIndianCurrency()}",
+			Text = total.FormatIndianCurrency(),
 			FontSize = 12,
 			HorizontalAlignment = HorizontalAlignment.Center
 		};
@@ -138,7 +142,7 @@ static class CreateKOTComponents
 
 		button.Click += (sender, e) =>
 		{
-			RunningKOTWindow runningKOTWindow = new(kOTDashboard, table, runningTable);
+			RunningKOTWindow runningKOTWindow = new(kOTDashboard, table, runningBill);
 			runningKOTWindow.Show();
 			kOTDashboard.Hide();
 		};

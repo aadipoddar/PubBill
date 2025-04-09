@@ -5,6 +5,7 @@
     [ProductId] INT NOT NULL, 
     [Quantity] INT NOT NULL DEFAULT 1, 
     [Instruction] VARCHAR(250) NOT NULL, 
+    [Status] BIT NOT NULL DEFAULT 1, 
     CONSTRAINT [FK_KOTBillDetail_ToBill] FOREIGN KEY (RunningBillId) REFERENCES [RunningBill](Id), 
     CONSTRAINT [FK_KOTBillDetail_ToProduct] FOREIGN KEY (ProductId) REFERENCES [Product](Id)
 )

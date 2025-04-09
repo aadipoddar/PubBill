@@ -3,7 +3,8 @@
 	@RunningBillId INT,
 	@ProductId INT,
 	@Quantity INT,
-	@Instruction VARCHAR(250)
+	@Instruction VARCHAR(250),
+	@Status BIT
 AS
 BEGIN
 	IF @Id = 0
@@ -13,13 +14,15 @@ BEGIN
 			RunningBillId,
 			ProductId,
 			Quantity,
-			Instruction
+			Instruction,
+			[Status]
 		) VALUES
 		(
 			@RunningBillId,
 			@ProductId,
 			@Quantity,
-			@Instruction
+			@Instruction,
+			@Status
 		);
 	END
 
@@ -30,7 +33,8 @@ BEGIN
 			RunningBillId = @RunningBillId,
 			ProductId = @ProductId,
 			Quantity = @Quantity,
-			Instruction = @Instruction
+			Instruction = @Instruction,
+			[Status] = @Status
 		WHERE Id = @Id;
 	END
 END

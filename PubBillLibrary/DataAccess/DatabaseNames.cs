@@ -16,6 +16,7 @@ public static class TableNames
 	public static string RunningBill => "RunningBill";
 	public static string RunningBillDetail => "RunningBillDetail";
 	public static string KOTBillDetail => "KOTBillDetail";
+	public static string BillPaymentDetail => "BillPaymentDetail";
 }
 
 public static class ViewNames
@@ -38,6 +39,7 @@ public static class StoredProcedureNames
 	public static string InsertRunningBill => "Insert_RunningBill";
 	public static string InsertRunningBillDetail => "Insert_RunningBillDetail";
 	public static string InsertKOTBillDetail => "Insert_KOTBillDetail";
+	public static string InsertBillPaymentDetail => "Insert_BillPaymentDetail";
 
 	public static string LoadTableData => "Load_TableData";
 	public static string LoadTableDataById => "Load_TableData_By_Id";
@@ -55,8 +57,5 @@ public static class StoredProcedureNames
 	public static string LoadRunningTabeDetailByRunningBillId => "Load_RunningTabeDetail_By_RunningBillId";
 	public static string LoadKOTBillDetailByRunningBillId => "Load_KOTBillDetail_By_RunningBillId";
 
-	public static string DeleteRunningBill => "Delete_RunningBill";
 	public static string DeleteRunningBillDetail => "Delete_RunningBillDetail";
-
-	public static string DeleteKOTBillDetail => "Delete_KOTBillDetail";
 }

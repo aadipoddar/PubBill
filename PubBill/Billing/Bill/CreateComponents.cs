@@ -3,7 +3,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 
-namespace PubBill.Billing;
+namespace PubBill.Billing.Bill;
 
 static class CreateComponents
 {
@@ -11,7 +11,7 @@ static class CreateComponents
 	{
 		var location = await CommonData.LoadTableDataById<LocationModel>(TableNames.Location, userModel.LocationId);
 		var diningAreas = await DiningAreaData.LoadDiningAreaByLocation(location.Id);
-		var runningBills = await CommonData.LoadTableData<RunningBillModel>(TableNames.RunningBill);
+		var runningBills = await CommonData.LoadTableDataByStatus<RunningBillModel>(TableNames.RunningBill);
 		runningBills = [.. runningBills.Where(b => b.LocationId == location.Id)];
 
 		areaStackPanel.Children.Clear();
@@ -83,10 +83,12 @@ static class CreateComponents
 		return button;
 	}
 
-	private static async Task<Button> MakeRunningTableButton(UserModel userModel, TableDashboard tableDashboard, DiningAreaModel diningArea, DiningTableModel table, RunningBillModel runningTable)
+	private static async Task<Button> MakeRunningTableButton(UserModel userModel, TableDashboard tableDashboard, DiningAreaModel diningArea, DiningTableModel table, RunningBillModel runningBill)
 	{
-		var user = await CommonData.LoadTableDataById<UserModel>(TableNames.User, runningTable.UserId);
-		var totalTime = DateTime.Now - runningTable.BillStartDateTime;
+		var user = await CommonData.LoadTableDataById<UserModel>(TableNames.User, runningBill.UserId);
+		var runningBillDetails = await RunningBillData.LoadRunningBillDetailByRunningBillId(runningBill.Id);
+		var total = runningBillDetails.Sum(b => b.Rate * b.Quantity);
+		total -= runningBill.AdjAmount;
 
 		var grid = new Grid();
 		grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
@@ -113,7 +115,7 @@ static class CreateComponents
 
 		var totalTimeTextBlock = new TextBlock
 		{
-			Text = $"{totalTime:hh\\:mm}",
+			Text = $"{DateTime.Now - runningBill.BillStartDateTime:hh\\:mm}",
 			FontSize = 12,
 			HorizontalAlignment = HorizontalAlignment.Right
 		};
@@ -135,7 +137,7 @@ static class CreateComponents
 
 		var totalAmountTextBlock = new TextBlock
 		{
-			Text = $"{runningTable.Total.FormatIndianCurrency()}",
+			Text = total.FormatIndianCurrency(),
 			FontSize = 12,
 			HorizontalAlignment = HorizontalAlignment.Center
 		};
@@ -146,7 +148,7 @@ static class CreateComponents
 
 		var totalPeopleTextBlock = new TextBlock
 		{
-			Text = $"People: {runningTable.TotalPeople}",
+			Text = $"People: {runningBill.TotalPeople}",
 			FontSize = 12,
 			HorizontalAlignment = HorizontalAlignment.Center
 		};
@@ -171,7 +173,7 @@ static class CreateComponents
 
 		button.Click += (sender, e) =>
 		{
-			BillWindow billWindow = new(userModel, tableDashboard, table, diningArea, runningTable);
+			BillWindow billWindow = new(userModel, tableDashboard, table, diningArea, runningBill);
 			billWindow.Show();
 			tableDashboard.Hide();
 		};

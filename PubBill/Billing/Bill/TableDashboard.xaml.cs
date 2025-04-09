@@ -1,8 +1,6 @@
 ﻿using System.Windows;
 
-using PubBill.Common;
-
-namespace PubBill.Billing;
+namespace PubBill.Billing.Bill;
 
 /// <summary>
 /// Interaction logic for TableDashboard.xaml

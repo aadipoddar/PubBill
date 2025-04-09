@@ -1,9 +1,9 @@
-﻿<Window x:Class="PubBill.Billing.BillWindow"
+﻿<Window x:Class="PubBill.Billing.Bill.BillWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:PubBill.Billing"
+        xmlns:local="clr-namespace:PubBill.Billing.Bill"
 		xmlns:common="clr-namespace:PubBill.Common"
 		xmlns:main="clr-namespace:PubBill"
         mc:Ignorable="d" WindowState="Maximized"
@@ -135,7 +135,6 @@
 									<RowDefinition Height="Auto" />
 									<RowDefinition Height="Auto" />
 									<RowDefinition Height="Auto" />
-									<RowDefinition Height="Auto" />
 								</Grid.RowDefinitions>
 
 								<TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="Bill Information" Margin="10" Padding="5" HorizontalAlignment="Center" />
@@ -146,10 +145,8 @@
 								<TextBlock Grid.Row="2" Grid.Column="0" Text="Total" Margin="10" Padding="5" />
 								<TextBox x:Name="totalAmountTextBox" Grid.Row="2" Grid.Column="1" Margin="10" Padding="5" MinWidth="100" TextAlignment="Right" Text="0.00" IsReadOnly="True" />
 
-								<ComboBox x:Name="paymentModeComboBox" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" MinWidth="100" Margin="10" Padding="5" />
-
-								<Button x:Name="kotButton" Grid.Row="4" Grid.Column="0" Content="KOT" Margin="10" Padding="5" MinWidth="100" MinHeight="40" Background="Red" Click="kotButton_Click" />
-								<Button x:Name="billButton" Grid.Row="4" Grid.Column="1" Content="Bill" Margin="10" Padding="5" MinWidth="100" MinHeight="40" Style="{DynamicResource AccentButtonStyle}" Click="billButton_Click" />
+								<Button x:Name="kotButton" Grid.Row="3" Grid.Column="0" Content="KOT" Margin="10" Padding="5" MinWidth="100" MinHeight="40" Background="IndianRed" Click="kotButton_Click" />
+								<Button x:Name="billButton" Grid.Row="3" Grid.Column="1" Content="Bill" Margin="10" Padding="5" MinWidth="100" MinHeight="40" Style="{DynamicResource AccentButtonStyle}" Click="billButton_Click" />
 							</Grid>
 						</Border>
 						<!--#endregion-->
@@ -273,13 +270,13 @@
 								<TextBox Grid.Row="1" Grid.Column="1" Margin="10" Padding="5"  x:Name="instructionsTextBox" MinWidth="150" TextChanged="instructionsTextBox_TextChanged" />
 							</Grid>
 							
-							<TabControl Grid.Row="1" x:Name="cartTabControl">
-								<TabItem Header="All Items" x:Name="allCartTabItem">
-									<DataGrid Grid.Row="1" Margin="10" Padding="5" x:Name="cartDataGrid" IsReadOnly="True" MinColumnWidth="100" SelectionChanged="cartDataGrid_SelectionChanged" />
+							<TabControl Grid.Row="1" x:Name="cartTabControl" Margin="10">
+								<TabItem Header="All Items" x:Name="allCartTabItem" Background="CornflowerBlue" MinWidth="300">
+									<DataGrid Grid.Row="1" Padding="5" x:Name="cartDataGrid" IsReadOnly="True" MinColumnWidth="100" SelectionChanged="cartDataGrid_SelectionChanged" />
 								</TabItem>
 								
-								<TabItem Header="New Items" IsSelected="True" x:Name="kotCartTabItem">
-									<DataGrid Grid.Row="1" Margin="10" Padding="5" x:Name="kotCartDataGrid" IsReadOnly="True" MinColumnWidth="100" SelectionChanged="kotCartDataGrid_SelectionChanged" />
+								<TabItem Header="New Items" IsSelected="True" x:Name="kotCartTabItem" Background="IndianRed" MinWidth="300">
+									<DataGrid Grid.Row="1" Padding="5" x:Name="kotCartDataGrid" IsReadOnly="True" MinColumnWidth="100" SelectionChanged="kotCartDataGrid_SelectionChanged" />
 								</TabItem>
 							</TabControl>
 						</Grid>

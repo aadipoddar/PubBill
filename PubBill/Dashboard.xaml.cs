@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 
 using PubBill.Admin;
-using PubBill.Billing;
+using PubBill.Billing.Bill;
 using PubBill.Billing.KOT;
 
 namespace PubBill;

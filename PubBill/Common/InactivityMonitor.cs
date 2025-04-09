@@ -119,7 +119,7 @@ public class InactivityMonitor
 	}
 
 	// Check if the active window is the login window
-	private bool IsLoginWindowActive()
+	private static bool IsLoginWindowActive()
 	{
 		var activeWindow = Application.Current.Windows.OfType<Window>().FirstOrDefault(w => w.IsActive);
 		return activeWindow is LoginWindow;
