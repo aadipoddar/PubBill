@@ -8,4 +8,5 @@ public class KOTBillDetailModel
 	public int Quantity { get; set; }
 	public string Instruction { get; set; }
 	public bool Status { get; set; }
+	public bool Cancelled { get; set; }
 }

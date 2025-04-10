@@ -87,7 +87,7 @@ static class CreateComponents
 	{
 		var user = await CommonData.LoadTableDataById<UserModel>(TableNames.User, runningBill.UserId);
 		var runningBillDetails = await RunningBillData.LoadRunningBillDetailByRunningBillId(runningBill.Id);
-		var total = runningBillDetails.Sum(b => b.Rate * b.Quantity);
+		var total = runningBillDetails.Where(x => !x.Cancelled).Sum(b => b.Rate * b.Quantity);
 		total -= runningBill.AdjAmount;
 
 		var grid = new Grid();

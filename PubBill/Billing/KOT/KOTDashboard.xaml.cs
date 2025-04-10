@@ -81,7 +81,8 @@ public partial class KOTDashboard : Window
 			ProductId = kOTBillDetail.ProductId,
 			Quantity = kOTBillDetail.Quantity,
 			Instruction = kOTBillDetail.Instruction,
-			Status = false
+			Status = false,
+			Cancelled = kOTBillDetail.Cancelled
 		});
 	}
 

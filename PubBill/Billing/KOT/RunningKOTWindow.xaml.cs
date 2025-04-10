@@ -74,6 +74,7 @@ public partial class RunningKOTWindow : Window
 				Quantity = billDetail.Quantity,
 				Rate = product.Rate,
 				Instruction = billDetail.Instruction,
+				Cancelled = billDetail.Cancelled
 			});
 		}
 
@@ -123,7 +124,8 @@ public partial class RunningKOTWindow : Window
 			ProductId = kOTBillDetail.ProductId,
 			Quantity = kOTBillDetail.Quantity,
 			Instruction = kOTBillDetail.Instruction,
-			Status = false
+			Status = false,
+			Cancelled = kOTBillDetail.Cancelled
 		});
 	}
 

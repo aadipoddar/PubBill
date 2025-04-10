@@ -249,6 +249,7 @@
 								<Grid.ColumnDefinitions>
 									<ColumnDefinition Width="Auto" />
 									<ColumnDefinition Width="Auto" />
+									<ColumnDefinition Width="Auto" />
 								</Grid.ColumnDefinitions>
 
 								<!--#region Quantity -->
@@ -267,7 +268,9 @@
 								<!--#endregion-->
 
 								<TextBlock Grid.Row="0" Grid.Column="1" Margin="10" Padding="5" Text="Instructions"/>
-								<TextBox Grid.Row="1" Grid.Column="1" Margin="10" Padding="5"  x:Name="instructionsTextBox" MinWidth="150" TextChanged="instructionsTextBox_TextChanged" />
+								<TextBox Grid.Row="1" Grid.Column="1" Margin="10" Padding="5" x:Name="instructionsTextBox" MinWidth="150" TextChanged="instructionsTextBox_TextChanged" />
+
+								<CheckBox Grid.Row="0" Grid.Column="2" Grid.RowSpan="2" IsChecked="False" Margin="10" Padding="5" Content="Cacelled" x:Name="cancelledCheckBox" Checked="cancelledCheckBox_Checked" Unchecked="cancelledCheckBox_Unchecked"/>
 							</Grid>
 							
 							<TabControl Grid.Row="1" x:Name="cartTabControl" Margin="10">

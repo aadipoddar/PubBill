@@ -23,6 +23,7 @@ public class BillDetailModel
 	public int Quantity { get; set; }
 	public decimal Rate { get; set; }
 	public string Instruction { get; set; }
+	public bool Cancelled { get; set; } = false;
 }
 
 public class CartModel
@@ -33,6 +34,7 @@ public class CartModel
 	public decimal Rate { get; set; }
 	public decimal Total => Quantity * Rate;
 	public string Instruction { get; set; }
+	public bool Cancelled { get; set; }
 }
 
 public class BillPaymentDetailModel

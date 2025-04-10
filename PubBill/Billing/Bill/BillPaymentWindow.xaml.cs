@@ -38,7 +38,7 @@ public partial class BillPaymentWindow : Window
 		paymentModeComboBox.SelectedIndex = 0;
 
 		_runningBillDetails = await RunningBillData.LoadRunningBillDetailByRunningBillId(_runningBillModel.Id);
-		_totalAmount = _runningBillDetails.Sum(x => x.Rate * x.Quantity) - _billModel.AdjAmount;
+		_totalAmount = _runningBillDetails.Where(x => !x.Cancelled).Sum(x => x.Rate * x.Quantity) - _billModel.AdjAmount;
 
 		totalTextBox.Text = _totalAmount.FormatIndianCurrency();
 

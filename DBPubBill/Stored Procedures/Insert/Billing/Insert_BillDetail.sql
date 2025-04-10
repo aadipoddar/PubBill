@@ -4,7 +4,8 @@
 	@ProductId INT,
 	@Quantity INT,
 	@Rate MONEY,
-	@Instruction VARCHAR(250)
+	@Instruction VARCHAR(250),
+	@Cancelled BIT
 AS
 BEGIN
 	IF @Id = 0
@@ -15,14 +16,16 @@ BEGIN
 			ProductId,
 			Quantity,
 			Rate,
-			Instruction
+			Instruction,
+			Cancelled
 		) VALUES
 		(
 			@BillId,
 			@ProductId,
 			@Quantity,
 			@Rate,
-			@Instruction
+			@Instruction,
+			@Cancelled
 		);
 	END
 
@@ -34,7 +37,8 @@ BEGIN
 			ProductId = @ProductId,
 			Quantity = @Quantity,
 			Rate = @Rate,
-			Instruction = @Instruction
+			Instruction = @Instruction,
+			Cancelled = @Cancelled
 		WHERE Id = @Id;
 	END
 END

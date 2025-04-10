@@ -24,4 +24,5 @@ public class RunningBillDetailModel
 	public int Quantity { get; set; }
 	public decimal Rate { get; set; }
 	public string Instruction { get; set; }
+	public bool Cancelled { get; set; }
 }

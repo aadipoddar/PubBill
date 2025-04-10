@@ -92,7 +92,7 @@ public partial class BillWindow : Window
 	{
 		var runningBillDetails = await RunningBillData.LoadRunningBillDetailByRunningBillId(_runningBillModel.Id);
 		var adjAmount = _runningBillModel.AdjAmount;
-		var total = runningBillDetails.Sum(item => item.Quantity * item.Rate);
+		var total = runningBillDetails.Where(item => !item.Cancelled).Sum(item => item.Quantity * item.Rate);
 		var percent = adjAmount / total * 100;
 		total -= adjAmount;
 
@@ -120,7 +120,8 @@ public partial class BillWindow : Window
 					ProductName = product.Name,
 					Quantity = item.Quantity,
 					Rate = item.Rate,
-					Instruction = item.Instruction
+					Instruction = item.Instruction,
+					Cancelled = item.Cancelled
 				});
 			}
 		}
@@ -203,7 +204,7 @@ public partial class BillWindow : Window
 
 	private void AddProductToKotCart(ProductModel product)
 	{
-		var existingProduct = _kotCart.FirstOrDefault(c => c.ProductId == product.Id);
+		var existingProduct = _kotCart.FirstOrDefault(c => c.ProductId == product.Id && c.Cancelled == false);
 		if (existingProduct is not null)
 			existingProduct.Quantity++;
 		else
@@ -268,6 +269,7 @@ public partial class BillWindow : Window
 		{
 			quantityTextBox.Text = selectedSale.Quantity.ToString();
 			instructionsTextBox.Text = selectedSale.Instruction;
+			cancelledCheckBox.IsChecked = selectedSale.Cancelled;
 			instructionsTextBox.Focus();
 		}
 	}
@@ -291,21 +293,69 @@ public partial class BillWindow : Window
 		RefreshTotal();
 	}
 
+	private void AddProductToKotCart(CartModel cart)
+	{
+		var existingProduct = _kotCart.FirstOrDefault(c => c.ProductId == cart.ProductId && c.Cancelled == cart.Cancelled);
+		if (existingProduct is not null)
+			existingProduct.Quantity += cart.Quantity;
+		else
+			_kotCart.Add(new CartModel
+			{
+				ProductId = cart.ProductId,
+				ProductName = cart.ProductName,
+				Quantity = cart.Quantity,
+				Rate = cart.Rate,
+				Instruction = cart.Instruction,
+				Cancelled = cart.Cancelled
+			});
+		RefreshTotal();
+	}
+
 	private void quantityTextBox_TextChanged(object sender, TextChangedEventArgs e)
 	{
 		if (quantityTextBox is null || allCartTabItem is null || kotCartTabItem is null) return;
 
-		CartModel selectedSale = null;
+		if (cartTabControl.SelectedIndex == 0 && cartDataGrid?.SelectedItem is CartModel sale)
+		{
+			int newQuantity = int.Parse(quantityTextBox.Text);
+			int oldQuantity = sale.Quantity;
+			int quantityChange = newQuantity - oldQuantity;
 
-		if (cartTabControl.SelectedIndex == 0 && cartDataGrid?.SelectedItem is CartModel sale1)
-			selectedSale = sale1;
-		else if (cartTabControl.SelectedIndex == 1 && kotCartDataGrid?.SelectedItem is CartModel sale2)
-			selectedSale = sale2;
+			if (newQuantity > oldQuantity)
+				AddProductToKotCart(new CartModel
+				{
+					ProductId = sale.ProductId,
+					ProductName = sale.ProductName,
+					Quantity = quantityChange,
+					Rate = sale.Rate,
+					Instruction = sale.Instruction
+				});
 
-		if (selectedSale != null && int.TryParse(quantityTextBox.Text, out int quantity))
-			selectedSale.Quantity = quantity;
-		else
-			quantityTextBox.Text = "0";
+			else if (newQuantity < oldQuantity)
+				_kotCart.Add(new CartModel
+				{
+					ProductId = sale.ProductId,
+					ProductName = sale.ProductName,
+					Quantity = quantityChange,
+					Rate = sale.Rate,
+					Instruction = sale.Instruction,
+					Cancelled = true
+				});
+
+			if (newQuantity == 0)
+				_allCart.Remove(sale);
+		}
+
+		else if (cartTabControl.SelectedIndex == 1 && kotCartDataGrid?.SelectedItem is CartModel kotSale)
+		{
+			int quantity = int.Parse(quantityTextBox.Text);
+			if (quantity < 0) quantity = 0;
+
+			if (quantity == 0) _kotCart.Remove(kotSale);
+			else kotSale.Quantity = quantity;
+		}
+
+		else quantityTextBox.Text = "0";
 
 		RefreshTotal();
 	}
@@ -321,6 +371,46 @@ public partial class BillWindow : Window
 		if (int.TryParse(quantityTextBox.Text, out int currentQty))
 			quantityTextBox.Text = Math.Max(0, currentQty + change).ToString();
 	}
+
+	private void cancelledCheckBox_Checked(object sender, RoutedEventArgs e)
+	{
+		if (cartTabControl.SelectedIndex == 0 && cartDataGrid?.SelectedItem is CartModel sale)
+		{
+			if (sale.Cancelled) return;
+			sale.Cancelled = true;
+			_allCart.Remove(sale);
+			_kotCart.Add(sale);
+		}
+
+		else if (cartTabControl.SelectedIndex == 1 && kotCartDataGrid?.SelectedItem is CartModel kotSale)
+		{
+			if (kotSale.Cancelled) return;
+			_kotCart.Remove(kotSale);
+			kotSale.Cancelled = true;
+			AddProductToKotCart(kotSale);
+		}
+
+		RefreshTotal();
+	}
+
+	private void cancelledCheckBox_Unchecked(object sender, RoutedEventArgs e)
+	{
+		if (cartTabControl.SelectedIndex == 0 && cartDataGrid?.SelectedItem is CartModel sale)
+		{
+			if (!sale.Cancelled) return;
+			sale.Cancelled = false;
+		}
+
+		else if (cartTabControl.SelectedIndex == 1 && kotCartDataGrid?.SelectedItem is CartModel kotSale)
+		{
+			if (!kotSale.Cancelled) return;
+			kotSale.Cancelled = false;
+			_kotCart.Remove(kotSale);
+			AddProductToKotCart(kotSale);
+		}
+
+		RefreshTotal();
+	}
 	#endregion
 
 	#region Price Calculations
@@ -333,8 +423,8 @@ public partial class BillWindow : Window
 		kotCartDataGrid.Items.Refresh();
 
 		_originalTotal = 0;
-		foreach (CartModel cart in _allCart) _originalTotal += cart.Total;
-		foreach (CartModel cart in _kotCart) _originalTotal += cart.Total;
+		_originalTotal += _allCart.Where(cart => !cart.Cancelled).Sum(cart => cart.Total);
+		_originalTotal += _kotCart.Where(cart => !cart.Cancelled).Sum(cart => cart.Total);
 
 		// Apply right alignment to all text columns
 		foreach (var column in cartDataGrid.Columns)
@@ -506,7 +596,8 @@ public partial class BillWindow : Window
 				ProductId = cart.ProductId,
 				Quantity = cart.Quantity,
 				Instruction = cart.Instruction,
-				Status = true
+				Status = true,
+				Cancelled = cart.Cancelled
 			});
 	}
 
@@ -525,7 +616,8 @@ public partial class BillWindow : Window
 				ProductId = cart.ProductId,
 				Quantity = cart.Quantity,
 				Rate = cart.Rate,
-				Instruction = cart.Instruction
+				Instruction = cart.Instruction,
+				Cancelled = cart.Cancelled
 			});
 	}
 
@@ -533,12 +625,13 @@ public partial class BillWindow : Window
 	{
 		foreach (var kotCart in _kotCart)
 		{
-			var allCart = _allCart.FirstOrDefault(c => c.ProductId == kotCart.ProductId);
+			var allCart = _allCart.FirstOrDefault(c => c.ProductId == kotCart.ProductId && c.Cancelled == kotCart.Cancelled);
 			if (allCart != null)
 			{
 				allCart.Quantity += kotCart.Quantity;
 				allCart.Rate = kotCart.Rate;
 				allCart.Instruction = kotCart.Instruction;
+				allCart.Cancelled = kotCart.Cancelled;
 			}
 			else
 			{
@@ -548,7 +641,8 @@ public partial class BillWindow : Window
 					ProductName = kotCart.ProductName,
 					Quantity = kotCart.Quantity,
 					Rate = kotCart.Rate,
-					Instruction = kotCart.Instruction
+					Instruction = kotCart.Instruction,
+					Cancelled = kotCart.Cancelled
 				});
 			}
 		}

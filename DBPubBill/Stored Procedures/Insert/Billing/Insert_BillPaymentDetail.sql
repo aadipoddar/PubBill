@@ -13,7 +13,7 @@ BEGIN
 			BillId,
 			PaymentModeId,
 			Amount,
-			Status
+			[Status]
 		) VALUES
 		(
 			@BillId,

@@ -6,6 +6,7 @@
     [Quantity] INT NOT NULL DEFAULT 1, 
     [Rate] MONEY NOT NULL, 
     [Instruction] VARCHAR(250) NOT NULL, 
+    [Cancelled] BIT NOT NULL DEFAULT 0, 
     CONSTRAINT [FK_BillDetail_ToBill] FOREIGN KEY (BillId) REFERENCES [Bill](Id), 
     CONSTRAINT [FK_BillDetail_ToProduct] FOREIGN KEY (ProductId) REFERENCES [Product](Id)
 )
