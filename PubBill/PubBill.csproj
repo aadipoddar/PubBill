@@ -25,9 +25,11 @@
     <Using Include="PubBill.Common" />
     <Using Include="PubBillLibrary.Data" />
     <Using Include="PubBillLibrary.Data.Billing" />
+    <Using Include="PubBillLibrary.Data.Products" />
     <Using Include="PubBillLibrary.DataAccess" />
     <Using Include="PubBillLibrary.Models" />
     <Using Include="PubBillLibrary.Models.Billing" />
+    <Using Include="PubBillLibrary.Models.Products" />
   </ItemGroup>
 
 </Project>

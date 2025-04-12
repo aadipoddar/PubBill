@@ -13,7 +13,6 @@ public partial class BillPaymentWindow : Window
 	private readonly RunningBillModel _runningBillModel;
 	private static ObservableCollection<CartModel> _allCart;
 	private readonly List<BillPaymentModeModel> _paymentModels = [];
-	private List<RunningBillDetailModel> _runningBillDetails = [];
 	private decimal _totalAmount;
 
 	public BillPaymentWindow(BillWindow billWindow, BillModel billModel, RunningBillModel runningBillModel, ObservableCollection<CartModel> allCart)
@@ -37,9 +36,7 @@ public partial class BillPaymentWindow : Window
 		paymentModeComboBox.SelectedValuePath = nameof(PaymentModeModel.Id);
 		paymentModeComboBox.SelectedIndex = 0;
 
-		_runningBillDetails = await RunningBillData.LoadRunningBillDetailByRunningBillId(_runningBillModel.Id);
-		_totalAmount = _runningBillDetails.Where(x => !x.Cancelled).Sum(x => x.Rate * x.Quantity) - _billModel.AdjAmount;
-
+		_totalAmount = await BillWindowHelper.CalculateBillTotal(_allCart, _runningBillModel);
 		totalTextBox.Text = _totalAmount.FormatIndianCurrency();
 
 		CalculateTotal();
@@ -65,15 +62,14 @@ public partial class BillPaymentWindow : Window
 	}
 
 	private void amountTextBox_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e) =>
-		e.Handled = !decimal.TryParse(e.Text, out _);
+		Helper.ValidateDecimalInput(sender, e);
 
 	private void amountTextBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
 	{
 		var collected = _paymentModels.Sum(x => x.Amount);
 		var remaining = _totalAmount - collected;
 
-		if (string.IsNullOrEmpty(amountTextBox.Text))
-			return;
+		if (string.IsNullOrEmpty(amountTextBox.Text)) return;
 
 		if (decimal.Parse(amountTextBox.Text) > remaining)
 			CalculateTotal();
@@ -96,7 +92,7 @@ public partial class BillPaymentWindow : Window
 
 		var remaining = _totalAmount - collected;
 
-		amountTextBox.Text = remaining.ToString();
+		amountTextBox.Text = Math.Round(remaining, 2).ToString();
 
 		if (remaining == 0)
 			saveButton.IsEnabled = true;
@@ -126,6 +122,8 @@ public partial class BillPaymentWindow : Window
 	private static async Task InsertBillDetails(int billId)
 	{
 		foreach (var cart in _allCart)
+		{
+			var productDetail = await CommonData.LoadTableDataById<ProductTaxModel>(ViewNames.ProductTax, cart.ProductId);
 			await BillData.InsertBillDetail(new BillDetailModel
 			{
 				Id = 0,
@@ -133,8 +131,13 @@ public partial class BillPaymentWindow : Window
 				ProductId = cart.ProductId,
 				Quantity = cart.Quantity,
 				Rate = cart.Rate,
-				Instruction = cart.Instruction
+				CGST = productDetail.CGSTPercent,
+				SGST = productDetail.SGSTPercent,
+				IGST = productDetail.IGSTPercent,
+				Instruction = cart.Instruction,
+				Cancelled = cart.Cancelled
 			});
+		}
 	}
 
 	private async Task InsertPaymentDetails(int billId)

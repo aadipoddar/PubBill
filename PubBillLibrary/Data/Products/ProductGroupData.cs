@@ -1,4 +1,4 @@
-﻿namespace PubBillLibrary.Data;
+﻿namespace PubBillLibrary.Data.Products;
 
 public static class ProductGroupData
 {

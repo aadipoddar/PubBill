@@ -6,8 +6,6 @@ using System.Windows.Media;
 
 using Microsoft.Win32;
 
-using PubBill.Common;
-
 namespace PubBill;
 
 /// <summary>

@@ -4,6 +4,9 @@
 	@ProductId INT,
 	@Quantity INT,
 	@Rate MONEY,
+	@CGST DECIMAL(5,2),
+	@SGST DECIMAL(5,2),
+	@IGST DECIMAL(5,2),
 	@Instruction VARCHAR(250),
 	@Cancelled BIT
 AS
@@ -16,6 +19,9 @@ BEGIN
 			ProductId,
 			Quantity,
 			Rate,
+			CGST,
+			SGST,
+			IGST,
 			Instruction,
 			Cancelled
 		) VALUES
@@ -24,6 +30,9 @@ BEGIN
 			@ProductId,
 			@Quantity,
 			@Rate,
+			@CGST,
+			@SGST,
+			@IGST,
 			@Instruction,
 			@Cancelled
 		);
@@ -37,6 +46,9 @@ BEGIN
 			ProductId = @ProductId,
 			Quantity = @Quantity,
 			Rate = @Rate,
+			CGST = @CGST,
+			SGST = @SGST,
+			IGST = @IGST,
 			Instruction = @Instruction,
 			Cancelled = @Cancelled
 		WHERE Id = @Id;

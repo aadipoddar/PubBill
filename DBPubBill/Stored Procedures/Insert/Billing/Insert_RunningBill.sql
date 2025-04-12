@@ -4,10 +4,11 @@
 	@LocationId INT,
 	@DiningAreaId INT,
 	@DiningTableId INT,
-	@PersonId INT,
+	@PersonId INT NULL,
 	@TotalPeople INT,
-	@AdjAmount MONEY,
-	@AdjReason VARCHAR(250),
+	@DiscPercent DECIMAL(5,2),
+	@DiscReason VARCHAR(250),
+	@ServicePercent DECIMAL(5,2),
 	@Remarks VARCHAR(250),
 	@BillStartDateTime DATETIME,
 	@Status BIT
@@ -23,8 +24,9 @@ BEGIN
 			DiningTableId,
 			PersonId,
 			TotalPeople,
-			AdjAmount,
-			AdjReason,
+			DiscPercent,
+			DiscReason,
+			ServicePercent,
 			Remarks,
 			[Status]
 		) VALUES
@@ -35,8 +37,9 @@ BEGIN
 			@DiningTableId,
 			@PersonId,
 			@TotalPeople,
-			@AdjAmount,
-			@AdjReason,
+			@DiscPercent,
+			@DiscReason,
+			@ServicePercent,
 			@Remarks,
 			@Status
 		);
@@ -54,8 +57,9 @@ BEGIN
 			DiningTableId = @DiningTableId,
 			PersonId = @PersonId,
 			TotalPeople = @TotalPeople,
-			AdjAmount = @AdjAmount,
-			AdjReason = @AdjReason,
+			DiscPercent = @DiscPercent,
+			DiscReason = @DiscReason,
+			ServicePercent = @ServicePercent,
 			Remarks = @Remarks,
 			[Status] = @Status
 		WHERE Id = @Id;

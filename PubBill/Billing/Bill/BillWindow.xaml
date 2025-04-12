@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:PubBill.Billing.Bill"
 		xmlns:common="clr-namespace:PubBill.Common"
 		xmlns:main="clr-namespace:PubBill"
+		DataContext="{Binding BillWindowHelper}"
         mc:Ignorable="d" WindowState="Maximized"
         Title="Bill Dashboard" Height="450" Width="800"
 		Closed="Window_Closed" Loaded="Window_Loaded">
@@ -23,7 +24,7 @@
 					<RowDefinition Height="*"/>
 				</Grid.RowDefinitions>
 
-				<Expander Header="Bill Details" Grid.Row="0" Margin="10" Padding="5" IsExpanded="True">
+				<Expander Header="Bill Details" Grid.Row="0" Margin="10" Padding="5" IsExpanded="True" Background="Goldenrod">
 					<Grid HorizontalAlignment="Center">
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="Auto" />
@@ -106,18 +107,26 @@
 									<RowDefinition Height="Auto" />
 									<RowDefinition Height="Auto" />
 									<RowDefinition Height="Auto" />
+									<RowDefinition Height="Auto" />
+									<RowDefinition Height="Auto" />
 								</Grid.RowDefinitions>
 
 								<TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="Adjustments" Margin="10" Padding="5" HorizontalAlignment="Center" />
 
-								<TextBlock Grid.Row="1" Grid.Column="0" Text="Adj %" Margin="10" Padding="5" />
-								<TextBox x:Name="adjPercentTextBox" Grid.Row="1" Grid.Column="1" Margin="10" Padding="5" MinWidth="100" TextAlignment="Right" Text="0" MaxLength="3" TextChanged="adjPercentTextBox_TextChanged" PreviewTextInput="decimalTextBox_PreviewTextInput" />
+								<TextBlock Grid.Row="1" Grid.Column="0" Text="Discount %" Margin="10" Padding="5" />
+								<TextBox x:Name="discountPercentTextBox" Grid.Row="1" Grid.Column="1" Margin="10" Padding="5" MinWidth="100" TextAlignment="Right" Text="0.0" MaxLength="3" TextChanged="discountPercentTextBox_TextChanged" PreviewTextInput="decimalTextBox_PreviewTextInput" />
 
-								<TextBlock Grid.Row="2" Grid.Column="0" Text="Adj Amt" Margin="10" Padding="5" />
-								<TextBox x:Name="adjAmountTextBox" Grid.Row="2" Grid.Column="1" Margin="10" Padding="5" MinWidth="100" TextAlignment="Right" Text="0" MaxLength="10" TextChanged="adjAmountTextBox_TextChanged" PreviewTextInput="decimalTextBox_PreviewTextInput"/>
+								<TextBlock Grid.Row="2" Grid.Column="0" Text="Discount Amt" Margin="10" Padding="5" />
+								<TextBox x:Name="discountAmountTextBox" Grid.Row="2" Grid.Column="1" Margin="10" Padding="5" MinWidth="100" TextAlignment="Right" Text="0.0" MaxLength="10" TextChanged="discountAmountTextBox_TextChanged" PreviewTextInput="decimalTextBox_PreviewTextInput"/>
 
-								<TextBlock Grid.Row="3" Grid.Column="0" Text="Adj Reason" Margin="10" Padding="5" />
-								<TextBox x:Name="adjReasonTextBox" Grid.Row="3" Grid.Column="1" Margin="10" Padding="5" MinWidth="100" TextWrapping="Wrap" MaxWidth="150" />
+								<TextBlock Grid.Row="3" Grid.Column="0" Text="Discount Reason" Margin="10" Padding="5" />
+								<TextBox x:Name="discountReasonTextBox" Grid.Row="3" Grid.Column="1" Margin="10" Padding="5" MinWidth="100" TextWrapping="Wrap" MaxWidth="150" />
+
+								<TextBlock Grid.Row="4" Grid.Column="0" Text="Service Charge %" Margin="10" Padding="5" />
+								<TextBox x:Name="servicePercentTextBox" Grid.Row="4" Grid.Column="1" Margin="10" Padding="5" MinWidth="100" TextAlignment="Right" Text="0.0" MaxLength="3" TextChanged="servicePercentTextBox_TextChanged" PreviewTextInput="decimalTextBox_PreviewTextInput" />
+
+								<TextBlock Grid.Row="5" Grid.Column="0" Text="Service Charge Amt" Margin="10" Padding="5" />
+								<TextBox x:Name="serviceAmountTextBox" Grid.Row="5" Grid.Column="1" Margin="10" Padding="5" MinWidth="100" TextAlignment="Right" Text="0.0" MaxLength="3" TextChanged="serviceAmountTextBox_TextChanged" PreviewTextInput="decimalTextBox_PreviewTextInput" />
 							</Grid>
 						</Border>
 						<!--#endregion-->
@@ -135,6 +144,9 @@
 									<RowDefinition Height="Auto" />
 									<RowDefinition Height="Auto" />
 									<RowDefinition Height="Auto" />
+									<RowDefinition Height="Auto" />
+									<RowDefinition Height="Auto" />
+									<RowDefinition Height="Auto" />
 								</Grid.RowDefinitions>
 
 								<TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="Bill Information" Margin="10" Padding="5" HorizontalAlignment="Center" />
@@ -142,11 +154,20 @@
 								<TextBlock Grid.Row="1" Grid.Column="0" Text="Remarks" Margin="10" Padding="5" />
 								<TextBox x:Name="remarkTextBox" Grid.Row="1" Grid.Column="1" Margin="10" Padding="5" MinWidth="100" TextWrapping="Wrap" MaxWidth="150" />
 
-								<TextBlock Grid.Row="2" Grid.Column="0" Text="Total" Margin="10" Padding="5" />
-								<TextBox x:Name="totalAmountTextBox" Grid.Row="2" Grid.Column="1" Margin="10" Padding="5" MinWidth="100" TextAlignment="Right" Text="0.00" IsReadOnly="True" />
+								<TextBlock Grid.Row="2" Grid.Column="0" Text="Base Total" Margin="10" Padding="5" />
+								<TextBox x:Name="baseTotalAmountTextBox" Grid.Row="2" Grid.Column="1" Margin="10" Padding="5" MinWidth="100" TextAlignment="Right" Text="0.00" IsReadOnly="True" />
 
-								<Button x:Name="kotButton" Grid.Row="3" Grid.Column="0" Content="KOT" Margin="10" Padding="5" MinWidth="100" MinHeight="40" Background="IndianRed" Click="kotButton_Click" />
-								<Button x:Name="billButton" Grid.Row="3" Grid.Column="1" Content="Bill" Margin="10" Padding="5" MinWidth="100" MinHeight="40" Style="{DynamicResource AccentButtonStyle}" Click="billButton_Click" />
+								<TextBlock Grid.Row="3" Grid.Column="0" Text="(After Discounts)" Margin="10" Padding="5" />
+								<TextBox x:Name="afterDiscsTotalAmountTextBox" Grid.Row="3" Grid.Column="1" Margin="10" Padding="5" MinWidth="100" TextAlignment="Right" Text="0.00" IsReadOnly="True" />
+
+								<TextBlock Grid.Row="4" Grid.Column="0" Text="Sub Total" Margin="10" Padding="5" />
+								<TextBox x:Name="subTotalAmountTextBox" Grid.Row="4" Grid.Column="1" Margin="10" Padding="5" MinWidth="100" TextAlignment="Right" Text="0.00" IsReadOnly="True" />
+
+								<TextBlock Grid.Row="5" Grid.Column="0" Text="Total" Margin="10" Padding="5" />
+								<TextBox x:Name="totalAmountTextBox" Grid.Row="5" Grid.Column="1" Margin="10" Padding="5" MinWidth="100" TextAlignment="Right" Text="0.00" IsReadOnly="True" />
+
+								<Button x:Name="kotButton" Grid.Row="6" Grid.Column="0" Content="KOT" Margin="10" Padding="5" MinWidth="100" MinHeight="40" Background="IndianRed" Click="kotButton_Click" />
+								<Button x:Name="billButton" Grid.Row="6" Grid.Column="1" Content="Bill" Margin="10" Padding="5" MinWidth="100" MinHeight="40" Style="{DynamicResource AccentButtonStyle}" Click="billButton_Click" />
 							</Grid>
 						</Border>
 						<!--#endregion-->
@@ -274,11 +295,11 @@
 							</Grid>
 							
 							<TabControl Grid.Row="1" x:Name="cartTabControl" Margin="10">
-								<TabItem Header="All Items" x:Name="allCartTabItem" Background="CornflowerBlue" MinWidth="300">
+								<TabItem Header="All Items" x:Name="allCartTabItem" Background="CornflowerBlue">
 									<DataGrid Grid.Row="1" Padding="5" x:Name="cartDataGrid" IsReadOnly="True" MinColumnWidth="100" SelectionChanged="cartDataGrid_SelectionChanged" />
 								</TabItem>
 								
-								<TabItem Header="New Items" IsSelected="True" x:Name="kotCartTabItem" Background="IndianRed" MinWidth="300">
+								<TabItem Header="New Items" IsSelected="True" x:Name="kotCartTabItem" Background="IndianRed">
 									<DataGrid Grid.Row="1" Padding="5" x:Name="kotCartDataGrid" IsReadOnly="True" MinColumnWidth="100" SelectionChanged="kotCartDataGrid_SelectionChanged" />
 								</TabItem>
 							</TabControl>

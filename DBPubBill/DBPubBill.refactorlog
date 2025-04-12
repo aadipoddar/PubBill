@@ -77,4 +77,46 @@
     <Property Name="ParentElementType" Value="SqlSchema" />
     <Property Name="NewName" Value="[RunningBillDetail]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="20cb2b38-11d6-4174-be95-f4eee46ab0fc" ChangeDateTime="04/10/2025 14:24:20">
+    <Property Name="ElementName" Value="[dbo].[Product].[TaxCode]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Product]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="TaxId" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="f57ac499-017c-41e5-b634-b12b8d036b96" ChangeDateTime="04/12/2025 07:30:11">
+    <Property Name="ElementName" Value="[dbo].[Bill].[AdjAmount]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Bill]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="DiscPercent" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="482f8784-3bf5-459a-a4b4-44196b5bb9ec" ChangeDateTime="04/12/2025 07:30:34">
+    <Property Name="ElementName" Value="[dbo].[Bill].[AdjReason]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Bill]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="DiscReason" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="e5de014a-b55a-4b41-8476-f7bf70935dcd" ChangeDateTime="04/12/2025 07:31:05">
+    <Property Name="ElementName" Value="[dbo].[RunningBill].[AdjAmount]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[RunningBill]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="DiscPercent" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="8e7085fe-335b-4dfd-b25c-2326f24f97fd" ChangeDateTime="04/12/2025 07:31:12">
+    <Property Name="ElementName" Value="[dbo].[RunningBill].[AdjReason]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[RunningBill]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="DiscReason" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="4315b1ad-1827-4fcb-8923-6dae6c6e7eef" ChangeDateTime="04/12/2025 13:21:16">
+    <Property Name="ElementName" Value="[dbo].[BillDetail].[decimal(5,2)]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[BillDetail]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="IGST" />
+  </Operation>
 </Operations>

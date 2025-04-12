@@ -7,10 +7,11 @@ public class RunningBillModel
 	public int LocationId { get; set; }
 	public int DiningAreaId { get; set; }
 	public int DiningTableId { get; set; }
-	public int PersonId { get; set; }
+	public int? PersonId { get; set; } = null;
 	public int TotalPeople { get; set; }
-	public decimal AdjAmount { get; set; }
-	public string AdjReason { get; set; }
+	public decimal DiscPercent { get; set; }
+	public string DiscReason { get; set; }
+	public decimal ServicePercent { get; set; }
 	public string Remarks { get; set; }
 	public DateTime BillStartDateTime { get; set; }
 	public bool Status { get; set; }

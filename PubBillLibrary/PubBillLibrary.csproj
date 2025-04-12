@@ -15,6 +15,7 @@
     <Using Include="PubBillLibrary.DataAccess" />
     <Using Include="PubBillLibrary.Models" />
     <Using Include="PubBillLibrary.Models.Billing" />
+    <Using Include="PubBillLibrary.Models.Products" />
   </ItemGroup>
 
 </Project>

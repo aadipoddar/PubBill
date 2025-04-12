@@ -13,20 +13,18 @@ public partial class BillWindow : Window
 	private readonly UserModel _user;
 	private readonly TableDashboard _tableDashboard;
 	private readonly DiningTableModel _diningTableModel;
-	private readonly DiningAreaModel _diningAreaModel;
 	private readonly RunningBillModel _runningBillModel;
 
-	private static readonly ObservableCollection<CartModel> _allCart = [];
-	private static readonly ObservableCollection<CartModel> _kotCart = [];
+	private static readonly ObservableCollection<CartModel> _allCart = [], _kotCart = [];
 	#endregion
 
 	#region Constructors
-	public BillWindow(UserModel user, TableDashboard tableDashboard, DiningTableModel diningTableModel, DiningAreaModel diningAreaModel)
-		: this(user, tableDashboard, diningTableModel, diningAreaModel, null)
+	public BillWindow(UserModel user, TableDashboard tableDashboard, DiningTableModel diningTableModel)
+		: this(user, tableDashboard, diningTableModel, null)
 	{
 	}
 
-	public BillWindow(UserModel user, TableDashboard tableDashboard, DiningTableModel diningTableModel, DiningAreaModel diningAreaModel, RunningBillModel runningBillModel)
+	public BillWindow(UserModel user, TableDashboard tableDashboard, DiningTableModel diningTableModel, RunningBillModel runningBillModel)
 	{
 		InitializeComponent();
 
@@ -34,29 +32,37 @@ public partial class BillWindow : Window
 		_kotCart.Clear();
 		cartDataGrid.ItemsSource = _allCart;
 		kotCartDataGrid.ItemsSource = _kotCart;
+
 		_user = user;
 		_tableDashboard = tableDashboard;
 		_diningTableModel = diningTableModel;
-		_diningAreaModel = diningAreaModel;
 		_runningBillModel = runningBillModel;
-
-		RefreshTotal();
 	}
 	#endregion
 
 	#region Initialization
 	private async void Window_Loaded(object sender, RoutedEventArgs e)
 	{
-		InitializeTextFields();
+		await InitializeTextFields();
 		await LoadProductGroupComboBox();
 		await LoadComponentsFromRunningBill();
+		await RefreshTotal();
 	}
 
-	private void InitializeTextFields()
+	private async Task InitializeTextFields()
 	{
-		diningAreaTextBox.Text = _diningAreaModel.Name;
+		var dininArea = await CommonData.LoadTableDataById<DiningAreaModel>(TableNames.DiningArea, _diningTableModel.DiningAreaId);
+		diningAreaTextBox.Text = dininArea.Name;
 		diningTableTextBox.Text = _diningTableModel.Name;
 		runningTimeTextBox.Text = "0";
+
+		// Apply right alignment to all text columns
+		foreach (var column in cartDataGrid.Columns)
+			if (column is DataGridTextColumn textColumn)
+				textColumn.ElementStyle = new Style(typeof(TextBlock))
+				{
+					Setters = { new Setter(TextBlock.TextAlignmentProperty, TextAlignment.Right) }
+				};
 	}
 
 	private async Task LoadComponentsFromRunningBill()
@@ -65,10 +71,8 @@ public partial class BillWindow : Window
 
 		UpdateRunningTime();
 		await LoadPersonData();
-		await UpdateAdjustmentFields();
+		UpdateAdjustmentFields();
 		await LoadCartItems();
-
-		RefreshTotal();
 	}
 
 	private void UpdateRunningTime()
@@ -79,7 +83,11 @@ public partial class BillWindow : Window
 
 	private async Task LoadPersonData()
 	{
-		var person = await CommonData.LoadTableDataById<PersonModel>(TableNames.Person, _runningBillModel.PersonId);
+		totalPeopleTextBox.Text = _runningBillModel.TotalPeople.ToString();
+
+		if (_runningBillModel.PersonId is null) return;
+
+		var person = await CommonData.LoadTableDataById<PersonModel>(TableNames.Person, (int)_runningBillModel.PersonId);
 		if (person is not null)
 		{
 			personNameTextBox.Text = person.Name;
@@ -88,28 +96,20 @@ public partial class BillWindow : Window
 		}
 	}
 
-	private async Task UpdateAdjustmentFields()
+	private void UpdateAdjustmentFields()
 	{
-		var runningBillDetails = await RunningBillData.LoadRunningBillDetailByRunningBillId(_runningBillModel.Id);
-		var adjAmount = _runningBillModel.AdjAmount;
-		var total = runningBillDetails.Where(item => !item.Cancelled).Sum(item => item.Quantity * item.Rate);
-		var percent = adjAmount / total * 100;
-		total -= adjAmount;
-
-		totalPeopleTextBox.Text = _runningBillModel.TotalPeople.ToString();
-		adjAmountTextBox.Text = adjAmount.ToString();
-		adjPercentTextBox.Text = percent.ToString();
-		adjReasonTextBox.Text = _runningBillModel.AdjReason;
+		discountPercentTextBox.Text = _runningBillModel.DiscPercent.ToString();
+		discountReasonTextBox.Text = _runningBillModel.DiscReason;
+		servicePercentTextBox.Text = _runningBillModel.ServicePercent.ToString();
 		remarkTextBox.Text = _runningBillModel.Remarks;
-		totalAmountTextBox.Text = total.ToString();
 	}
 
 	private async Task LoadCartItems()
 	{
 		_allCart.Clear();
 
-		var runningTableDetails = await RunningBillData.LoadRunningBillDetailByRunningBillId(_runningBillModel.Id);
-		foreach (var item in runningTableDetails)
+		var runningBillDetails = await RunningBillData.LoadRunningBillDetailByRunningBillId(_runningBillModel.Id);
+		foreach (var item in runningBillDetails)
 		{
 			var product = await CommonData.LoadTableDataById<ProductModel>(TableNames.Product, item.ProductId);
 			if (product is not null)
@@ -183,7 +183,7 @@ public partial class BillWindow : Window
 		foreach (var product in products)
 		{
 			var button = CreateComponents.BuildProductButton(product);
-			button.Click += (sender, e) => AddProductToKotCart(product);
+			button.Click += async (sender, e) => await AddProductToKotCart(product);
 			itemsContol.Items.Add(button);
 		}
 	}
@@ -197,26 +197,9 @@ public partial class BillWindow : Window
 
 		if (foundProduct is not null)
 		{
-			AddProductToKotCart(foundProduct);
+			await AddProductToKotCart(foundProduct);
 			searchCodeTextBox.Clear();
 		}
-	}
-
-	private void AddProductToKotCart(ProductModel product)
-	{
-		var existingProduct = _kotCart.FirstOrDefault(c => c.ProductId == product.Id && c.Cancelled == false);
-		if (existingProduct is not null)
-			existingProduct.Quantity++;
-		else
-			_kotCart.Add(new CartModel
-			{
-				ProductId = product.Id,
-				ProductName = product.Name,
-				Quantity = 1,
-				Rate = product.Rate,
-				Instruction = string.Empty
-			});
-		RefreshTotal();
 	}
 	#endregion
 
@@ -265,53 +248,29 @@ public partial class BillWindow : Window
 
 	private void UpdateSelectionFields(CartModel selectedSale)
 	{
-		if (selectedSale != null)
-		{
-			quantityTextBox.Text = selectedSale.Quantity.ToString();
-			instructionsTextBox.Text = selectedSale.Instruction;
-			cancelledCheckBox.IsChecked = selectedSale.Cancelled;
-			instructionsTextBox.Focus();
-		}
+		if (selectedSale is null) return;
+
+		quantityTextBox.Text = selectedSale.Quantity.ToString();
+		instructionsTextBox.Text = selectedSale.Instruction;
+		cancelledCheckBox.IsChecked = selectedSale.Cancelled;
+		instructionsTextBox.Focus();
 	}
 
-	private void instructionsTextBox_TextChanged(object sender, TextChangedEventArgs e)
+	private async void instructionsTextBox_TextChanged(object sender, TextChangedEventArgs e)
 	{
 		if (instructionsTextBox is null || allCartTabItem is null || kotCartTabItem is null) return;
 
-		CartModel selectedSale = null;
-
 		if (cartTabControl.SelectedIndex == 0 && cartDataGrid?.SelectedItem is CartModel sale1)
-			selectedSale = sale1;
+			sale1.Instruction = instructionsTextBox.Text;
 		else if (cartTabControl.SelectedIndex == 1 && kotCartDataGrid?.SelectedItem is CartModel sale2)
-			selectedSale = sale2;
+			sale2.Instruction = instructionsTextBox.Text;
 
-		if (selectedSale != null)
-			selectedSale.Instruction = instructionsTextBox.Text;
-		else
-			instructionsTextBox.Clear();
+		else instructionsTextBox.Clear();
 
-		RefreshTotal();
+		await RefreshTotal();
 	}
 
-	private void AddProductToKotCart(CartModel cart)
-	{
-		var existingProduct = _kotCart.FirstOrDefault(c => c.ProductId == cart.ProductId && c.Cancelled == cart.Cancelled);
-		if (existingProduct is not null)
-			existingProduct.Quantity += cart.Quantity;
-		else
-			_kotCart.Add(new CartModel
-			{
-				ProductId = cart.ProductId,
-				ProductName = cart.ProductName,
-				Quantity = cart.Quantity,
-				Rate = cart.Rate,
-				Instruction = cart.Instruction,
-				Cancelled = cart.Cancelled
-			});
-		RefreshTotal();
-	}
-
-	private void quantityTextBox_TextChanged(object sender, TextChangedEventArgs e)
+	private async void quantityTextBox_TextChanged(object sender, TextChangedEventArgs e)
 	{
 		if (quantityTextBox is null || allCartTabItem is null || kotCartTabItem is null) return;
 
@@ -322,7 +281,7 @@ public partial class BillWindow : Window
 			int quantityChange = newQuantity - oldQuantity;
 
 			if (newQuantity > oldQuantity)
-				AddProductToKotCart(new CartModel
+				await AddProductToKotCart(new CartModel
 				{
 					ProductId = sale.ProductId,
 					ProductName = sale.ProductName,
@@ -357,7 +316,7 @@ public partial class BillWindow : Window
 
 		else quantityTextBox.Text = "0";
 
-		RefreshTotal();
+		await RefreshTotal();
 	}
 
 	private void quantityMinusButton_Click(object sender, RoutedEventArgs e) =>
@@ -372,7 +331,7 @@ public partial class BillWindow : Window
 			quantityTextBox.Text = Math.Max(0, currentQty + change).ToString();
 	}
 
-	private void cancelledCheckBox_Checked(object sender, RoutedEventArgs e)
+	private async void cancelledCheckBox_Checked(object sender, RoutedEventArgs e)
 	{
 		if (cartTabControl.SelectedIndex == 0 && cartDataGrid?.SelectedItem is CartModel sale)
 		{
@@ -387,13 +346,13 @@ public partial class BillWindow : Window
 			if (kotSale.Cancelled) return;
 			_kotCart.Remove(kotSale);
 			kotSale.Cancelled = true;
-			AddProductToKotCart(kotSale);
+			await AddProductToKotCart(kotSale);
 		}
 
-		RefreshTotal();
+		await RefreshTotal();
 	}
 
-	private void cancelledCheckBox_Unchecked(object sender, RoutedEventArgs e)
+	private async void cancelledCheckBox_Unchecked(object sender, RoutedEventArgs e)
 	{
 		if (cartTabControl.SelectedIndex == 0 && cartDataGrid?.SelectedItem is CartModel sale)
 		{
@@ -406,103 +365,130 @@ public partial class BillWindow : Window
 			if (!kotSale.Cancelled) return;
 			kotSale.Cancelled = false;
 			_kotCart.Remove(kotSale);
-			AddProductToKotCart(kotSale);
+			await AddProductToKotCart(kotSale);
 		}
 
-		RefreshTotal();
+		await RefreshTotal();
 	}
 	#endregion
 
 	#region Price Calculations
-	private decimal _originalTotal;
+	private decimal _baseTotal = 0;
 	private bool _isUpdating = false;
 
-	private void RefreshTotal()
+	private async Task RefreshTotal()
 	{
 		cartDataGrid.Items.Refresh();
 		kotCartDataGrid.Items.Refresh();
 
-		_originalTotal = 0;
-		_originalTotal += _allCart.Where(cart => !cart.Cancelled).Sum(cart => cart.Total);
-		_originalTotal += _kotCart.Where(cart => !cart.Cancelled).Sum(cart => cart.Total);
+		_baseTotal = BillWindowHelper.CalculateBaseTotal(_allCart, _kotCart);
+		baseTotalAmountTextBox.Text = _baseTotal.FormatIndianCurrency();
 
-		// Apply right alignment to all text columns
-		foreach (var column in cartDataGrid.Columns)
-			if (column is DataGridTextColumn textColumn)
-				textColumn.ElementStyle = new Style(typeof(TextBlock))
-				{
-					Setters = { new Setter(TextBlock.TextAlignmentProperty, TextAlignment.Right) }
-				};
+		decimal discountPercent = decimal.Parse(discountPercentTextBox.Text);
+		decimal discountAmout = _baseTotal * (discountPercent / 100);
 
-		RecalculateTotals();
+		discountAmountTextBox.Text = discountAmout.ToString("N2");
+		afterDiscsTotalAmountTextBox.Text = (_baseTotal - discountAmout).FormatIndianCurrency();
+
+		decimal productTax = await BillWindowHelper.CalculatProductTotalTax(_allCart, _kotCart);
+		decimal subTotal = _baseTotal - discountAmout + productTax;
+		subTotalAmountTextBox.Text = subTotal.FormatIndianCurrency();
+
+		decimal servicePercent = decimal.Parse(servicePercentTextBox.Text);
+		decimal serviceAmount = subTotal * (servicePercent / 100);
+
+		serviceAmountTextBox.Text = serviceAmount.ToString("N2");
+		totalAmountTextBox.Text = (subTotal + serviceAmount).FormatIndianCurrency();
 	}
 
-	private void RecalculateTotals()
+	private async void discountPercentTextBox_TextChanged(object sender, TextChangedEventArgs e)
 	{
-		decimal adjPercent = 0;
-		if (decimal.TryParse(adjPercentTextBox.Text, out decimal parsedPercent))
-		{
-			adjPercent = Math.Clamp(parsedPercent, 0, 100);
-			if (parsedPercent != adjPercent)
-				adjPercentTextBox.Text = adjPercent.ToString("N2");
-		}
-		else
-		{
-			adjPercentTextBox.Text = "0.00";
-		}
-
-		decimal adjAmount = _originalTotal * (adjPercent / 100);
-		decimal finalTotal = _originalTotal - adjAmount;
-
-		adjAmountTextBox.Text = adjAmount.ToString("N2");
-		totalAmountTextBox.Text = finalTotal.ToString("N2");
-	}
-
-	private void adjPercentTextBox_TextChanged(object sender, TextChangedEventArgs e)
-	{
-		if (_isUpdating || adjPercentTextBox is null || adjAmountTextBox is null || totalAmountTextBox is null) return;
+		if (_isUpdating || discountPercentTextBox is null || discountAmountTextBox is null || totalAmountTextBox is null) return;
 
 		_isUpdating = true;
 
-		if (!decimal.TryParse(adjPercentTextBox.Text, out decimal percent))
+		if (!decimal.TryParse(discountPercentTextBox.Text, out decimal percent))
 		{
-			adjPercentTextBox.Text = "0.00";
+			discountPercentTextBox.Text = "0.00";
 			percent = 0;
 		}
 
 		percent = Math.Clamp(percent, 0, 100);
-		if (percent != decimal.Parse(adjPercentTextBox.Text))
-			adjPercentTextBox.Text = percent.ToString("N2");
+		if (percent != decimal.Parse(discountPercentTextBox.Text))
+			discountPercentTextBox.Text = percent.ToString("N2");
 
-		decimal adjAmount = _originalTotal * (percent / 100);
-		decimal finalTotal = _originalTotal - adjAmount;
-
-		adjAmountTextBox.Text = adjAmount.ToString("N2");
-		totalAmountTextBox.Text = finalTotal.ToString("N2");
+		await RefreshTotal();
 
 		_isUpdating = false;
 	}
 
-	private void adjAmountTextBox_TextChanged(object sender, TextChangedEventArgs e)
+	private async void discountAmountTextBox_TextChanged(object sender, TextChangedEventArgs e)
 	{
-		if (_isUpdating || adjAmountTextBox is null || adjPercentTextBox is null || totalAmountTextBox is null) return;
+		if (_isUpdating || discountAmountTextBox is null || discountPercentTextBox is null || totalAmountTextBox is null) return;
 
 		_isUpdating = true;
 
-		if (!decimal.TryParse(adjAmountTextBox.Text, out decimal amount))
+		if (!decimal.TryParse(discountAmountTextBox.Text, out decimal amount))
 		{
-			adjAmountTextBox.Text = "0.00";
+			discountAmountTextBox.Text = "0.00";
 			amount = 0;
 		}
 
-		amount = Math.Clamp(amount, 0, _originalTotal);
-		if (amount != decimal.Parse(adjAmountTextBox.Text))
-			adjAmountTextBox.Text = amount.ToString("N2");
+		amount = Math.Clamp(amount, 0, _baseTotal);
+		if (amount != decimal.Parse(discountAmountTextBox.Text))
+			discountAmountTextBox.Text = amount.ToString("N2");
 
-		decimal adjPercent = _originalTotal != 0 ? (amount / _originalTotal) * 100 : 0;
-		adjPercentTextBox.Text = adjPercent.ToString("N2");
+		decimal discountPercent = _baseTotal != 0 ? (amount / _baseTotal) * 100 : 0;
+		discountPercentTextBox.Text = discountPercent.ToString("N2");
 
-		totalAmountTextBox.Text = (_originalTotal - amount).ToString("N2");
+		await RefreshTotal();
+
+		_isUpdating = false;
+	}
+
+	private async void servicePercentTextBox_TextChanged(object sender, TextChangedEventArgs e)
+	{
+		if (_isUpdating || servicePercentTextBox is null || serviceAmountTextBox is null || totalAmountTextBox is null) return;
+
+		_isUpdating = true;
+
+		if (!decimal.TryParse(servicePercentTextBox.Text, out decimal percent))
+		{
+			servicePercentTextBox.Text = "0.00";
+			percent = 0;
+		}
+
+		percent = Math.Clamp(percent, 0, 100);
+		if (percent != decimal.Parse(servicePercentTextBox.Text))
+			servicePercentTextBox.Text = percent.ToString("N2");
+
+		await RefreshTotal();
+
+		_isUpdating = false;
+	}
+
+	private async void serviceAmountTextBox_TextChanged(object sender, TextChangedEventArgs e)
+	{
+		if (_isUpdating || servicePercentTextBox is null || serviceAmountTextBox is null || totalAmountTextBox is null) return;
+
+		_isUpdating = true;
+
+		if (!decimal.TryParse(serviceAmountTextBox.Text, out decimal amount))
+		{
+			serviceAmountTextBox.Text = "0.00";
+			amount = 0;
+		}
+
+		amount = Math.Clamp(amount, 0, _baseTotal);
+		if (amount != decimal.Parse(serviceAmountTextBox.Text))
+			serviceAmountTextBox.Text = amount.ToString("N2");
+
+		decimal subTotal = _baseTotal - decimal.Parse(discountAmountTextBox.Text);
+		decimal servicePercent = subTotal != 0 ? (amount / subTotal) * 100 : 0;
+
+		servicePercentTextBox.Text = servicePercent.ToString("N2");
+
+		await RefreshTotal();
 
 		_isUpdating = false;
 	}
@@ -510,53 +496,64 @@ public partial class BillWindow : Window
 
 	#region Validation
 	private void numberTextBox_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e) =>
-		e.Handled = !int.TryParse(e.Text, out _);
+		Helper.ValidateIntegerInput(sender, e);
 
 	private void decimalTextBox_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e) =>
-		e.Handled = !decimal.TryParse(e.Text, out _);
-
-	private bool ValidateFields()
-	{
-		if (string.IsNullOrEmpty(personNumberTextBox.Text))
-		{
-			MessageBox.Show("Please enter a valid number.", "Invalid Number", MessageBoxButton.OK, MessageBoxImage.Warning);
-			personNumberTextBox.Focus();
-			return false;
-		}
-
-		if (string.IsNullOrEmpty(personNameTextBox.Text))
-		{
-			MessageBox.Show("Please enter a valid name.", "Invalid Name", MessageBoxButton.OK, MessageBoxImage.Warning);
-			personNameTextBox.Focus();
-			return false;
-		}
-
-		return true;
-	}
+		Helper.ValidateDecimalInput(sender, e);
 	#endregion
 
 	#region KOT Processing
+	private async Task AddProductToKotCart(ProductModel product)
+	{
+		var existingProduct = _kotCart.FirstOrDefault(c => c.ProductId == product.Id && c.Cancelled == false);
+		if (existingProduct is not null)
+			existingProduct.Quantity++;
+		else
+			_kotCart.Add(new CartModel
+			{
+				ProductId = product.Id,
+				ProductName = product.Name,
+				Quantity = 1,
+				Rate = product.Rate,
+				Instruction = string.Empty
+			});
+		await RefreshTotal();
+	}
+
+	private async Task AddProductToKotCart(CartModel cart)
+	{
+		var existingProduct = _kotCart.FirstOrDefault(c => c.ProductId == cart.ProductId && c.Cancelled == cart.Cancelled);
+		if (existingProduct is not null)
+			existingProduct.Quantity += cart.Quantity;
+		else
+			_kotCart.Add(new CartModel
+			{
+				ProductId = cart.ProductId,
+				ProductName = cart.ProductName,
+				Quantity = cart.Quantity,
+				Rate = cart.Rate,
+				Instruction = cart.Instruction,
+				Cancelled = cart.Cancelled
+			});
+		await RefreshTotal();
+	}
+
 	private async void kotButton_Click(object sender, RoutedEventArgs e)
 	{
-		if (!ValidateFields()) return;
-
-		if (kotCartDataGrid.Items.Count == 0)
+		if (_kotCart.Count == 0)
 		{
-			MessageBox.Show("Please add at least one product to the cart", "Empty Cart", MessageBoxButton.OK, MessageBoxImage.Warning);
+			MessageBox.Show("Cart is Empty. Add Items to Cart.", "Empty Cart", MessageBoxButton.OK, MessageBoxImage.Warning);
 			return;
 		}
 
-		int personId = await InsertPerson();
-		if (personId == 0)
-		{
-			MessageBox.Show("Failed to insert person data.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-			return;
-		}
+		int? personId = null;
+		if (!string.IsNullOrEmpty(personNumberTextBox.Text))
+			personId = await InsertPerson();
 
 		int runningBillId = await InsertRunningBill(personId);
 		if (runningBillId == 0)
 		{
-			MessageBox.Show("Failed to insert running bill data.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+			MessageBox.Show("Failed to insert running bill data.", "Missing Bill Id", MessageBoxButton.OK, MessageBoxImage.Error);
 			return;
 		}
 
@@ -565,19 +562,20 @@ public partial class BillWindow : Window
 		Close();
 	}
 
-	private async Task<int> InsertRunningBill(int personId)
+	private async Task<int> InsertRunningBill(int? personId)
 	{
 		RunningBillModel runningBill = new()
 		{
 			Id = _runningBillModel?.Id ?? 0,
 			UserId = _user.Id,
 			LocationId = _user.LocationId,
-			DiningAreaId = _diningAreaModel.Id,
+			DiningAreaId = _diningTableModel.DiningAreaId,
 			DiningTableId = _diningTableModel.Id,
 			PersonId = personId,
 			TotalPeople = int.TryParse(totalPeopleTextBox.Text, out int people) ? people : 0,
-			AdjAmount = decimal.TryParse(adjAmountTextBox.Text, out decimal adj) ? adj : 0,
-			AdjReason = adjReasonTextBox.Text,
+			DiscPercent = decimal.Parse(discountPercentTextBox.Text),
+			DiscReason = discountReasonTextBox.Text,
+			ServicePercent = decimal.Parse(servicePercentTextBox.Text),
 			Remarks = remarkTextBox.Text,
 			BillStartDateTime = _runningBillModel?.BillStartDateTime ?? DateTime.Now,
 			Status = true
@@ -652,43 +650,45 @@ public partial class BillWindow : Window
 	#region Bill Processing
 	private async void billButton_Click(object sender, RoutedEventArgs e)
 	{
-		if (!ValidateFields()) return;
-
-		if (await CheckKOT())
-		{
-			MessageBox.Show("KOT Items not yet Printed.", "Warning", MessageBoxButton.OK, MessageBoxImage.Error);
-			return;
-		}
-
-		int personId = await InsertPerson();
-		if (personId == 0)
-		{
-			MessageBox.Show("Failed to insert person data.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-			return;
-		}
-
 		if (_runningBillModel is null)
 		{
-			MessageBox.Show("Cart is Empty. Push Items to KOT.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+			MessageBox.Show("Cart is Empty. Add Items to Cart.", "Empty Cart", MessageBoxButton.OK, MessageBoxImage.Error);
 			return;
 		}
+
+		if (_kotCart.Count > 0)
+		{
+			MessageBox.Show("KOT Cart not Empty. Push Items to KOT.", "Push KOT", MessageBoxButton.OK, MessageBoxImage.Error);
+			return;
+		}
+
+		if (await BillWindowHelper.CheckKOT(_runningBillModel))
+		{
+			MessageBox.Show("KOT Items not yet Printed.", "Print KOT", MessageBoxButton.OK, MessageBoxImage.Error);
+			return;
+		}
+
+		int? personId = null;
+		if (!string.IsNullOrEmpty(personNumberTextBox.Text))
+			personId = await InsertPerson();
 
 		NavigateToPaymentWindow(personId);
 	}
 
-	private void NavigateToPaymentWindow(int personId)
+	private void NavigateToPaymentWindow(int? personId)
 	{
 		BillModel billModel = new()
 		{
 			Id = 0,
 			UserId = _user.Id,
 			LocationId = _user.LocationId,
-			DiningAreaId = _diningAreaModel.Id,
+			DiningAreaId = _diningTableModel.DiningAreaId,
 			DiningTableId = _diningTableModel.Id,
 			PersonId = personId,
 			TotalPeople = int.TryParse(totalPeopleTextBox.Text, out int people) ? people : 0,
-			AdjAmount = decimal.TryParse(adjAmountTextBox.Text, out decimal adj) ? adj : 0,
-			AdjReason = adjReasonTextBox.Text,
+			DiscPercent = decimal.Parse(discountPercentTextBox.Text),
+			DiscReason = discountReasonTextBox.Text,
+			ServicePercent = decimal.Parse(servicePercentTextBox.Text),
 			Remarks = remarkTextBox.Text,
 			BillDateTime = DateTime.Now
 		};
@@ -702,8 +702,9 @@ public partial class BillWindow : Window
 			DiningTableId = _runningBillModel.DiningTableId,
 			PersonId = _runningBillModel.PersonId,
 			TotalPeople = _runningBillModel.TotalPeople,
-			AdjAmount = _runningBillModel.AdjAmount,
-			AdjReason = _runningBillModel.AdjReason,
+			DiscPercent = decimal.Parse(discountPercentTextBox.Text),
+			DiscReason = discountReasonTextBox.Text,
+			ServicePercent = decimal.Parse(servicePercentTextBox.Text),
 			Remarks = _runningBillModel.Remarks,
 			BillStartDateTime = DateTime.Now,
 			Status = false
@@ -711,13 +712,6 @@ public partial class BillWindow : Window
 
 		BillPaymentWindow billPaymentWindow = new(this, billModel, runningBillModel, _allCart);
 		billPaymentWindow.ShowDialog();
-	}
-
-	private async Task<bool> CheckKOT()
-	{
-		if (_runningBillModel is null) return false;
-		var kotOrders = await KOTData.LoadKOTBillDetailByRunningBillId(_runningBillModel.Id);
-		return kotOrders.Any(k => k.Status);
 	}
 	#endregion
 

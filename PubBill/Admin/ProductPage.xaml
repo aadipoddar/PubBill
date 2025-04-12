@@ -32,25 +32,29 @@
 					<RowDefinition Height="Auto"/>
 					<RowDefinition Height="Auto"/>
 					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
 				</Grid.RowDefinitions>
 
 				<Label Margin="10" Padding="5" Grid.Row="0" Grid.Column="0" Content="Name"/>
 				<TextBox x:Name="nameTextBox" Margin="10" Padding="5" Grid.Row="0" Grid.Column="1" TextChanged="nameTextBox_TextChanged"/>
 
 				<Label Margin="10" Padding="5" Grid.Row="1" Grid.Column="0" Content="Code"/>
-				<TextBox x:Name="codeTextBox" Margin="10" Padding="5" Grid.Row="1" Grid.Column="1" TextChanged="nameTextBox_TextChanged"/>
+				<TextBox Margin="10" Padding="5" Grid.Row="1" Grid.Column="1" x:Name="codeTextBox" TextChanged="nameTextBox_TextChanged"/>
 
-				<Label Margin="10" Padding="5" Grid.Row="2" Grid.Column="0" Content="Rate"/>
-				<TextBox x:Name="rateTextBox" Margin="10" Padding="5" Grid.Row="2" Grid.Column="1" TextAlignment="Right" Text="0.0" PreviewTextInput="decimalTextBox_PreviewTextInput" TextChanged="nameTextBox_TextChanged"/>
+				<Label Margin="10" Padding="5" Grid.Row="2" Grid.Column="0" Content="Product Group"/>
+				<ComboBox Margin="10" Padding="5" Grid.Row="2" Grid.Column="1" x:Name="productGroupComboBox" SelectedIndex="0" SelectionChanged="productGroupComboBox_SelectionChanged" />
 
-				<Label Margin="10" Padding="5" Grid.Row="3" Grid.Column="0" Content="Product Group"/>
-				<ComboBox x:Name="productGroupComboBox" Margin="10" Padding="5" Grid.Row="3" Grid.Column="1" SelectedIndex="0" SelectionChanged="productGroupComboBox_SelectionChanged" />
+				<Label Margin="10" Padding="5" Grid.Row="3" Grid.Column="0" Content="Product Category"/>
+				<ComboBox Margin="10" Padding="5" Grid.Row="3" Grid.Column="1" x:Name="productCategoryComboBox" SelectedIndex="0"/>
 
-				<Label Margin="10" Padding="5" Grid.Row="4" Grid.Column="0" Content="Product Category"/>
-				<ComboBox x:Name="productCategoryComboBox" Margin="10" Padding="5" Grid.Row="4" Grid.Column="1" SelectedIndex="0"/>
+				<Label Margin="10" Padding="5" Grid.Row="4" Grid.Column="0" Content="Rate"/>
+				<TextBox Margin="10" Padding="5" Grid.Row="4" Grid.Column="1" x:Name="rateTextBox" TextAlignment="Right" Text="0.0" PreviewTextInput="decimalTextBox_PreviewTextInput" TextChanged="nameTextBox_TextChanged"/>
 
-				<CheckBox x:Name="statusCheckBox" Margin="10" Padding="5" Grid.Row="5" Grid.Column="0" Content="Status" IsChecked="True"/>
-				<Button x:Name="saveButton" Margin="10" Padding="5" Grid.Row="5" Grid.Column="1" MinWidth="120" MinHeight="40" Content="Save" HorizontalAlignment="Center"
+				<Label Margin="10" Padding="5" Grid.Row="5" Grid.Column="0" Content="Tax"/>
+				<ComboBox Margin="10" Padding="5" Grid.Row="5" Grid.Column="1" x:Name="taxComboBox" SelectedIndex="0"/>
+
+				<CheckBox x:Name="statusCheckBox" Margin="10" Padding="5" Grid.Row="6" Grid.Column="0" Content="Status" IsChecked="True"/>
+				<Button x:Name="saveButton" Margin="10" Padding="5" Grid.Row="6" Grid.Column="1" MinWidth="120" MinHeight="40" Content="Save" HorizontalAlignment="Center"
 						IsDefault="True" Style="{DynamicResource AccentButtonStyle}" IsEnabled="False" Click="saveButton_Click"/>
 			</Grid>
 

@@ -1,5 +1,4 @@
-﻿using System.Text.RegularExpressions;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 
 namespace PubBill.Admin;
@@ -36,6 +35,12 @@ public partial class ProductPage : Page
 		searchProductCategoryComboBox.DisplayMemberPath = nameof(ProductCategoryModel.Name);
 		searchProductCategoryComboBox.SelectedValuePath = nameof(ProductCategoryModel.Id);
 		searchProductCategoryComboBox.SelectedIndex = 0;
+
+		var tax = await CommonData.LoadTableData<TaxModel>(TableNames.Tax);
+		taxComboBox.ItemsSource = tax;
+		taxComboBox.DisplayMemberPath = nameof(TaxModel.Code);
+		taxComboBox.SelectedValuePath = nameof(TaxModel.Id);
+		taxComboBox.SelectedIndex = 0;
 
 		await ApplySearchFilter();
 	}
@@ -98,8 +103,9 @@ public partial class ProductPage : Page
 		{
 			nameTextBox.Text = selectedProduct.Name;
 			codeTextBox.Text = selectedProduct.Code;
-			rateTextBox.Text = selectedProduct.Rate.ToString();
 			productGroupComboBox.SelectedValue = searchProductGroupComboBox.SelectedValue;
+			rateTextBox.Text = selectedProduct.Rate.ToString();
+			taxComboBox.SelectedValue = selectedProduct.TaxId;
 			statusCheckBox.IsChecked = selectedProduct.Status;
 			saveButton.Content = "Update";
 			saveButton.IsEnabled = true;
@@ -114,7 +120,7 @@ public partial class ProductPage : Page
 		{
 			nameTextBox.Clear();
 			codeTextBox.Clear();
-			rateTextBox.Clear();
+			rateTextBox.Text = "0.0";
 			statusCheckBox.IsChecked = true;
 			saveButton.Content = "Save";
 			saveButton.IsEnabled = false;
@@ -134,11 +140,8 @@ public partial class ProductPage : Page
 		else saveButton.IsEnabled = false;
 	}
 
-	private void decimalTextBox_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
-	{
-		Regex regex = new(@"^\d*\.?\d{0,2}$");
-		e.Handled = !regex.IsMatch((sender as TextBox).Text + e.Text);
-	}
+	private void decimalTextBox_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e) =>
+		Helper.ValidateDecimalInput(sender, e);
 
 	private bool ValidateForm()
 	{
@@ -184,8 +187,9 @@ public partial class ProductPage : Page
 			Id = productDataGrid.SelectedItem is ProductModel selectedProduct ? selectedProduct.Id : 0,
 			Name = nameTextBox.Text,
 			Code = codeTextBox.Text.RemoveSpace(),
-			Rate = Decimal.Parse(rateTextBox.Text),
 			ProductCategoryId = (int)productCategoryComboBox.SelectedValue,
+			Rate = decimal.Parse(rateTextBox.Text),
+			TaxId = (int)taxComboBox.SelectedValue,
 			Status = (bool)statusCheckBox.IsChecked
 		};
 

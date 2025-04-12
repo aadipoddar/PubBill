@@ -45,8 +45,8 @@ static class CreateComponents
 				var runningTable = runningTables.FirstOrDefault(b => b.DiningTableId == table.Id);
 
 				Button button;
-				if (runningTable is null) button = MakeTableButton(userModel, tableDashboard, diningArea, table);
-				else button = await MakeRunningTableButton(userModel, tableDashboard, diningArea, table, runningTable);
+				if (runningTable is null) button = MakeTableButton(userModel, tableDashboard, table);
+				else button = await MakeRunningTableButton(userModel, tableDashboard, table, runningTable);
 
 				itemsControl.Items.Add(button);
 			}
@@ -57,7 +57,7 @@ static class CreateComponents
 		}
 	}
 
-	private static Button MakeTableButton(UserModel userModel, TableDashboard tableDashboard, DiningAreaModel diningArea, DiningTableModel table)
+	private static Button MakeTableButton(UserModel userModel, TableDashboard tableDashboard, DiningTableModel table)
 	{
 		Button button = new()
 		{
@@ -75,7 +75,7 @@ static class CreateComponents
 
 		button.Click += (sender, e) =>
 		{
-			BillWindow billWindow = new(userModel, tableDashboard, table, diningArea);
+			BillWindow billWindow = new(userModel, tableDashboard, table);
 			billWindow.Show();
 			tableDashboard.Hide();
 		};
@@ -83,12 +83,11 @@ static class CreateComponents
 		return button;
 	}
 
-	private static async Task<Button> MakeRunningTableButton(UserModel userModel, TableDashboard tableDashboard, DiningAreaModel diningArea, DiningTableModel table, RunningBillModel runningBill)
+	private static async Task<Button> MakeRunningTableButton(UserModel userModel, TableDashboard tableDashboard, DiningTableModel table, RunningBillModel runningBill)
 	{
 		var user = await CommonData.LoadTableDataById<UserModel>(TableNames.User, runningBill.UserId);
 		var runningBillDetails = await RunningBillData.LoadRunningBillDetailByRunningBillId(runningBill.Id);
 		var total = runningBillDetails.Where(x => !x.Cancelled).Sum(b => b.Rate * b.Quantity);
-		total -= runningBill.AdjAmount;
 
 		var grid = new Grid();
 		grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
@@ -173,7 +172,7 @@ static class CreateComponents
 
 		button.Click += (sender, e) =>
 		{
-			BillWindow billWindow = new(userModel, tableDashboard, table, diningArea, runningBill);
+			BillWindow billWindow = new(userModel, tableDashboard, table, runningBill);
 			billWindow.Show();
 			tableDashboard.Hide();
 		};

@@ -7,10 +7,13 @@ public static class TableNames
 	public static string User => "User";
 	public static string DiningArea => "DiningArea";
 	public static string DiningTable => "DiningTable";
+	public static string PaymentMode => "PaymentMode";
+
 	public static string ProductGroup => "ProductGroup";
 	public static string ProductCategory => "ProductCategory";
 	public static string Product => "Product";
-	public static string PaymentMode => "PaymentMode";
+	public static string Tax => "Tax";
+
 	public static string Bill => "Bill";
 	public static string BillDetail => "BillDetail";
 	public static string RunningBill => "RunningBill";
@@ -21,6 +24,7 @@ public static class TableNames
 
 public static class ViewNames
 {
+	public static string ProductTax => "Product_Tax";
 }
 
 public static class StoredProcedureNames
@@ -30,10 +34,14 @@ public static class StoredProcedureNames
 	public static string InsertUser => "Insert_User";
 	public static string InsertDiningArea => "Insert_DiningArea";
 	public static string InsertDiningTable => "Insert_DiningTable";
+	public static string InsertPaymentMode => "Insert_PaymentMode";
+
 	public static string InsertProductGroup => "Insert_ProductGroup";
 	public static string InsertProductCategory => "Insert_ProductCategory";
 	public static string InsertProduct => "Insert_Product";
-	public static string InsertPaymentMode => "Insert_PaymentMode";
+	public static string InsertTax => "Insert_Tax";
+
+
 	public static string InsertBill => "Insert_Bill";
 	public static string InsertBillDetail => "Insert_BillDetail";
 	public static string InsertRunningBill => "Insert_RunningBill";

@@ -57,7 +57,6 @@ static class CreateKOTComponents
 
 		var runningBillDetails = await RunningBillData.LoadRunningBillDetailByRunningBillId(runningBill.Id);
 		var total = runningBillDetails.Where(x => !x.Cancelled).Sum(b => b.Rate * b.Quantity);
-		total -= runningBill.AdjAmount;
 
 		var grid = new Grid();
 		grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
