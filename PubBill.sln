@@ -4,10 +4,22 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.13.35913.81
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PubBill", "PubBill\PubBill.csproj", "{85B22086-F304-4556-9898-91C0F3923ADE}"
+	ProjectSection(ProjectDependencies) = postProject
+		{31079248-DF03-4EEA-AD5B-4A2EDE089408} = {31079248-DF03-4EEA-AD5B-4A2EDE089408}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PubBillLibrary", "PubBillLibrary\PubBillLibrary.csproj", "{15BC8022-26C7-4A07-AC88-5EAF7F599B5A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{31079248-DF03-4EEA-AD5B-4A2EDE089408} = {31079248-DF03-4EEA-AD5B-4A2EDE089408}
+	EndProjectSection
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "DBPubBill", "DBPubBill\DBPubBill.sqlproj", "{31079248-DF03-4EEA-AD5B-4A2EDE089408}"
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "SetupProject", "SetupProject\SetupProject.vdproj", "{34AB757A-BA4F-F52C-C103-667695FDFA40}"
+	ProjectSection(ProjectDependencies) = postProject
+		{15BC8022-26C7-4A07-AC88-5EAF7F599B5A} = {15BC8022-26C7-4A07-AC88-5EAF7F599B5A}
+		{31079248-DF03-4EEA-AD5B-4A2EDE089408} = {31079248-DF03-4EEA-AD5B-4A2EDE089408}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,6 +41,8 @@ Global
 		{31079248-DF03-4EEA-AD5B-4A2EDE089408}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{31079248-DF03-4EEA-AD5B-4A2EDE089408}.Release|Any CPU.Build.0 = Release|Any CPU
 		{31079248-DF03-4EEA-AD5B-4A2EDE089408}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{34AB757A-BA4F-F52C-C103-667695FDFA40}.Debug|Any CPU.ActiveCfg = Debug
+		{34AB757A-BA4F-F52C-C103-667695FDFA40}.Release|Any CPU.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
