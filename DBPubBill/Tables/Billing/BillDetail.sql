@@ -10,6 +10,7 @@
     [IGST] DECIMAL(5, 2) NOT NULL DEFAULT 0, 
     [Instruction] VARCHAR(250) NOT NULL, 
     [Cancelled] BIT NOT NULL DEFAULT 0, 
+    [Status] BIT NOT NULL DEFAULT 1, 
     CONSTRAINT [FK_BillDetail_ToBill] FOREIGN KEY (BillId) REFERENCES [Bill](Id), 
     CONSTRAINT [FK_BillDetail_ToProduct] FOREIGN KEY (ProductId) REFERENCES [Product](Id)
 )

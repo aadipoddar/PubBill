@@ -14,6 +14,7 @@ public class RunningBillModel
 	public decimal ServicePercent { get; set; }
 	public string Remarks { get; set; }
 	public DateTime BillStartDateTime { get; set; }
+	public int? BillId { get; set; } = null;
 	public bool Status { get; set; }
 }
 

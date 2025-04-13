@@ -10,9 +10,9 @@ namespace PubBill.Billing.Bill;
 public partial class BillWindow : Window
 {
 	#region Fields
-	private readonly UserModel _user;
+	private UserModel _user;
 	private readonly TableDashboard _tableDashboard;
-	private readonly DiningTableModel _diningTableModel;
+	private DiningTableModel _diningTableModel;
 	private readonly RunningBillModel _runningBillModel;
 
 	private static readonly ObservableCollection<CartModel> _allCart = [], _kotCart = [];
@@ -20,11 +20,6 @@ public partial class BillWindow : Window
 
 	#region Constructors
 	public BillWindow(UserModel user, TableDashboard tableDashboard, DiningTableModel diningTableModel)
-		: this(user, tableDashboard, diningTableModel, null)
-	{
-	}
-
-	public BillWindow(UserModel user, TableDashboard tableDashboard, DiningTableModel diningTableModel, RunningBillModel runningBillModel)
 	{
 		InitializeComponent();
 
@@ -36,6 +31,18 @@ public partial class BillWindow : Window
 		_user = user;
 		_tableDashboard = tableDashboard;
 		_diningTableModel = diningTableModel;
+	}
+
+	public BillWindow(TableDashboard tableDashboard, RunningBillModel runningBillModel)
+	{
+		InitializeComponent();
+
+		_allCart.Clear();
+		_kotCart.Clear();
+		cartDataGrid.ItemsSource = _allCart;
+		kotCartDataGrid.ItemsSource = _kotCart;
+
+		_tableDashboard = tableDashboard;
 		_runningBillModel = runningBillModel;
 	}
 	#endregion
@@ -51,6 +58,12 @@ public partial class BillWindow : Window
 
 	private async Task InitializeTextFields()
 	{
+		if (_runningBillModel is not null)
+		{
+			_diningTableModel = await CommonData.LoadTableDataById<DiningTableModel>(TableNames.DiningTable, _runningBillModel.DiningTableId);
+			_user = await CommonData.LoadTableDataById<UserModel>(TableNames.User, _runningBillModel.UserId);
+		}
+
 		var dininArea = await CommonData.LoadTableDataById<DiningAreaModel>(TableNames.DiningArea, _diningTableModel.DiningAreaId);
 		diningAreaTextBox.Text = dininArea.Name;
 		diningTableTextBox.Text = _diningTableModel.Name;
@@ -578,6 +591,7 @@ public partial class BillWindow : Window
 			ServicePercent = decimal.Parse(servicePercentTextBox.Text),
 			Remarks = remarkTextBox.Text,
 			BillStartDateTime = _runningBillModel?.BillStartDateTime ?? DateTime.Now,
+			BillId = _runningBillModel?.BillId ?? null,
 			Status = true
 		};
 
@@ -679,7 +693,7 @@ public partial class BillWindow : Window
 	{
 		BillModel billModel = new()
 		{
-			Id = 0,
+			Id = _runningBillModel?.BillId ?? 0,
 			UserId = _user.Id,
 			LocationId = _user.LocationId,
 			DiningAreaId = _diningTableModel.DiningAreaId,
@@ -707,6 +721,7 @@ public partial class BillWindow : Window
 			ServicePercent = decimal.Parse(servicePercentTextBox.Text),
 			Remarks = _runningBillModel.Remarks,
 			BillStartDateTime = DateTime.Now,
+			BillId = _runningBillModel.BillId,
 			Status = false
 		};
 

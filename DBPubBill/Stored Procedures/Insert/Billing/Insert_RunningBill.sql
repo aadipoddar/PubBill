@@ -11,6 +11,7 @@
 	@ServicePercent DECIMAL(5,2),
 	@Remarks VARCHAR(250),
 	@BillStartDateTime DATETIME,
+	@BillId INT NULL,
 	@Status BIT
 AS
 BEGIN
@@ -28,6 +29,7 @@ BEGIN
 			DiscReason,
 			ServicePercent,
 			Remarks,
+			BillId,
 			[Status]
 		) VALUES
 		(
@@ -41,6 +43,7 @@ BEGIN
 			@DiscReason,
 			@ServicePercent,
 			@Remarks,
+			@BillId,
 			@Status
 		);
 		
@@ -61,6 +64,7 @@ BEGIN
 			DiscReason = @DiscReason,
 			ServicePercent = @ServicePercent,
 			Remarks = @Remarks,
+			BillId = @BillId,
 			[Status] = @Status
 		WHERE Id = @Id;
 	END

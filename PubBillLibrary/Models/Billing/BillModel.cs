@@ -28,6 +28,7 @@ public class BillDetailModel
 	public decimal IGST { get; set; }
 	public string Instruction { get; set; }
 	public bool Cancelled { get; set; } = false;
+	public bool Status { get; set; } = true;
 }
 
 public class CartModel

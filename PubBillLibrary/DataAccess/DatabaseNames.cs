@@ -64,6 +64,8 @@ public static class StoredProcedureNames
 
 	public static string LoadRunningTabeDetailByRunningBillId => "Load_RunningTabeDetail_By_RunningBillId";
 	public static string LoadKOTBillDetailByRunningBillId => "Load_KOTBillDetail_By_RunningBillId";
+	public static string LoadBillDetailByBillId => "Load_BillDetail_By_BillId";
+	public static string LoadBillPaymentDetailByBillId => "Load_BillPaymentDetail_By_BillId";
 
 	public static string DeleteRunningBillDetail => "Delete_RunningBillDetail";
 }

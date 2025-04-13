@@ -172,7 +172,7 @@ static class CreateComponents
 
 		button.Click += (sender, e) =>
 		{
-			BillWindow billWindow = new(userModel, tableDashboard, table, runningBill);
+			BillWindow billWindow = new(tableDashboard, runningBill);
 			billWindow.Show();
 			tableDashboard.Hide();
 		};

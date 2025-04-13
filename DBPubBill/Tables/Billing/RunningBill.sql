@@ -12,6 +12,7 @@
     [ServicePercent] DECIMAL(5, 2) NOT NULL DEFAULT 0, 
     [Remarks] VARCHAR(250) NOT NULL, 
     [BillStartDateTime] DATETIME NOT NULL DEFAULT (((getdate() AT TIME ZONE 'UTC') AT TIME ZONE 'India Standard Time')), 
+    [BillId] INT NULL , 
     [Status] BIT NOT NULL DEFAULT 1, 
     CONSTRAINT [FK_RunningTable_ToUser] FOREIGN KEY (UserId) REFERENCES [User](Id), 
     CONSTRAINT [FK_RunningTable_ToLocation] FOREIGN KEY (LocationId) REFERENCES [Location](Id), 

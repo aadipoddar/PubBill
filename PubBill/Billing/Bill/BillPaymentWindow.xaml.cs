@@ -135,7 +135,8 @@ public partial class BillPaymentWindow : Window
 				SGST = productDetail.SGSTPercent,
 				IGST = productDetail.IGSTPercent,
 				Instruction = cart.Instruction,
-				Cancelled = cart.Cancelled
+				Cancelled = cart.Cancelled,
+				Status = true
 			});
 		}
 	}

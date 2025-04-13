@@ -77,4 +77,78 @@ public partial class TableDashboard : Window
 		_refreshManager.Dispose();
 		_loginWindow.Show();
 	}
+
+	private void numberTextBox_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e) =>
+		Helper.ValidateIntegerInput(sender, e);
+
+	private async void billButton_Click(object sender, RoutedEventArgs e)
+	{
+		var billModel = await CommonData.LoadTableDataById<BillModel>(TableNames.Bill, int.Parse(billNoTextBox.Text));
+		if (billModel is null)
+		{
+			MessageBox.Show("Bill not found. Please check the bill number.", "Bill Not Found", MessageBoxButton.OK, MessageBoxImage.Error);
+			return;
+		}
+
+		#region Start New Running Bill And Status False
+		var billDetails = await BillData.LoadBillDetailByBillId(billModel.Id);
+		billDetails = [.. billDetails.Where(x => x.Status)];
+
+		var runningBillModel = new RunningBillModel()
+		{
+			Id = 0,
+			UserId = billModel.UserId,
+			LocationId = billModel.LocationId,
+			DiningAreaId = billModel.DiningAreaId,
+			DiningTableId = billModel.DiningTableId,
+			PersonId = billModel.PersonId,
+			TotalPeople = billModel.TotalPeople,
+			DiscPercent = billModel.DiscPercent,
+			DiscReason = billModel.DiscReason,
+			ServicePercent = billModel.ServicePercent,
+			Remarks = billModel.Remarks,
+			BillStartDateTime = billModel.BillDateTime,
+			BillId = billModel.Id,
+			Status = true
+		};
+
+		runningBillModel.Id = await RunningBillData.InsertRunningBill(runningBillModel);
+
+		foreach (var item in billDetails)
+		{
+			item.Status = false;
+			await BillData.InsertBillDetail(item);
+
+			await RunningBillData.InsertRunningBillDetail(new RunningBillDetailModel()
+			{
+				Id = 0,
+				RunningBillId = runningBillModel.Id,
+				ProductId = item.ProductId,
+				Quantity = item.Quantity,
+				Rate = item.Rate,
+				Instruction = item.Instruction,
+				Cancelled = false
+			});
+		}
+		#endregion
+
+		#region Set PaymentDetails False
+		var billPaymentDetails = await BillData.LoadBillPaymentDetailByBillId(billModel.Id);
+		billPaymentDetails = [.. billPaymentDetails.Where(x => x.Status)];
+
+		foreach (var item in billPaymentDetails)
+			await BillData.InsertBillPaymentDetail(new BillPaymentDetailModel
+			{
+				Id = item.Id,
+				BillId = item.BillId,
+				Amount = item.Amount,
+				PaymentModeId = item.PaymentModeId,
+				Status = false
+			});
+		#endregion
+
+		BillWindow billWindow = new(this, runningBillModel);
+		billWindow.Show();
+		Hide();
+	}
 }

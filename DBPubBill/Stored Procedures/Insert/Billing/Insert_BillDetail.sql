@@ -8,7 +8,8 @@
 	@SGST DECIMAL(5,2),
 	@IGST DECIMAL(5,2),
 	@Instruction VARCHAR(250),
-	@Cancelled BIT
+	@Cancelled BIT,
+	@Status BIT
 AS
 BEGIN
 	IF @Id = 0
@@ -23,7 +24,8 @@ BEGIN
 			SGST,
 			IGST,
 			Instruction,
-			Cancelled
+			Cancelled,
+			[Status]
 		) VALUES
 		(
 			@BillId,
@@ -34,7 +36,8 @@ BEGIN
 			@SGST,
 			@IGST,
 			@Instruction,
-			@Cancelled
+			@Cancelled,
+			@Status
 		);
 	END
 
@@ -50,7 +53,8 @@ BEGIN
 			SGST = @SGST,
 			IGST = @IGST,
 			Instruction = @Instruction,
-			Cancelled = @Cancelled
+			Cancelled = @Cancelled,
+			[Status] = @Status
 		WHERE Id = @Id;
 	END
 END
