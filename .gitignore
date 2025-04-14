@@ -399,3 +399,4 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 PubBillLibrary/DataAccess/Secrets.cs
+.idea
