@@ -732,6 +732,7 @@ public partial class BillWindow : Window
 			DiscPercent = decimal.Parse(discountPercentTextBox.Text),
 			DiscReason = discountReasonTextBox.Text,
 			ServicePercent = decimal.Parse(servicePercentTextBox.Text),
+			EntryPaid = int.Parse(entryPaidTextBox.Text),
 			Remarks = remarkTextBox.Text,
 			BillDateTime = DateTime.Now
 		};

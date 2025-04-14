@@ -9,6 +9,7 @@
 	@DiscPercent DECIMAL(5,2),
 	@DiscReason VARCHAR(250),
 	@ServicePercent DECIMAL(5,2),
+	@EntryPaid INT,
 	@Remarks VARCHAR(250),
 	@BillDateTime DATETIME
 AS
@@ -26,6 +27,7 @@ BEGIN
 			DiscPercent,
 			DiscReason,
 			ServicePercent,
+			EntryPaid,
 			Remarks
 		) VALUES
 		(
@@ -38,6 +40,7 @@ BEGIN
 			@DiscPercent,
 			@DiscReason,
 			@ServicePercent,
+			@EntryPaid,
 			@Remarks
 		);
 		
@@ -57,6 +60,7 @@ BEGIN
 			DiscPercent = @DiscPercent,
 			DiscReason = @DiscReason,
 			ServicePercent = @ServicePercent,
+			EntryPaid = @EntryPaid,
 			Remarks = @Remarks
 		WHERE Id = @Id;
 	END

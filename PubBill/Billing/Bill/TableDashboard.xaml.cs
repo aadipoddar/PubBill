@@ -90,7 +90,32 @@ public partial class TableDashboard : Window
 			return;
 		}
 
-		#region Start New Running Bill And Status False
+		RunningBillModel runningBillModel = await StartRunningBill(billModel);
+		await SetPaymentDetailsFalse(billModel);
+
+		BillWindow billWindow = new(this, runningBillModel);
+		billWindow.Show();
+		Hide();
+	}
+
+	private static async Task SetPaymentDetailsFalse(BillModel billModel)
+	{
+		var billPaymentDetails = await BillData.LoadBillPaymentDetailByBillId(billModel.Id);
+		billPaymentDetails = [.. billPaymentDetails.Where(x => x.Status)];
+
+		foreach (var item in billPaymentDetails)
+			await BillData.InsertBillPaymentDetail(new BillPaymentDetailModel
+			{
+				Id = item.Id,
+				BillId = item.BillId,
+				Amount = item.Amount,
+				PaymentModeId = item.PaymentModeId,
+				Status = false
+			});
+	}
+
+	private static async Task<RunningBillModel> StartRunningBill(BillModel billModel)
+	{
 		var billDetails = await BillData.LoadBillDetailByBillId(billModel.Id);
 		billDetails = [.. billDetails.Where(x => x.Status)];
 
@@ -130,25 +155,7 @@ public partial class TableDashboard : Window
 				Cancelled = false
 			});
 		}
-		#endregion
 
-		#region Set PaymentDetails False
-		var billPaymentDetails = await BillData.LoadBillPaymentDetailByBillId(billModel.Id);
-		billPaymentDetails = [.. billPaymentDetails.Where(x => x.Status)];
-
-		foreach (var item in billPaymentDetails)
-			await BillData.InsertBillPaymentDetail(new BillPaymentDetailModel
-			{
-				Id = item.Id,
-				BillId = item.BillId,
-				Amount = item.Amount,
-				PaymentModeId = item.PaymentModeId,
-				Status = false
-			});
-		#endregion
-
-		BillWindow billWindow = new(this, runningBillModel);
-		billWindow.Show();
-		Hide();
+		return runningBillModel;
 	}
 }

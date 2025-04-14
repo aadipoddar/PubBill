@@ -10,6 +10,7 @@
     [DiscPercent] DECIMAL(5, 2) NOT NULL DEFAULT 0, 
     [DiscReason] VARCHAR(250) NOT NULL, 
     [ServicePercent] DECIMAL(5, 2) NOT NULL, 
+    [EntryPaid] INT NOT NULL DEFAULT 0, 
     [Remarks] VARCHAR(250) NOT NULL, 
     [BillDateTime] DATETIME NOT NULL DEFAULT (((getdate() AT TIME ZONE 'UTC') AT TIME ZONE 'India Standard Time')), 
     CONSTRAINT [FK_Bill_ToUser] FOREIGN KEY (UserId) REFERENCES [User](Id), 

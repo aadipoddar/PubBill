@@ -12,6 +12,7 @@ public class BillModel
 	public decimal DiscPercent { get; set; }
 	public string DiscReason { get; set; }
 	public decimal ServicePercent { get; set; }
+	public int EntryPaid { get; set; }
 	public string Remarks { get; set; }
 	public DateTime BillDateTime { get; set; }
 }
