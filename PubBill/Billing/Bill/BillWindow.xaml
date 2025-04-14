@@ -76,6 +76,7 @@
 									<RowDefinition Height="Auto" />
 									<RowDefinition Height="Auto" />
 									<RowDefinition Height="Auto" />
+									<RowDefinition Height="Auto" />
 								</Grid.RowDefinitions>
 
 								<TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="Person Information" Margin="10" Padding="5" HorizontalAlignment="Center" />
@@ -90,6 +91,9 @@
 
 								<TextBlock Grid.Row="4" Grid.Column="0" Text="Total People" Margin="10" Padding="5" />
 								<TextBox  x:Name="totalPeopleTextBox" Grid.Row="4" Grid.Column="1" Margin="10" Padding="5" MinWidth="100" Text="1" MaxLength="5" PreviewTextInput="numberTextBox_PreviewTextInput" />
+
+								<TextBlock Grid.Row="5" Grid.Column="0" Text="Entry Paid" Margin="10" Padding="5" />
+								<TextBox  x:Name="entryPaidTextBox" Grid.Row="5" Grid.Column="1" Margin="10" Padding="5" MinWidth="100" Text="0" IsReadOnly="True" />
 							</Grid>
 						</Border>
 						<!--#endregion-->

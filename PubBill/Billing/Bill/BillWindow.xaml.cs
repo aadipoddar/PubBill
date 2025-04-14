@@ -219,19 +219,45 @@ public partial class BillWindow : Window
 	#region Person Management
 	private async void personNumberTextBox_TextChanged(object sender, TextChangedEventArgs e)
 	{
-		var foundPerson = await PersonData.LoadPersonByNumber(personNumberTextBox.Text);
+		var foundPersonTransaction = await PubEntryData.LaodTransactionByLocationPerson(_user.LocationId, personNumberTextBox.Text);
 
-		if (foundPerson is not null)
+		if (foundPersonTransaction is not null)
 		{
-			personNameTextBox.Text = foundPerson.Name;
+			var totalAdvance = 0;
+			var advance = await PubEntryData.LoadAdvanceByTransactionId(foundPersonTransaction.Id);
+
+			if (advance is not null)
+			{
+				var advanceDetails = await PubEntryData.LoadAdvanceDetailByAdvanceId(advance.Id);
+				totalAdvance = (int)advanceDetails.Sum(x => x?.Amount);
+			}
+
+			personNameTextBox.Text = foundPersonTransaction.PersonName;
 			personNameTextBox.IsReadOnly = true;
-			loyaltyCheckBox.IsChecked = foundPerson.Loyalty;
+			loyaltyCheckBox.IsChecked = foundPersonTransaction.PersonLoyalty;
+			totalPeopleTextBox.Text = (foundPersonTransaction.Male + foundPersonTransaction.Female).ToString();
+			entryPaidTextBox.Text = (foundPersonTransaction.Cash + foundPersonTransaction.Card + foundPersonTransaction.UPI + foundPersonTransaction.Amex + totalAdvance).ToString();
 		}
+
 		else
 		{
-			personNameTextBox.Clear();
-			personNameTextBox.IsReadOnly = false;
-			loyaltyCheckBox.IsChecked = false;
+			totalPeopleTextBox.Text = "1";
+			entryPaidTextBox.Text = "0";
+
+			var foundPerson = await PersonData.LoadPersonByNumber(personNumberTextBox.Text);
+
+			if (foundPerson is not null)
+			{
+				personNameTextBox.Text = foundPerson.Name;
+				personNameTextBox.IsReadOnly = true;
+				loyaltyCheckBox.IsChecked = foundPerson.Loyalty;
+			}
+			else
+			{
+				personNameTextBox.Clear();
+				personNameTextBox.IsReadOnly = false;
+				loyaltyCheckBox.IsChecked = false;
+			}
 		}
 	}
 
@@ -245,8 +271,9 @@ public partial class BillWindow : Window
 			Loyalty = (bool)loyaltyCheckBox.IsChecked
 		};
 
-		if (personNameTextBox.IsReadOnly)
-			person.Id = (await PersonData.LoadPersonByNumber(person.Number)).Id;
+		var foundPerson = await PersonData.LoadPersonByNumber(personNumberTextBox.Text);
+		if (foundPerson is not null)
+			person.Id = foundPerson.Id;
 
 		return await PersonData.InsertPerson(person);
 	}
@@ -411,7 +438,9 @@ public partial class BillWindow : Window
 		decimal serviceAmount = subTotal * (servicePercent / 100);
 
 		serviceAmountTextBox.Text = serviceAmount.ToString("N2");
-		totalAmountTextBox.Text = (subTotal + serviceAmount).FormatIndianCurrency();
+
+		decimal entryPaid = decimal.Parse(entryPaidTextBox.Text);
+		totalAmountTextBox.Text = (subTotal + serviceAmount - entryPaid).FormatIndianCurrency();
 	}
 
 	private async void discountPercentTextBox_TextChanged(object sender, TextChangedEventArgs e)

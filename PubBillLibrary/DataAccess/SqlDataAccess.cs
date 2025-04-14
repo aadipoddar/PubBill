@@ -31,4 +31,14 @@ static class SqlDataAccess
 
 		await connection.ExecuteAsync(storedProcedure, commandType: CommandType.StoredProcedure);
 	}
+
+	public static async Task<List<T>> PubEntryLoadData<T, U>(string storedProcedure, U parameters)
+	{
+		using IDbConnection connection = new SqlConnection(ConnectionStrings.PubEntryLocal);
+
+		List<T> rows = [.. await connection.QueryAsync<T>(storedProcedure, parameters,
+		commandType: CommandType.StoredProcedure)];
+
+		return rows;
+	}
 }

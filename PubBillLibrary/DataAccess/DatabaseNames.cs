@@ -69,3 +69,10 @@ public static class StoredProcedureNames
 
 	public static string DeleteRunningBillDetail => "Delete_RunningBillDetail";
 }
+
+public static class PubEntryStoredProcedures
+{
+	public static string LaodTransactionByLocationPerson => "Laod_Transaction_By_Location_Person";
+	public static string LoadAdvanceByTransactionId => "Load_Advance_By_TransactionId";
+	public static string LoadAdvanceDetailByAdvanceId => "Load_AdvanceDetail_By_AdvanceId";
+}
