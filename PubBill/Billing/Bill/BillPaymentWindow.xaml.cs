@@ -36,7 +36,7 @@ public partial class BillPaymentWindow : Window
 		paymentModeComboBox.SelectedValuePath = nameof(PaymentModeModel.Id);
 		paymentModeComboBox.SelectedIndex = 0;
 
-		_totalAmount = await BillWindowHelper.CalculateBillTotal(_allCart, _runningBillModel);
+		_totalAmount = await BillWindowHelper.CalculateBillTotal(_allCart, _runningBillModel, _billModel.EntryPaid);
 		totalTextBox.Text = _totalAmount.FormatIndianCurrency();
 
 		CalculateTotal();
@@ -115,6 +115,7 @@ public partial class BillPaymentWindow : Window
 		await InsertPaymentDetails(billId);
 
 		// Change Running Table Status
+		_runningBillModel.BillId = billId;
 		await RunningBillData.InsertRunningBill(_runningBillModel);
 		Close();
 	}

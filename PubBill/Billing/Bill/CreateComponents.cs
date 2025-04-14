@@ -7,9 +7,8 @@ namespace PubBill.Billing.Bill;
 
 static class CreateComponents
 {
-	internal static async Task CreateDiningAreaExpanders(StackPanel areaStackPanel, UserModel userModel, TableDashboard tableDashboard)
+	internal static async Task CreateDiningAreaExpanders(StackPanel areaStackPanel, UserModel userModel, LocationModel location, TableDashboard tableDashboard)
 	{
-		var location = await CommonData.LoadTableDataById<LocationModel>(TableNames.Location, userModel.LocationId);
 		var diningAreas = await DiningAreaData.LoadDiningAreaByLocation(location.Id);
 		var runningBills = await CommonData.LoadTableDataByStatus<RunningBillModel>(TableNames.RunningBill);
 		runningBills = [.. runningBills.Where(b => b.LocationId == location.Id)];
@@ -85,7 +84,7 @@ static class CreateComponents
 
 	private static async Task<Button> MakeRunningTableButton(UserModel userModel, TableDashboard tableDashboard, DiningTableModel table, RunningBillModel runningBill)
 	{
-		var user = await CommonData.LoadTableDataById<UserModel>(TableNames.User, runningBill.UserId);
+		var runningTableUser = await CommonData.LoadTableDataById<UserModel>(TableNames.User, runningBill.UserId);
 		var runningBillDetails = await RunningBillData.LoadRunningBillDetailByRunningBillId(runningBill.Id);
 		var total = runningBillDetails.Where(x => !x.Cancelled).Sum(b => b.Rate * b.Quantity);
 
@@ -103,7 +102,7 @@ static class CreateComponents
 
 		var userNameTextBlock = new TextBlock
 		{
-			Text = $"{user.Name}",
+			Text = $"{runningTableUser.Name}",
 			FontSize = 12,
 			Foreground = Brushes.Black,
 			HorizontalAlignment = HorizontalAlignment.Left
@@ -170,11 +169,21 @@ static class CreateComponents
 			Padding = new Thickness(5),
 		};
 
+
 		button.Click += (sender, e) =>
 		{
-			BillWindow billWindow = new(tableDashboard, runningBill);
-			billWindow.Show();
-			tableDashboard.Hide();
+			if (runningTableUser.Id != userModel.Id && !userModel.Admin)
+			{
+				MessageBox.Show("This Table is Managed by another User", "Invalid User", MessageBoxButton.OK, MessageBoxImage.Error);
+				return;
+			}
+
+			else
+			{
+				BillWindow billWindow = new(tableDashboard, runningBill);
+				billWindow.Show();
+				tableDashboard.Hide();
+			}
 		};
 
 		return button;

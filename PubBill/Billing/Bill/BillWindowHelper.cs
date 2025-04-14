@@ -4,7 +4,7 @@ namespace PubBill.Billing.Bill;
 
 internal static class BillWindowHelper
 {
-	internal static async Task<decimal> CalculateBillTotal(ObservableCollection<CartModel> allCart, RunningBillModel runningBillModel)
+	internal static async Task<decimal> CalculateBillTotal(ObservableCollection<CartModel> allCart, RunningBillModel runningBillModel, int entryPaid)
 	{
 		decimal baseTotal = CalculateBaseTotal(allCart, []);
 
@@ -17,7 +17,7 @@ internal static class BillWindowHelper
 		decimal servicePercent = runningBillModel.ServicePercent;
 		decimal serviceAmount = subTotal * (servicePercent / 100);
 
-		return subTotal + serviceAmount;
+		return subTotal + serviceAmount - entryPaid;
 	}
 
 	internal static decimal CalculateBaseTotal(ObservableCollection<CartModel> allCart, ObservableCollection<CartModel> kotCart)

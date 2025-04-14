@@ -23,12 +23,14 @@ public partial class TableDashboard : Window
 	#endregion
 
 	private readonly UserModel _user;
+	private readonly LocationModel _location;
 	private readonly LoginWindow _loginWindow;
 
-	public TableDashboard(UserModel user, LoginWindow loginWindow)
+	public TableDashboard(UserModel user, LocationModel location, LoginWindow loginWindow)
 	{
 		InitializeComponent();
 		_user = user;
+		_location = location;
 		_loginWindow = loginWindow;
 	}
 
@@ -45,13 +47,10 @@ public partial class TableDashboard : Window
 		}
 
 		userTextBlock.Text = _user.Name;
-
-		var location = await CommonData.LoadTableDataById<LocationModel>(TableNames.Location, _user.LocationId);
-		locationTextBlock.Text = location.Name;
-
-		_loginWindow.Hide();
+		locationTextBlock.Text = _location.Name;
 
 		await RefreshScreen();
+		_loginWindow.Hide();
 	}
 
 	public async Task RefreshScreen()
@@ -62,7 +61,7 @@ public partial class TableDashboard : Window
 			InactivityMonitor.Instance.BeginRefreshOperation();
 
 			dateTimeTextBlock.Text = DateTime.Now.ToString("HH:mm tt");
-			await CreateComponents.CreateDiningAreaExpanders(areasStackPanel, _user, this);
+			await CreateComponents.CreateDiningAreaExpanders(areasStackPanel, _user, _location, this);
 		}
 		finally
 		{
@@ -87,6 +86,26 @@ public partial class TableDashboard : Window
 		if (billModel is null)
 		{
 			MessageBox.Show("Bill not found. Please check the bill number.", "Bill Not Found", MessageBoxButton.OK, MessageBoxImage.Error);
+			return;
+		}
+
+		if (billModel.LocationId != _location.Id)
+		{
+			MessageBox.Show("Bill not found in this location. Please check the bill number.", "Bill Not Found", MessageBoxButton.OK, MessageBoxImage.Error);
+			return;
+		}
+
+		if (billModel.UserId != _user.Id && !_user.Admin)
+		{
+			MessageBox.Show("This Bill was done by another user.", "Unauthorized Access", MessageBoxButton.OK, MessageBoxImage.Error);
+			return;
+		}
+
+		var runningTables = await CommonData.LoadTableDataByStatus<RunningBillModel>(TableNames.RunningBill);
+		runningTables = [.. runningTables.Where(x => x.DiningTableId == billModel.DiningTableId)];
+		if (runningTables.Count > 0)
+		{
+			MessageBox.Show("This Table has a runnning Order Please Close it first.", "Table Already Running", MessageBoxButton.OK, MessageBoxImage.Error);
 			return;
 		}
 

@@ -21,11 +21,16 @@ public partial class Dashboard : Window
 		_loginWindow = loginWindow;
 	}
 
-	private void Window_Loaded(object sender, RoutedEventArgs e)
+	private async void Window_Loaded(object sender, RoutedEventArgs e)
 	{
 		if (_user is null) Close();
 		else
 		{
+			locationComboBox.ItemsSource = await CommonData.LoadTableDataByStatus<LocationModel>(TableNames.Location);
+			locationComboBox.DisplayMemberPath = nameof(LocationModel.Name);
+			locationComboBox.SelectedValuePath = nameof(LocationModel.Id);
+			locationComboBox.SelectedValue = _user.LocationId;
+
 			bool isAdmin = _user.Admin;
 			bool isBill = _user.Bill;
 			bool isKOT = _user.KOT;
@@ -52,7 +57,7 @@ public partial class Dashboard : Window
 
 			if (isBill && !isKOT && !isInventory)
 			{
-				TableDashboard tableDashboard = new(_user, _loginWindow);
+				TableDashboard tableDashboard = new(_user, locationComboBox.SelectedItem as LocationModel, _loginWindow);
 				tableDashboard.Show();
 				Close();
 			}
@@ -71,11 +76,9 @@ public partial class Dashboard : Window
 		}
 	}
 
-	private void Window_Closed(object sender, EventArgs e) => _loginWindow.Show();
-
 	private void billButton_Click(object sender, RoutedEventArgs e)
 	{
-		TableDashboard tableDashboard = new(_user, _loginWindow);
+		TableDashboard tableDashboard = new(_user, locationComboBox.SelectedItem as LocationModel, _loginWindow);
 		tableDashboard.Show();
 		Close();
 	}
@@ -98,4 +101,6 @@ public partial class Dashboard : Window
 		adminPanel.Show();
 		Hide();
 	}
+
+	private void Window_Closed(object sender, EventArgs e) => _loginWindow.Show();
 }

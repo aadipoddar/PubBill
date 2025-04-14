@@ -11,8 +11,9 @@ public partial class BillWindow : Window
 {
 	#region Fields
 	private UserModel _user;
+	private DiningTableModel _diningTable;
+	private DiningAreaModel _diningArea;
 	private readonly TableDashboard _tableDashboard;
-	private DiningTableModel _diningTableModel;
 	private readonly RunningBillModel _runningBillModel;
 
 	private static readonly ObservableCollection<CartModel> _allCart = [], _kotCart = [];
@@ -29,8 +30,8 @@ public partial class BillWindow : Window
 		kotCartDataGrid.ItemsSource = _kotCart;
 
 		_user = user;
+		_diningTable = diningTableModel;
 		_tableDashboard = tableDashboard;
-		_diningTableModel = diningTableModel;
 	}
 
 	public BillWindow(TableDashboard tableDashboard, RunningBillModel runningBillModel)
@@ -60,13 +61,13 @@ public partial class BillWindow : Window
 	{
 		if (_runningBillModel is not null)
 		{
-			_diningTableModel = await CommonData.LoadTableDataById<DiningTableModel>(TableNames.DiningTable, _runningBillModel.DiningTableId);
+			_diningTable = await CommonData.LoadTableDataById<DiningTableModel>(TableNames.DiningTable, _runningBillModel.DiningTableId);
 			_user = await CommonData.LoadTableDataById<UserModel>(TableNames.User, _runningBillModel.UserId);
 		}
 
-		var dininArea = await CommonData.LoadTableDataById<DiningAreaModel>(TableNames.DiningArea, _diningTableModel.DiningAreaId);
-		diningAreaTextBox.Text = dininArea.Name;
-		diningTableTextBox.Text = _diningTableModel.Name;
+		_diningArea = await CommonData.LoadTableDataById<DiningAreaModel>(TableNames.DiningArea, _diningTable.DiningAreaId);
+		diningAreaTextBox.Text = _diningArea.Name;
+		diningTableTextBox.Text = _diningTable.Name;
 		runningTimeTextBox.Text = "0";
 
 		// Apply right alignment to all text columns
@@ -219,7 +220,7 @@ public partial class BillWindow : Window
 	#region Person Management
 	private async void personNumberTextBox_TextChanged(object sender, TextChangedEventArgs e)
 	{
-		var foundPersonTransaction = await PubEntryData.LaodTransactionByLocationPerson(_user.LocationId, personNumberTextBox.Text);
+		var foundPersonTransaction = await PubEntryData.LaodTransactionByLocationPerson(_diningArea.LocationId, personNumberTextBox.Text);
 
 		if (foundPersonTransaction is not null)
 		{
@@ -259,6 +260,8 @@ public partial class BillWindow : Window
 				loyaltyCheckBox.IsChecked = false;
 			}
 		}
+
+		await RefreshTotal();
 	}
 
 	private async Task<int> InsertPerson()
@@ -609,10 +612,10 @@ public partial class BillWindow : Window
 		RunningBillModel runningBill = new()
 		{
 			Id = _runningBillModel?.Id ?? 0,
-			UserId = _user.Id,
-			LocationId = _user.LocationId,
-			DiningAreaId = _diningTableModel.DiningAreaId,
-			DiningTableId = _diningTableModel.Id,
+			UserId = _runningBillModel?.UserId ?? _user.Id,
+			LocationId = _diningArea.LocationId,
+			DiningAreaId = _diningArea.Id,
+			DiningTableId = _diningTable.Id,
 			PersonId = personId,
 			TotalPeople = int.TryParse(totalPeopleTextBox.Text, out int people) ? people : 0,
 			DiscPercent = decimal.Parse(discountPercentTextBox.Text),
@@ -723,10 +726,10 @@ public partial class BillWindow : Window
 		BillModel billModel = new()
 		{
 			Id = _runningBillModel?.BillId ?? 0,
-			UserId = _user.Id,
-			LocationId = _user.LocationId,
-			DiningAreaId = _diningTableModel.DiningAreaId,
-			DiningTableId = _diningTableModel.Id,
+			UserId = _runningBillModel?.UserId ?? _user.Id,
+			LocationId = _diningArea.LocationId,
+			DiningAreaId = _diningArea.Id,
+			DiningTableId = _diningTable.Id,
 			PersonId = personId,
 			TotalPeople = int.TryParse(totalPeopleTextBox.Text, out int people) ? people : 0,
 			DiscPercent = decimal.Parse(discountPercentTextBox.Text),
