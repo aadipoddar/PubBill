@@ -1,5 +1,9 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Documents;
+
+using PubBill.Billing.Bill.Printing;
 
 namespace PubBill.Billing.Bill;
 
@@ -117,6 +121,8 @@ public partial class BillPaymentWindow : Window
 		// Change Running Table Status
 		_runningBillModel.BillId = billId;
 		await RunningBillData.InsertRunningBill(_runningBillModel);
+
+		PrintBill();
 		Close();
 	}
 
@@ -153,6 +159,18 @@ public partial class BillPaymentWindow : Window
 				Amount = payment.Amount,
 				Status = true
 			});
+	}
+
+	private void PrintBill()
+	{
+		PrintDialog printDialog = new();
+
+		decimal amount = _paymentModels
+			.Where(item => item.PaymentModeId == 3)
+			.Sum(item => item.Amount);
+
+		IDocumentPaginatorSource idpSource = ThermalReceipt.Print(amount);
+		printDialog.PrintDocument(idpSource.DocumentPaginator, "Thermal Receipt");
 	}
 	#endregion
 
