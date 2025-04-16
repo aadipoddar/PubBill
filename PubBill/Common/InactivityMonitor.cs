@@ -16,7 +16,7 @@ public class InactivityMonitor
 	// Activity monitoring properties
 	public DateTime LastActivityTime { get; private set; } = DateTime.Now;
 	private DispatcherTimer _activityTimer;
-	private TimeSpan _inactivityThreshold = TimeSpan.FromSeconds(60);
+	private TimeSpan _inactivityThreshold = TimeSpan.FromMinutes(1);
 	private TimeSpan _warningThreshold = TimeSpan.FromSeconds(20);
 	private bool _warningDisplayed = false;
 	private Window _warningWindow;

@@ -433,7 +433,7 @@ public partial class BillWindow : Window
 		discountAmountTextBox.Text = discountAmout.ToString("N2");
 		afterDiscsTotalAmountTextBox.Text = (_baseTotal - discountAmout).FormatIndianCurrency();
 
-		decimal productTax = await BillWindowHelper.CalculatProductTotalTax(_allCart, _kotCart);
+		decimal productTax = await BillWindowHelper.CalculateProductTotalTax(_allCart, _kotCart);
 		decimal subTotal = _baseTotal - discountAmout + productTax;
 		subTotalAmountTextBox.Text = subTotal.FormatIndianCurrency();
 

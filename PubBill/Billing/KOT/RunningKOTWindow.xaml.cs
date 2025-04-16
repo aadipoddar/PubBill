@@ -8,6 +8,8 @@ namespace PubBill.Billing.KOT;
 /// </summary>
 public partial class RunningKOTWindow : Window
 {
+	private static int RefreshTimer => (int)Application.Current.Resources[SettingsKeys.RefreshReportTimer];
+
 	#region Timers
 
 	private SmartRefreshManager _refreshManager;
@@ -16,7 +18,7 @@ public partial class RunningKOTWindow : Window
 	{
 		_refreshManager = new SmartRefreshManager(
 			refreshAction: RefreshScreen,
-			interval: TimeSpan.FromSeconds(20)
+			interval: TimeSpan.FromSeconds(RefreshTimer)
 		);
 		_refreshManager.Start();
 	}

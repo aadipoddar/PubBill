@@ -107,22 +107,22 @@ public partial class BillPaymentWindow : Window
 	#region Saving
 	private async void saveButton_Click(object sender, RoutedEventArgs e)
 	{
-		int billId = await BillData.InsertBill(_billModel);
-		if (billId == 0)
+		_billModel.Id = await BillData.InsertBill(_billModel);
+		if (_billModel.Id == 0)
 		{
 			MessageBox.Show("Failed to insert bill data.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
 			return;
 		}
 
-		await InsertBillDetails(billId);
+		await InsertBillDetails(_billModel.Id);
 
-		await InsertPaymentDetails(billId);
+		await InsertPaymentDetails(_billModel.Id);
 
 		// Change Running Table Status
-		_runningBillModel.BillId = billId;
+		_runningBillModel.BillId = _billModel.Id;
 		await RunningBillData.InsertRunningBill(_runningBillModel);
 
-		PrintBill();
+		await PrintBill();
 		Close();
 	}
 
@@ -161,7 +161,7 @@ public partial class BillPaymentWindow : Window
 			});
 	}
 
-	private void PrintBill()
+	private async Task PrintBill()
 	{
 		PrintDialog printDialog = new();
 
@@ -169,7 +169,7 @@ public partial class BillPaymentWindow : Window
 			.Where(item => item.PaymentModeId == 3)
 			.Sum(item => item.Amount);
 
-		IDocumentPaginatorSource idpSource = ThermalReceipt.Print(amount);
+		IDocumentPaginatorSource idpSource = await ThermalReceipt.Print(_billModel, amount);
 		printDialog.PrintDocument(idpSource.DocumentPaginator, "Thermal Receipt");
 	}
 	#endregion

@@ -26,7 +26,7 @@
 
 				<Expander Grid.Row="0" Margin="10" Padding="5" IsExpanded="True" Background="Goldenrod">
 					<Expander.Header>
-						<TextBlock Text="Bill Details"  FontWeight="Bold" Foreground="Black" HorizontalAlignment="Center" />
+						<TextBlock Text="Bill Details" FontWeight="Bold" Foreground="Black" HorizontalAlignment="Center" />
 					</Expander.Header>
 
 					<Grid HorizontalAlignment="Center">

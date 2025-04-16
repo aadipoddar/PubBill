@@ -23,9 +23,16 @@ static class CreateComponents
 			var expander = new Expander
 			{
 				Name = $"{diningArea.Name.RemoveSpace()}{diningArea.Id}Expander",
-				Header = diningArea.Name,
+				Background = Brushes.Gold,
 				IsExpanded = diningTables.Count > 0,
 				Margin = new Thickness(10),
+				Header = new TextBlock
+				{
+					Text = diningArea.Name,
+					FontWeight = FontWeights.Bold,
+					Foreground = Brushes.Black,
+					HorizontalAlignment = HorizontalAlignment.Center,
+				}
 			};
 
 			var itemsControl = new ItemsControl

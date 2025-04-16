@@ -70,6 +70,7 @@
     <Folder Include="Tables\Products" />
     <Folder Include="Stored Procedures\Insert\Products" />
     <Folder Include="Compare" />
+    <Folder Include="Stored Procedures\Settings" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\User.sql" />
@@ -119,6 +120,10 @@
     <Build Include="Views\Product_Tax.sql" />
     <Build Include="Stored Procedures\LoadData\Billing\Load_BillDetail_By_BillId.sql" />
     <Build Include="Stored Procedures\LoadData\Billing\Load_BillPaymentDetail_By_BillId.sql" />
+    <Build Include="Tables\Settings.sql" />
+    <Build Include="Stored Procedures\Settings\Load_Settings_By_Key.sql" />
+    <Build Include="Stored Procedures\Settings\Reset_Settings.sql" />
+    <Build Include="Stored Procedures\Settings\Update_Settings.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="DBPubBill.refactorlog" />

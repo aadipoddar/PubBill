@@ -1,5 +1,4 @@
-﻿using System.Text.RegularExpressions;
-using System.Windows;
+﻿using System.Windows;
 
 namespace PubBill;
 
@@ -10,7 +9,11 @@ public partial class LoginWindow : Window
 {
 	public LoginWindow() => InitializeComponent();
 
-	private void Window_Loaded(object sender, RoutedEventArgs e) => userPasswordBox.Focus();
+	private async void Window_Loaded(object sender, RoutedEventArgs e)
+	{
+		await SettingsManager.LoadSettings();
+		userPasswordBox.Focus();
+	}
 
 	private async void userPasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
 	{
@@ -34,9 +37,6 @@ public partial class LoginWindow : Window
 		}
 	}
 
-	private void numberTextBox_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
-	{
-		Regex regex = new("[^0-9]+");
-		e.Handled = regex.IsMatch(e.Text);
-	}
+	private void numberTextBox_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e) =>
+		Helper.ValidateIntegerInput(sender, e);
 }

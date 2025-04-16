@@ -68,6 +68,10 @@ public static class StoredProcedureNames
 	public static string LoadBillPaymentDetailByBillId => "Load_BillPaymentDetail_By_BillId";
 
 	public static string DeleteRunningBillDetail => "Delete_RunningBillDetail";
+
+	public static string LoadSettingsByKey => "Load_Settings_By_Key";
+	public static string UpdateSettings => "Update_Settings";
+	public static string ResetSettings => "Reset_Settings";
 }
 
 public static class PubEntryStoredProcedures
