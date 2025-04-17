@@ -16,6 +16,9 @@
 				<RowDefinition Height="Auto" />
 				<RowDefinition Height="20" />
 				<RowDefinition Height="Auto" />
+				<RowDefinition Height="20" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
 				<RowDefinition Height="Auto" />
 				<RowDefinition Height="20" />
 				<RowDefinition Height="Auto" />
@@ -48,10 +51,16 @@
 			<Label Content="Inactivity Timer (In Minutes)" Grid.Row="3" Grid.Column="0" Margin="5" Padding="5"/>
 			<TextBox x:Name="inactivityTimerTextBox" Grid.Row="3" Grid.Column="1" Margin="5" Padding="5" PreviewTextInput="textBox_PreviewTextInput"/>
 
-			<Label Content="Refresh Report Timer (In Seconds)" Grid.Row="4" Grid.Column="0" Margin="5" Padding="5"/>
-			<TextBox x:Name="refreshReportTimerTextBox" Grid.Row="4" Grid.Column="1" Margin="5" Padding="5" PreviewTextInput="textBox_PreviewTextInput"/>
+			<Label Content="Refresh Bill Timer (In Seconds)" Grid.Row="5" Grid.Column="0" Margin="5" Padding="5"/>
+			<TextBox x:Name="refreshBillTimerTextBox" Grid.Row="5" Grid.Column="1" Margin="5" Padding="5" PreviewTextInput="textBox_PreviewTextInput"/>
 
-			<Expander Header="Thermal Settings" IsExpanded="True" Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Margin="10">
+			<Label Content="Refresh KOT Timer (In Seconds)" Grid.Row="6" Grid.Column="0" Margin="5" Padding="5"/>
+			<TextBox x:Name="refreshKOTTimerTextBox" Grid.Row="6" Grid.Column="1" Margin="5" Padding="5" PreviewTextInput="textBox_PreviewTextInput"/>
+
+			<Label Content="Refresh Report Timer (In Seconds)" Grid.Row="7" Grid.Column="0" Margin="5" Padding="5"/>
+			<TextBox x:Name="refreshReportTimerTextBox" Grid.Row="7" Grid.Column="1" Margin="5" Padding="5" PreviewTextInput="textBox_PreviewTextInput"/>
+
+			<Expander Header="Thermal Settings" IsExpanded="True" Grid.Row="9" Grid.Column="0" Grid.ColumnSpan="2" Margin="10">
 				<Grid>
 					<Grid.RowDefinitions>
 						<RowDefinition Height="Auto" />

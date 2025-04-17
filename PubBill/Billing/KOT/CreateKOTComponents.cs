@@ -116,7 +116,7 @@ static class CreateKOTComponents
 
 		var totalPeopleTextBlock = new TextBlock
 		{
-			Text = $"Products: {productsCount}",
+			Text = $"New Products: {productsCount}",
 			FontSize = 12,
 			HorizontalAlignment = HorizontalAlignment.Center
 		};

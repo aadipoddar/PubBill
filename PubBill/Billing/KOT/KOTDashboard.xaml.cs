@@ -2,8 +2,6 @@
 using System.Windows.Controls;
 using System.Windows.Documents;
 
-using PubBill.Billing.KOT.Printing;
-
 namespace PubBill.Billing.KOT;
 
 /// <summary>
@@ -13,13 +11,15 @@ public partial class KOTDashboard : Window
 {
 	#region Timers
 
+	private static int RefreshTimer => (int)Application.Current.Resources[SettingsKeys.RefreshKOTTimer];
+
 	private SmartRefreshManager _refreshManager;
 
 	private void InitializeTimers()
 	{
 		_refreshManager = new SmartRefreshManager(
 			refreshAction: RefreshScreen,
-			interval: TimeSpan.FromMinutes(2)
+			interval: TimeSpan.FromSeconds(RefreshTimer)
 		);
 		_refreshManager.Start();
 	}
@@ -38,29 +38,33 @@ public partial class KOTDashboard : Window
 
 	private async Task LoadData()
 	{
+		await CreateKOTComponents.CreateLocationExpanders(areasStackPanel, this);
+		await PrintOrders();
+
 		InitializeTimers();
-		_loginWindow.Hide();
 		await RefreshScreen();
+
+		_loginWindow.Hide();
 	}
 
 	public async Task RefreshScreen()
 	{
 		try
 		{
-			// Tell the inactivity monitor that we're starting a programmatic refresh
 			InactivityMonitor.Instance.BeginRefreshOperation();
+
 			await CreateKOTComponents.CreateLocationExpanders(areasStackPanel, this);
 			await PrintOrders();
 		}
 		finally
 		{
-			// Always make sure to end the refresh operation, even if an error occurs
 			InactivityMonitor.Instance.EndRefreshOperation();
 		}
 	}
 
-	private static async Task PrintOrders()
+	private async Task PrintOrders()
 	{
+		_refreshManager?.Stop();
 		var runningBills = await CommonData.LoadTableDataByStatus<RunningBillModel>(TableNames.RunningBill);
 
 		foreach (var bill in runningBills)
@@ -76,12 +80,12 @@ public partial class KOTDashboard : Window
 				await ChangeKOTBillStatus(kotOrder);
 			}
 		}
+		_refreshManager?.Start();
 	}
 
-	private async static Task PrintKOT(KOTBillDetailModel kotOrder)
+	private static async Task PrintKOT(KOTBillDetailModel kotOrder)
 	{
 		PrintDialog printDialog = new();
-
 		IDocumentPaginatorSource idpSource = await ThermalKOTReceipt.Print(kotOrder);
 		printDialog.PrintDocument(idpSource.DocumentPaginator, "KOT Receipt");
 	}
@@ -102,8 +106,8 @@ public partial class KOTDashboard : Window
 
 	private void Window_Closed(object sender, EventArgs e)
 	{
-		_refreshManager.Stop();
-		_refreshManager.Dispose();
+		_refreshManager?.Stop();
+		_refreshManager?.Dispose();
 		_loginWindow.Show();
 	}
 }

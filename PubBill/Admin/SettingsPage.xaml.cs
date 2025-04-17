@@ -57,6 +57,9 @@ public partial class SettingsPage : Page
 		#endregion
 
 		inactivityTimerTextBox.Text = await SettingsData.LoadSettingsByKey(SettingsKeys.InactivityTime);
+
+		refreshBillTimerTextBox.Text = await SettingsData.LoadSettingsByKey(SettingsKeys.RefreshBillTimer);
+		refreshKOTTimerTextBox.Text = await SettingsData.LoadSettingsByKey(SettingsKeys.RefreshKOTTimer);
 		refreshReportTimerTextBox.Text = await SettingsData.LoadSettingsByKey(SettingsKeys.RefreshReportTimer);
 
 		#region Thermal

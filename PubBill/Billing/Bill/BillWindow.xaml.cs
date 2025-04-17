@@ -669,7 +669,7 @@ public partial class BillWindow : Window
 	{
 		foreach (var kotCart in _kotCart)
 		{
-			var allCart = _allCart.FirstOrDefault(c => c.ProductId == kotCart.ProductId && c.Cancelled == kotCart.Cancelled);
+			var allCart = _allCart.FirstOrDefault(c => c.ProductId == kotCart.ProductId && c.Cancelled == kotCart.Cancelled && c.Instruction == kotCart.Instruction);
 			if (allCart != null)
 			{
 				allCart.Quantity += kotCart.Quantity;

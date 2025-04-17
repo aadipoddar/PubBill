@@ -9,7 +9,7 @@ using MessagingToolkit.QRCode.Codec;
 
 using NumericWordsConversion;
 
-namespace PubBill.Billing.Bill.Printing;
+namespace PubBill.Billing.Bill;
 
 internal static class ThermalBillReceipt
 {
@@ -26,7 +26,7 @@ internal static class ThermalBillReceipt
 	private static string UpiId => Application.Current.Resources[SettingsKeys.UPIId].ToString();
 	#endregion
 
-	internal static async Task<FlowDocument> Print(BillModel billModel, decimal amount)
+	internal static async Task<FlowDocument> Print(BillModel billModel)
 	{
 		FlowDocument document = new()
 		{
@@ -44,7 +44,7 @@ internal static class ThermalBillReceipt
 		await AddItemDetails(document, billModel);
 		await AddTotalDetails(document, billModel);
 
-		AddQRCode(amount, document);
+		await AddQRCode(document, billModel);
 		AddFooterDetails(document);
 
 		return document;
@@ -202,8 +202,14 @@ internal static class ThermalBillReceipt
 		document.Blocks.Add(ThermalParagraphs.SeparatorParagraph());
 	}
 
-	private static void AddQRCode(decimal amount, FlowDocument document)
+	private static async Task AddQRCode(FlowDocument document, BillModel billModel)
 	{
+		var paymentDetails = await BillData.LoadBillPaymentDetailByBillId(billModel.Id);
+
+		decimal amount = paymentDetails
+			.Where(item => item.PaymentModeId == 3)
+			.Sum(item => item.Amount);
+
 		document.Blocks.Add(ThermalParagraphs.RegularParagraph("Scan to Pay"));
 
 		// Generate the UPI ID

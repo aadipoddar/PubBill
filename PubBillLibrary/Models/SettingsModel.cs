@@ -13,6 +13,8 @@ public static class SettingsKeys
 	public static string PubCloseTime => "PubCloseTime";
 
 	public static string InactivityTime => "InactivityTime";
+	public static string RefreshBillTimer => "RefreshBillTimer";
+	public static string RefreshKOTTimer => "RefreshKOTTimer";
 	public static string RefreshReportTimer => "RefreshReportTimer";
 
 	public static string PageWidthThermal => "PageWidthThermal";

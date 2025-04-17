@@ -3,8 +3,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 
-using PubBill.Billing.Bill.Printing;
-
 namespace PubBill.Billing.Bill;
 
 /// <summary>
@@ -164,12 +162,7 @@ public partial class BillPaymentWindow : Window
 	private async Task PrintBill()
 	{
 		PrintDialog printDialog = new();
-
-		decimal amount = _paymentModels
-			.Where(item => item.PaymentModeId == 3)
-			.Sum(item => item.Amount);
-
-		IDocumentPaginatorSource idpSource = await ThermalBillReceipt.Print(_billModel, amount);
+		IDocumentPaginatorSource idpSource = await ThermalBillReceipt.Print(_billModel);
 		printDialog.PrintDocument(idpSource.DocumentPaginator, "Bill Receipt");
 	}
 	#endregion

@@ -1,9 +1,5 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
-
-using PubBill.Billing.KOT.Printing;
 
 namespace PubBill.Billing.KOT;
 
@@ -12,9 +8,8 @@ namespace PubBill.Billing.KOT;
 /// </summary>
 public partial class RunningKOTWindow : Window
 {
-	private static int RefreshTimer => (int)Application.Current.Resources[SettingsKeys.RefreshReportTimer];
-
 	#region Timers
+	private static int RefreshTimer => (int)Application.Current.Resources[SettingsKeys.RefreshKOTTimer];
 
 	private SmartRefreshManager _refreshManager;
 
@@ -22,7 +17,7 @@ public partial class RunningKOTWindow : Window
 	{
 		_refreshManager = new SmartRefreshManager(
 			refreshAction: RefreshScreen,
-			interval: TimeSpan.FromMinutes(2)
+			interval: TimeSpan.FromMinutes(RefreshTimer)
 		);
 		_refreshManager.Start();
 	}
@@ -91,58 +86,13 @@ public partial class RunningKOTWindow : Window
 	{
 		try
 		{
-			// Tell the inactivity monitor that we're starting a programmatic refresh
 			InactivityMonitor.Instance.BeginRefreshOperation();
-			await PrintOrders();
 			await LoadDataGrid();
 		}
 		finally
 		{
-			// Always make sure to end the refresh operation, even if an error occurs
 			InactivityMonitor.Instance.EndRefreshOperation();
 		}
-	}
-
-	private async Task PrintOrders()
-	{
-		var runningBills = await CommonData.LoadTableDataByStatus<RunningBillModel>(TableNames.RunningBill);
-		runningBills = [.. runningBills.Where(b => b.DiningTableId == _runningTable.DiningTableId)];
-
-		foreach (var bill in runningBills)
-		{
-			if (bill == null) continue;
-
-			var kotOrders = await KOTData.LoadKOTBillDetailByRunningBillId(bill.Id);
-			kotOrders = [.. kotOrders.Where(x => x.Status)];
-
-			foreach (var kotOrder in kotOrders)
-			{
-				await PrintKOT(kotOrder);
-				await ChangeKOTBillStatus(kotOrder);
-			}
-		}
-	}
-
-	private async static Task PrintKOT(KOTBillDetailModel kotOrder)
-	{
-		PrintDialog printDialog = new();
-
-		IDocumentPaginatorSource idpSource = await ThermalKOTReceipt.Print(kotOrder);
-		printDialog.PrintDocument(idpSource.DocumentPaginator, "KOT Receipt");
-	}
-
-	private static async Task ChangeKOTBillStatus(KOTBillDetailModel kOTBillDetail)
-	{
-		await KOTData.InsertKOTBillDetail(new KOTBillDetailModel()
-		{
-			Id = kOTBillDetail.Id,
-			RunningBillId = kOTBillDetail.RunningBillId,
-			ProductId = kOTBillDetail.ProductId,
-			Quantity = kOTBillDetail.Quantity,
-			Instruction = kOTBillDetail.Instruction,
-			Status = false,
-			Cancelled = kOTBillDetail.Cancelled
-		});
 	}
 
 	private void Window_Closed(object sender, EventArgs e)

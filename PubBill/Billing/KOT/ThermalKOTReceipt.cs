@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Documents;
 
-namespace PubBill.Billing.KOT.Printing;
+namespace PubBill.Billing.KOT;
 
 internal static class ThermalKOTReceipt
 {
@@ -57,13 +57,12 @@ internal static class ThermalKOTReceipt
 		document.Blocks.Add(ThermalParagraphs.RegularParagraph($"Name: {product.Name}"));
 		document.Blocks.Add(ThermalParagraphs.RegularParagraph($"Code: {product.Code}"));
 		document.Blocks.Add(ThermalParagraphs.RegularParagraph($"Quantiy: {kotOrder.Quantity}"));
-		document.Blocks.Add(ThermalParagraphs.RegularParagraph($"Rate: {product.Rate}"));
 
 		if (!string.IsNullOrEmpty(kotOrder.Instruction))
 			document.Blocks.Add(ThermalParagraphs.RegularParagraph($"Instruction: {kotOrder.Instruction}"));
 
 		if (kotOrder.Cancelled)
-			document.Blocks.Add(ThermalParagraphs.RegularParagraph("This Item Has Been Cancelled"));
+			document.Blocks.Add(ThermalParagraphs.SubHeaderParagraph("This Item Has Been Cancelled"));
 
 		document.Blocks.Add(ThermalParagraphs.SeparatorParagraph());
 	}
