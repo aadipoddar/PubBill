@@ -169,8 +169,8 @@ public partial class BillPaymentWindow : Window
 			.Where(item => item.PaymentModeId == 3)
 			.Sum(item => item.Amount);
 
-		IDocumentPaginatorSource idpSource = await ThermalReceipt.Print(_billModel, amount);
-		printDialog.PrintDocument(idpSource.DocumentPaginator, "Thermal Receipt");
+		IDocumentPaginatorSource idpSource = await ThermalBillReceipt.Print(_billModel, amount);
+		printDialog.PrintDocument(idpSource.DocumentPaginator, "Bill Receipt");
 	}
 	#endregion
 

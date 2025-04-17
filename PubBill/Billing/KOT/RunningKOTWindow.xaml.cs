@@ -1,5 +1,9 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Documents;
+
+using PubBill.Billing.KOT.Printing;
 
 namespace PubBill.Billing.KOT;
 
@@ -18,7 +22,7 @@ public partial class RunningKOTWindow : Window
 	{
 		_refreshManager = new SmartRefreshManager(
 			refreshAction: RefreshScreen,
-			interval: TimeSpan.FromSeconds(RefreshTimer)
+			interval: TimeSpan.FromMinutes(2)
 		);
 		_refreshManager.Start();
 	}
@@ -101,7 +105,7 @@ public partial class RunningKOTWindow : Window
 
 	private async Task PrintOrders()
 	{
-		var runningBills = await CommonData.LoadTableData<RunningBillModel>(TableNames.RunningBill);
+		var runningBills = await CommonData.LoadTableDataByStatus<RunningBillModel>(TableNames.RunningBill);
 		runningBills = [.. runningBills.Where(b => b.DiningTableId == _runningTable.DiningTableId)];
 
 		foreach (var bill in runningBills)
@@ -109,12 +113,22 @@ public partial class RunningKOTWindow : Window
 			if (bill == null) continue;
 
 			var kotOrders = await KOTData.LoadKOTBillDetailByRunningBillId(bill.Id);
+			kotOrders = [.. kotOrders.Where(x => x.Status)];
+
 			foreach (var kotOrder in kotOrders)
 			{
-				// TODO - Print
+				await PrintKOT(kotOrder);
 				await ChangeKOTBillStatus(kotOrder);
 			}
 		}
+	}
+
+	private async static Task PrintKOT(KOTBillDetailModel kotOrder)
+	{
+		PrintDialog printDialog = new();
+
+		IDocumentPaginatorSource idpSource = await ThermalKOTReceipt.Print(kotOrder);
+		printDialog.PrintDocument(idpSource.DocumentPaginator, "KOT Receipt");
 	}
 
 	private static async Task ChangeKOTBillStatus(KOTBillDetailModel kOTBillDetail)

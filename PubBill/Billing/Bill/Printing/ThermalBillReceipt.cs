@@ -11,7 +11,7 @@ using NumericWordsConversion;
 
 namespace PubBill.Billing.Bill.Printing;
 
-internal static class ThermalReceipt
+internal static class ThermalBillReceipt
 {
 	#region Get Settings
 	private static int PageWidthThermal => (int)Application.Current.Resources[SettingsKeys.PageWidthThermal];

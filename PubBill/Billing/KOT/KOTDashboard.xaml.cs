@@ -1,4 +1,8 @@
 ﻿using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Documents;
+
+using PubBill.Billing.KOT.Printing;
 
 namespace PubBill.Billing.KOT;
 
@@ -15,7 +19,7 @@ public partial class KOTDashboard : Window
 	{
 		_refreshManager = new SmartRefreshManager(
 			refreshAction: RefreshScreen,
-			interval: TimeSpan.FromSeconds(20)
+			interval: TimeSpan.FromMinutes(2)
 		);
 		_refreshManager.Start();
 	}
@@ -35,8 +39,8 @@ public partial class KOTDashboard : Window
 	private async Task LoadData()
 	{
 		InitializeTimers();
-		await RefreshScreen();
 		_loginWindow.Hide();
+		await RefreshScreen();
 	}
 
 	public async Task RefreshScreen()
@@ -64,12 +68,22 @@ public partial class KOTDashboard : Window
 			if (bill is null) continue;
 
 			var kotOrders = await KOTData.LoadKOTBillDetailByRunningBillId(bill.Id);
+			kotOrders = [.. kotOrders.Where(x => x.Status)];
+
 			foreach (var kotOrder in kotOrders)
 			{
-				// TODO - Print
+				await PrintKOT(kotOrder);
 				await ChangeKOTBillStatus(kotOrder);
 			}
 		}
+	}
+
+	private async static Task PrintKOT(KOTBillDetailModel kotOrder)
+	{
+		PrintDialog printDialog = new();
+
+		IDocumentPaginatorSource idpSource = await ThermalKOTReceipt.Print(kotOrder);
+		printDialog.PrintDocument(idpSource.DocumentPaginator, "KOT Receipt");
 	}
 
 	private static async Task ChangeKOTBillStatus(KOTBillDetailModel kOTBillDetail)
