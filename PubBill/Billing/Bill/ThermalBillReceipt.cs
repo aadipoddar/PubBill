@@ -256,7 +256,7 @@ internal static class ThermalBillReceipt
 
 	private static void AddFooterDetails(FlowDocument document)
 	{
-		document.Blocks.Add(ThermalParagraphs.FooterParagraph($"Printed DT: {DateTime.Now:dd/MM/yy HH:mm}"));
+		document.Blocks.Add(ThermalParagraphs.FooterParagraph($"Printed DT: {DateTime.Now:dd/MM/yy HH:mm}", true));
 		document.Blocks.Add(ThermalParagraphs.FooterParagraph(FooterLine, true));
 	}
 }

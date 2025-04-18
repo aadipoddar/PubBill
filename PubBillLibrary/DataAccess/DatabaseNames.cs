@@ -72,6 +72,8 @@ public static class StoredProcedureNames
 	public static string LoadSettingsByKey => "Load_Settings_By_Key";
 	public static string UpdateSettings => "Update_Settings";
 	public static string ResetSettings => "Reset_Settings";
+
+	public static string LoadBillDetailsByDateLocationId => "Load_BillDetails_By_Date_LocationId";
 }
 
 public static class PubEntryStoredProcedures

@@ -3,6 +3,7 @@
 using PubBill.Admin;
 using PubBill.Billing.Bill;
 using PubBill.Billing.KOT;
+using PubBill.Reports;
 
 namespace PubBill;
 
@@ -48,12 +49,17 @@ public partial class Dashboard : Window
 				kotButton.Visibility = Visibility.Visible;
 				inventoryButton.Visibility = Visibility.Visible;
 				adminButton.Visibility = Visibility.Visible;
+				reportButton.Visibility = Visibility.Visible;
 			}
 
 			if (!isBill) billButton.Visibility = Visibility.Collapsed;
 			if (!isKOT) kotButton.Visibility = Visibility.Collapsed;
 			if (!isInventory) inventoryButton.Visibility = Visibility.Collapsed;
-			if (!isAdmin) adminButton.Visibility = Visibility.Collapsed;
+			if (!isAdmin)
+			{
+				adminButton.Visibility = Visibility.Collapsed;
+				reportButton.Visibility = Visibility.Collapsed;
+			}
 
 			if (isBill && !isKOT && !isInventory)
 			{
@@ -93,6 +99,13 @@ public partial class Dashboard : Window
 	private void inventoryButton_Click(object sender, RoutedEventArgs e)
 	{
 
+	}
+
+	private void reportButton_Click(object sender, RoutedEventArgs e)
+	{
+		SummaryReport summaryReport = new(this);
+		summaryReport.Show();
+		Hide();
 	}
 
 	private void adminButton_Click(object sender, RoutedEventArgs e)
