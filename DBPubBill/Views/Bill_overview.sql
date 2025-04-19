@@ -48,8 +48,8 @@ SELECT
         SUM(b.EntryPaid) AS FinalAmount,
 
     (SELECT Amount FROM [dbo].[BillPaymentDetail] bpd WHERE bpd.BillId = b.Id AND bpd.PaymentModeId = 1 AND bpd.Status = 1) AS [Cash],
-    (SELECT Amount FROM [dbo].[BillPaymentDetail] bpd WHERE bpd.BillId = b.Id AND bpd.PaymentModeId = 2 AND bpd.Status = 1) AS [Credit Card],
-    (SELECT Amount FROM [dbo].[BillPaymentDetail] bpd WHERE bpd.BillId = b.Id AND bpd.PaymentModeId = 3 AND bpd.Status = 1) AS [Online Transfer]
+    (SELECT Amount FROM [dbo].[BillPaymentDetail] bpd WHERE bpd.BillId = b.Id AND bpd.PaymentModeId = 2 AND bpd.Status = 1) AS [Card],
+    (SELECT Amount FROM [dbo].[BillPaymentDetail] bpd WHERE bpd.BillId = b.Id AND bpd.PaymentModeId = 3 AND bpd.Status = 1) AS [UPI]
 FROM 
     [dbo].[Bill] b
 INNER JOIN 

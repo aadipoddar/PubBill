@@ -33,6 +33,7 @@ public class BillOverviewModel
 	public decimal TotalTaxAmount { get; set; }
 	public decimal ServiceAmount { get; set; }
 	public decimal BaseTotal { get; set; }
+	public decimal AfterDiscount { get; set; }
 	public decimal AfterTax { get; set; }
 	public decimal AfterService { get; set; }
 	public int EntryPaid { get; set; }

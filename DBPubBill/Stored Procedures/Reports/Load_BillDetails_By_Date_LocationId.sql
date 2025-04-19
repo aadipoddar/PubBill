@@ -4,8 +4,18 @@
     @LocationId INT
 AS
 BEGIN
-    SELECT *
-    FROM dbo.Bill_Overview v
-    WHERE BillDateTime BETWEEN @FromDate AND @ToDate
-        AND LocationId = @LocationId;
+    IF @LocationId = 0
+    BEGIN
+        SELECT *
+        FROM dbo.Bill_Overview v
+        WHERE BillDateTime BETWEEN @FromDate AND @ToDate;
+    END
+
+    ELSE
+    BEGIN
+        SELECT *
+        FROM dbo.Bill_Overview v
+        WHERE BillDateTime BETWEEN @FromDate AND @ToDate
+          AND LocationId = @LocationId;
+    END
 END
