@@ -46,7 +46,7 @@ static class CreateKOTComponents
 	private static void SaveCheckedLocations(StackPanel locationCheckBoxStackPanel)
 	{
 		var checkedLocationIds = locationCheckBoxStackPanel.Children.OfType<CheckBox>()
-			.Where(c => c.IsChecked == true)
+			.Where(c => (bool)c.IsChecked)
 			.Select(c =>
 			{
 				string name = c.Name;

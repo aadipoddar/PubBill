@@ -2,7 +2,7 @@
 	@Id INT,
 	@Name VARCHAR(50),
 	@KitchenTypeId INT,
-	@PrinterName VARCHAR(20),
+	@PrinterName VARCHAR(100),
 	@Status BIT
 AS
 BEGIN
