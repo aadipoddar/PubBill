@@ -1,6 +1,6 @@
 ﻿namespace PubBillLibrary.Data;
 
-public class CommonData
+public static class CommonData
 {
 	public static async Task<List<T>> LoadTableData<T>(string TableName) where T : new() =>
 		await SqlDataAccess.LoadData<T, dynamic>(StoredProcedureNames.LoadTableData, new { TableName });

@@ -17,7 +17,7 @@
     <PackageReference Include="MessagingToolkit.QRCode" Version="1.3.0" />
     <PackageReference Include="NumericWordsConversion" Version="2.1.1" />
     <PackageReference Include="QRCoder" Version="1.6.0" />
-    <PackageReference Include="Syncfusion.Edit.WPF" Version="29.1.38" />
+    <PackageReference Include="Syncfusion.Edit.WPF" Version="29.1.41" />
   </ItemGroup>
 
   <ItemGroup>
@@ -28,10 +28,14 @@
     <Using Include="PubBill.Common" />
     <Using Include="PubBillLibrary.Data" />
     <Using Include="PubBillLibrary.Data.Billing" />
+    <Using Include="PubBillLibrary.Data.Dining" />
+    <Using Include="PubBillLibrary.Data.Kitchen" />
     <Using Include="PubBillLibrary.Data.Products" />
     <Using Include="PubBillLibrary.DataAccess" />
     <Using Include="PubBillLibrary.Models" />
     <Using Include="PubBillLibrary.Models.Billing" />
+    <Using Include="PubBillLibrary.Models.Dining" />
+    <Using Include="PubBillLibrary.Models.Kitchen" />
     <Using Include="PubBillLibrary.Models.Products" />
   </ItemGroup>
 

@@ -1,4 +1,4 @@
-﻿namespace PubBillLibrary.Models;
+﻿namespace PubBillLibrary.Models.Dining;
 
 public class DiningTableModel
 {

@@ -1,4 +1,4 @@
-﻿namespace PubBillLibrary.Data.Billing;
+﻿namespace PubBillLibrary.Data.Kitchen;
 
 public static class KOTData
 {

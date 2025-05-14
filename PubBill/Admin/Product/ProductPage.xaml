@@ -1,7 +1,7 @@
-﻿<Page x:Class="PubBill.Admin.ProductPage"
+﻿<Page x:Class="PubBill.Admin.Product.ProductPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:local="clr-namespace:PubBill.Admin"
+      xmlns:local="clr-namespace:PubBill.Admin.Product"
       Loaded="Page_Loaded">
 
 	<ScrollViewer HorizontalScrollBarVisibility="Visible">
@@ -33,6 +33,7 @@
 					<RowDefinition Height="Auto"/>
 					<RowDefinition Height="Auto"/>
 					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
 				</Grid.RowDefinitions>
 
 				<Label Margin="10" Padding="5" Grid.Row="0" Grid.Column="0" Content="Name"/>
@@ -53,8 +54,11 @@
 				<Label Margin="10" Padding="5" Grid.Row="5" Grid.Column="0" Content="Tax"/>
 				<ComboBox Margin="10" Padding="5" Grid.Row="5" Grid.Column="1" x:Name="taxComboBox" SelectedIndex="0"/>
 
-				<CheckBox x:Name="statusCheckBox" Margin="10" Padding="5" Grid.Row="6" Grid.Column="0" Content="Status" IsChecked="True"/>
-				<Button x:Name="saveButton" Margin="10" Padding="5" Grid.Row="6" Grid.Column="1" MinWidth="120" MinHeight="40" Content="Save" HorizontalAlignment="Center"
+				<Label Margin="10" Padding="5" Grid.Row="6" Grid.Column="0" Content="Kitchen Type"/>
+				<ComboBox Margin="10" Padding="5" Grid.Row="6" Grid.Column="1" x:Name="kitchenTypeComboBox" SelectedIndex="0"/>
+
+				<CheckBox x:Name="statusCheckBox" Margin="10" Padding="5" Grid.Row="7" Grid.Column="0" Content="Status" IsChecked="True"/>
+				<Button x:Name="saveButton" Margin="10" Padding="5" Grid.Row="7" Grid.Column="1" MinWidth="120" MinHeight="40" Content="Save" HorizontalAlignment="Center"
 						IsDefault="True" Style="{DynamicResource AccentButtonStyle}" IsEnabled="False" Click="saveButton_Click"/>
 			</Grid>
 

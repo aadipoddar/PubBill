@@ -1,30 +1,31 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 
-namespace PubBill.Admin;
+namespace PubBill.Admin.Dining;
 
 /// <summary>
 /// Interaction logic for DiningTablePage.xaml
 /// </summary>
 public partial class DiningTablePage : Page
 {
-	public DiningTablePage() => InitializeComponent();
+	public DiningTablePage() =>
+		InitializeComponent();
 
-	private async void Page_Loaded(object sender, RoutedEventArgs e) => await LoadData();
+	private async void Page_Loaded(object sender, RoutedEventArgs e) =>
+		await LoadData();
 
 	private async Task LoadData()
 	{
 		var locations = await CommonData.LoadTableData<LocationModel>(TableNames.Location);
+		locationComboBox.ItemsSource = locations;
+		locationComboBox.DisplayMemberPath = nameof(LocationModel.Name);
+		locationComboBox.SelectedValuePath = nameof(LocationModel.Id);
+		locationComboBox.SelectedIndex = 0;
 
 		searchLocationComboBox.ItemsSource = locations;
 		searchLocationComboBox.DisplayMemberPath = nameof(LocationModel.Name);
 		searchLocationComboBox.SelectedValuePath = nameof(LocationModel.Id);
 		searchLocationComboBox.SelectedIndex = 0;
-
-		locationComboBox.ItemsSource = locations;
-		locationComboBox.DisplayMemberPath = nameof(LocationModel.Name);
-		locationComboBox.SelectedValuePath = nameof(LocationModel.Id);
-		locationComboBox.SelectedIndex = 0;
 
 		var diningAreas = await DiningAreaData.LoadDiningAreaByLocation((int)searchLocationComboBox.SelectedValue);
 		diningAreaComboBox.ItemsSource = diningAreas;
@@ -51,8 +52,6 @@ public partial class DiningTablePage : Page
 		}
 	}
 
-	private async void searchTextBox_TextChanged(object sender, TextChangedEventArgs e) => await ApplySearchFilter();
-
 	private async void searchLocationComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 	{
 		await ApplySearchFilter();
@@ -66,13 +65,20 @@ public partial class DiningTablePage : Page
 		}
 	}
 
-	private async void searchAreaComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e) => await ApplySearchFilter();
+	private async void searchTextBox_TextChanged(object sender, TextChangedEventArgs e) =>
+		await ApplySearchFilter();
 
-	private async void showCheckBox_CheckedChanged(object sender, RoutedEventArgs e) => await ApplySearchFilter();
+	private async void searchAreaComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e) =>
+		await ApplySearchFilter();
 
-	private async void diningTableDataGrid_SelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e) => await UpdateFields();
+	private async void showCheckBox_CheckedChanged(object sender, RoutedEventArgs e) =>
+		await ApplySearchFilter();
 
-	private void nameTextBox_TextChanged(object sender, TextChangedEventArgs e) => UpdateButtonField();
+	private async void diningTableDataGrid_SelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e) =>
+		await UpdateFields();
+
+	private void nameTextBox_TextChanged(object sender, TextChangedEventArgs e) =>
+		UpdateButtonField();
 
 	private async Task ApplySearchFilter()
 	{

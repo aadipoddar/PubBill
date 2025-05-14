@@ -6,9 +6,74 @@ namespace PubBill.Billing.KOT;
 
 static class CreateKOTComponents
 {
-	internal static async Task CreateLocationExpanders(StackPanel locationStackPanel, KOTDashboard kOTDashboard)
+	#region Location Check Boxes
+	private const string _checkedLocationsKey = "KOT_CheckedLocations";
+
+	internal static async Task CreateLocationCheckBoxes(StackPanel locationCheckBoxStackPanel, KOTDashboard kOTDashboard)
 	{
 		var locations = await CommonData.LoadTableDataByStatus<LocationModel>(TableNames.Location);
+		var savedLocations = LoadCheckedLocations();
+
+		foreach (var location in locations)
+		{
+			var checkBox = new CheckBox
+			{
+				Name = $"{location.Name.RemoveSpace()}{location.Id}CheckBox",
+				Content = location.Name,
+				Margin = new Thickness(10),
+				IsChecked = savedLocations.Contains(location.Id)
+			};
+
+			checkBox.Checked += async (sender, e) =>
+			{
+				SaveCheckedLocations(locationCheckBoxStackPanel);
+				await kOTDashboard.RefreshScreen();
+			};
+
+			checkBox.Unchecked += async (sender, e) =>
+			{
+				SaveCheckedLocations(locationCheckBoxStackPanel);
+				await kOTDashboard.RefreshScreen();
+			};
+
+			locationCheckBoxStackPanel.Children.Add(checkBox);
+		}
+	}
+
+	private static HashSet<int> LoadCheckedLocations() =>
+		LocalSettingsData.GetSetting(_checkedLocationsKey, new HashSet<int>());
+
+	private static void SaveCheckedLocations(StackPanel locationCheckBoxStackPanel)
+	{
+		var checkedLocationIds = locationCheckBoxStackPanel.Children.OfType<CheckBox>()
+			.Where(c => c.IsChecked == true)
+			.Select(c =>
+			{
+				string name = c.Name;
+				string idPart = name[..^8];
+				idPart = new string([.. idPart.Reverse().TakeWhile(char.IsDigit).Reverse()]);
+
+				if (int.TryParse(idPart, out int id))
+					return id;
+				return -1;
+			})
+			.Where(id => id > 0)
+			.ToHashSet();
+
+		LocalSettingsData.SaveSetting(_checkedLocationsKey, checkedLocationIds);
+	}
+	#endregion
+
+	internal static async Task CreateLocationExpanders(StackPanel locationStackPanel, StackPanel locationCheckBoxStackPanel, KOTDashboard kOTDashboard)
+	{
+		var selectedLocationsNames = locationCheckBoxStackPanel.Children.OfType<CheckBox>()
+			.Where(c => (bool)c.IsChecked)
+			.Select(c => c.Content.ToString())
+			.ToList();
+
+		var locations = await CommonData.LoadTableDataByStatus<LocationModel>(TableNames.Location);
+		locations = [.. locations.Where(l => selectedLocationsNames.Contains(l.Name))];
+
 		var runningBills = await CommonData.LoadTableDataByStatus<RunningBillModel>(TableNames.RunningBill);
 
 		locationStackPanel.Children.Clear();

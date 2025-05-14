@@ -1,16 +1,18 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 
-namespace PubBill.Admin;
+namespace PubBill.Admin.Dining;
 
 /// <summary>
 /// Interaction logic for DiningAreaPage.xaml
 /// </summary>
 public partial class DiningAreaPage : Page
 {
-	public DiningAreaPage() => InitializeComponent();
+	public DiningAreaPage() =>
+		InitializeComponent();
 
-	private async void Page_Loaded(object sender, RoutedEventArgs e) => await LoadData();
+	private async void Page_Loaded(object sender, RoutedEventArgs e) =>
+		await LoadData();
 
 	private async Task LoadData()
 	{
@@ -29,15 +31,20 @@ public partial class DiningAreaPage : Page
 		await ApplySearchFilter();
 	}
 
-	private async void searchTextBox_TextChanged(object sender, TextChangedEventArgs e) => await ApplySearchFilter();
+	private async void searchTextBox_TextChanged(object sender, TextChangedEventArgs e) =>
+		await ApplySearchFilter();
 
-	private async void searchLocationComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e) => await ApplySearchFilter();
+	private async void searchLocationComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e) =>
+		await ApplySearchFilter();
 
-	private async void showCheckBox_CheckedChanged(object sender, RoutedEventArgs e) => await ApplySearchFilter();
+	private async void showCheckBox_CheckedChanged(object sender, RoutedEventArgs e) =>
+		await ApplySearchFilter();
 
-	private void diningAreaDataGrid_SelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e) => UpdateFields();
+	private void diningAreaDataGrid_SelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e) =>
+		UpdateFields();
 
-	private void nameTextBox_TextChanged(object sender, TextChangedEventArgs e) => UpdateButtonField();
+	private void nameTextBox_TextChanged(object sender, TextChangedEventArgs e) =>
+		UpdateButtonField();
 
 	private async Task ApplySearchFilter()
 	{

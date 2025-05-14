@@ -5,9 +5,11 @@ public static class TableNames
 	public static string Location => "Location";
 	public static string Person => "Person";
 	public static string User => "User";
+	public static string PaymentMode => "PaymentMode";
+
 	public static string DiningArea => "DiningArea";
 	public static string DiningTable => "DiningTable";
-	public static string PaymentMode => "PaymentMode";
+	public static string DiningAreaKitchen => "DiningAreaKitchen";
 
 	public static string ProductGroup => "ProductGroup";
 	public static string ProductCategory => "ProductCategory";
@@ -18,13 +20,17 @@ public static class TableNames
 	public static string BillDetail => "BillDetail";
 	public static string RunningBill => "RunningBill";
 	public static string RunningBillDetail => "RunningBillDetail";
-	public static string KOTBillDetail => "KOTBillDetail";
 	public static string BillPaymentDetail => "BillPaymentDetail";
+
+	public static string KOTBillDetail => "KOTBillDetail";
+	public static string Kitchen => "Kitchen";
+	public static string KitchenType => "KitchenType";
 }
 
 public static class ViewNames
 {
 	public static string ProductTax => "Product_Tax";
+	public static string BillOverview => "Bill_Overview";
 }
 
 public static class StoredProcedureNames
@@ -32,22 +38,28 @@ public static class StoredProcedureNames
 	public static string InsertLocation => "Insert_Location";
 	public static string InsertPerson => "Insert_Person";
 	public static string InsertUser => "Insert_User";
-	public static string InsertDiningArea => "Insert_DiningArea";
-	public static string InsertDiningTable => "Insert_DiningTable";
 	public static string InsertPaymentMode => "Insert_PaymentMode";
+
+	public static string InsertDiningArea => "Insert_DiningArea";
+	public static string InsertDiningAreaKitchen => "Insert_DiningAreaKitchen";
+	public static string InsertDiningTable => "Insert_DiningTable";
 
 	public static string InsertProductGroup => "Insert_ProductGroup";
 	public static string InsertProductCategory => "Insert_ProductCategory";
 	public static string InsertProduct => "Insert_Product";
 	public static string InsertTax => "Insert_Tax";
 
-
 	public static string InsertBill => "Insert_Bill";
 	public static string InsertBillDetail => "Insert_BillDetail";
 	public static string InsertRunningBill => "Insert_RunningBill";
 	public static string InsertRunningBillDetail => "Insert_RunningBillDetail";
-	public static string InsertKOTBillDetail => "Insert_KOTBillDetail";
 	public static string InsertBillPaymentDetail => "Insert_BillPaymentDetail";
+
+	public static string InsertKOTBillDetail => "Insert_KOTBillDetail";
+	public static string InsertKitchen => "Insert_Kitchen";
+	public static string InsertKitchenType => "Insert_KitchenType";
+
+
 
 	public static string LoadTableData => "Load_TableData";
 	public static string LoadTableDataById => "Load_TableData_By_Id";

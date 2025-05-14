@@ -1,19 +1,18 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 
-namespace PubBill.Admin;
+namespace PubBill.Admin.Product;
 
 /// <summary>
 /// Interaction logic for ProductCategoryPage.xaml
 /// </summary>
 public partial class ProductCategoryPage : Page
 {
-	public ProductCategoryPage()
-	{
+	public ProductCategoryPage() =>
 		InitializeComponent();
-	}
 
-	private async void Page_Loaded(object sender, RoutedEventArgs e) => await LoadData();
+	private async void Page_Loaded(object sender, RoutedEventArgs e) =>
+		await LoadData();
 
 	private async Task LoadData()
 	{
@@ -32,15 +31,20 @@ public partial class ProductCategoryPage : Page
 		await ApplySearchFilter();
 	}
 
-	private async void searchTextBox_TextChanged(object sender, TextChangedEventArgs e) => await ApplySearchFilter();
+	private async void searchTextBox_TextChanged(object sender, TextChangedEventArgs e) =>
+		await ApplySearchFilter();
 
-	private async void searchProductGroupComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e) => await ApplySearchFilter();
+	private async void searchProductGroupComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e) =>
+		await ApplySearchFilter();
 
-	private async void showCheckBox_CheckedChanged(object sender, RoutedEventArgs e) => await ApplySearchFilter();
+	private async void showCheckBox_CheckedChanged(object sender, RoutedEventArgs e) =>
+		await ApplySearchFilter();
 
-	private void productCategoryDataGrid_SelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e) => UpdateFields();
+	private void productCategoryDataGrid_SelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e) =>
+		UpdateFields();
 
-	private void nameTextBox_TextChanged(object sender, TextChangedEventArgs e) => UpdateButtonField();
+	private void nameTextBox_TextChanged(object sender, TextChangedEventArgs e) =>
+		UpdateButtonField();
 
 	private async Task ApplySearchFilter()
 	{

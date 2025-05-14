@@ -1,16 +1,18 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 
-namespace PubBill.Admin;
+namespace PubBill.Admin.Product;
 
 /// <summary>
 /// Interaction logic for ProductPage.xaml
 /// </summary>
 public partial class ProductPage : Page
 {
-	public ProductPage() => InitializeComponent();
+	public ProductPage() =>
+		InitializeComponent();
 
-	private async void Page_Loaded(object sender, RoutedEventArgs e) => await LoadData();
+	private async void Page_Loaded(object sender, RoutedEventArgs e) =>
+		await LoadData();
 
 	private async Task LoadData()
 	{
@@ -42,6 +44,12 @@ public partial class ProductPage : Page
 		taxComboBox.SelectedValuePath = nameof(TaxModel.Id);
 		taxComboBox.SelectedIndex = 0;
 
+		var kitchenTypes = await CommonData.LoadTableData<KitchenTypeModel>(TableNames.KitchenType);
+		kitchenTypeComboBox.ItemsSource = kitchenTypes;
+		kitchenTypeComboBox.DisplayMemberPath = nameof(KitchenTypeModel.Name);
+		kitchenTypeComboBox.SelectedValuePath = nameof(KitchenTypeModel.Id);
+		kitchenTypeComboBox.SelectedIndex = 0;
+
 		await ApplySearchFilter();
 	}
 
@@ -56,8 +64,6 @@ public partial class ProductPage : Page
 		}
 	}
 
-	private async void searchTextBox_TextChanged(object sender, TextChangedEventArgs e) => await ApplySearchFilter();
-
 	private async void searchProductGroupComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 	{
 		await ApplySearchFilter();
@@ -71,13 +77,20 @@ public partial class ProductPage : Page
 		}
 	}
 
-	private async void searchProductCategoryComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e) => await ApplySearchFilter();
+	private async void searchTextBox_TextChanged(object sender, TextChangedEventArgs e) =>
+		await ApplySearchFilter();
 
-	private async void showCheckBox_CheckedChanged(object sender, RoutedEventArgs e) => await ApplySearchFilter();
+	private async void searchProductCategoryComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e) =>
+		await ApplySearchFilter();
 
-	private async void productDataGrid_SelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e) => await UpdateFields();
+	private async void showCheckBox_CheckedChanged(object sender, RoutedEventArgs e) =>
+		await ApplySearchFilter();
 
-	private void nameTextBox_TextChanged(object sender, TextChangedEventArgs e) => UpdateButtonField();
+	private async void productDataGrid_SelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e) =>
+		await UpdateFields();
+
+	private void nameTextBox_TextChanged(object sender, TextChangedEventArgs e) =>
+		UpdateButtonField();
 
 	private async Task ApplySearchFilter()
 	{
@@ -106,6 +119,7 @@ public partial class ProductPage : Page
 			productGroupComboBox.SelectedValue = searchProductGroupComboBox.SelectedValue;
 			rateTextBox.Text = selectedProduct.Rate.ToString();
 			taxComboBox.SelectedValue = selectedProduct.TaxId;
+			kitchenTypeComboBox.SelectedValue = selectedProduct.KitchenTypeId;
 			statusCheckBox.IsChecked = selectedProduct.Status;
 			saveButton.Content = "Update";
 			saveButton.IsEnabled = true;
@@ -190,6 +204,7 @@ public partial class ProductPage : Page
 			ProductCategoryId = (int)productCategoryComboBox.SelectedValue,
 			Rate = decimal.Parse(rateTextBox.Text),
 			TaxId = (int)taxComboBox.SelectedValue,
+			KitchenTypeId = (int)kitchenTypeComboBox.SelectedValue,
 			Status = (bool)statusCheckBox.IsChecked
 		};
 

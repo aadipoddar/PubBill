@@ -6,9 +6,8 @@
         xmlns:local="clr-namespace:PubBill.Billing.Bill"
 		xmlns:common="clr-namespace:PubBill.Common"
 		xmlns:main="clr-namespace:PubBill"
-		DataContext="{Binding BillWindowHelper}"
         mc:Ignorable="d" WindowState="Maximized"
-        Title="Bill Dashboard" Height="450" Width="800"
+        Title="Bill Dashboard" Height="1000" Width="1500"
 		Closed="Window_Closed" Loaded="Window_Loaded">
 
 	<Grid>

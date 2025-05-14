@@ -126,4 +126,53 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="BillId" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="a76b47fb-55ef-41f0-8f1b-216e7d9db9e3" ChangeDateTime="05/13/2025 14:28:31">
+    <Property Name="ElementName" Value="[dbo].[KOTType].[name]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[KOTType]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="Name" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="25a71425-3cfa-43b6-849c-e82ae58dd523" ChangeDateTime="05/13/2025 19:53:35">
+    <Property Name="ElementName" Value="[dbo].[KitchenTypes].[Statu]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[KitchenTypes]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="Status" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="04e2d46a-166a-49ea-aa8d-775b070c9f98" ChangeDateTime="05/13/2025 20:00:22">
+    <Property Name="ElementName" Value="[dbo].[DiningAreaKitchen].[DiningAreaid]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[DiningAreaKitchen]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="DiningAreaId" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="020ace74-da59-401d-8040-251f7081c1cc" ChangeDateTime="05/13/2025 20:03:20">
+    <Property Name="ElementName" Value="[dbo].[Product].[KOTTypeId]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Product]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="KitchenTypeId" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="84b509a0-8926-49ad-9360-5c4b486f09e4" ChangeDateTime="05/13/2025 20:03:28">
+    <Property Name="ElementName" Value="[dbo].[FK_Product_ToKOTType]" />
+    <Property Name="ElementType" Value="SqlForeignKeyConstraint" />
+    <Property Name="ParentElementName" Value="[dbo].[Product]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[FK_Product_ToKitchen]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="11a367ca-e1b1-41f8-a00d-2c3ee8cb66cb" ChangeDateTime="05/13/2025 20:04:22">
+    <Property Name="ElementName" Value="[dbo].[Kitchen].[KitchenType]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Kitchen]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="KitchenTypeId" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="8d2840d4-9057-491d-887e-0b189403bdf6" ChangeDateTime="05/14/2025 18:33:37">
+    <Property Name="ElementName" Value="[dbo].[Kitchen].[PrinterIP]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Kitchen]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[PrinterName]" />
+  </Operation>
 </Operations>

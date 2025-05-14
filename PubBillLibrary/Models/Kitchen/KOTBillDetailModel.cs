@@ -1,4 +1,4 @@
-﻿namespace PubBillLibrary.Models.Billing;
+﻿namespace PubBillLibrary.Models.Kitchen;
 
 public class KOTBillDetailModel
 {

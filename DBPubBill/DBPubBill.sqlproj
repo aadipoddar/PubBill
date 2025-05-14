@@ -72,6 +72,10 @@
     <Folder Include="Compare" />
     <Folder Include="Stored Procedures\Settings" />
     <Folder Include="Stored Procedures\Reports" />
+    <Folder Include="Tables\Kitchen" />
+    <Folder Include="Tables\Dining" />
+    <Folder Include="Stored Procedures\Insert\Dining" />
+    <Folder Include="Stored Procedures\Insert\Kitchen" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\User.sql" />
@@ -82,10 +86,6 @@
     <Build Include="Stored Procedures\Insert\Insert_Person.sql" />
     <Build Include="Stored Procedures\LoadData\Load_Person_By_Number.sql" />
     <Build Include="Stored Procedures\LoadData\Load_User_By_Password.sql" />
-    <Build Include="Tables\DiningArea.sql" />
-    <Build Include="Tables\DiningTable.sql" />
-    <Build Include="Stored Procedures\Insert\Insert_DiningArea.sql" />
-    <Build Include="Stored Procedures\Insert\Insert_DiningTable.sql" />
     <Build Include="Stored Procedures\LoadData\Load_DiningArea_By_Location.sql" />
     <Build Include="Stored Procedures\LoadData\Load_DIningTable_By_DiningArea.sql" />
     <Build Include="Stored Procedures\LoadData\Load_ProductCategory_By_ProductGroup.sql" />
@@ -103,8 +103,6 @@
     <Build Include="Tables\Billing\BillDetail.sql" />
     <Build Include="Tables\Billing\RunningBill.sql" />
     <Build Include="Tables\Billing\RunningBillDetail.sql" />
-    <Build Include="Tables\Billing\KOTBillDetail.sql" />
-    <Build Include="Stored Procedures\Insert\Billing\Insert_KOTBillDetail.sql" />
     <Build Include="Stored Procedures\LoadData\Billing\Load_KOTBillDetail_By_RunningBillId.sql" />
     <Build Include="Tables\Billing\BillPaymentDetail.sql" />
     <Build Include="Stored Procedures\Insert\Billing\Insert_BillPaymentDetail.sql" />
@@ -127,6 +125,18 @@
     <Build Include="Stored Procedures\Settings\Update_Settings.sql" />
     <Build Include="Stored Procedures\Reports\Load_BillDetails_By_Date_LocationId.sql" />
     <Build Include="Views\Bill_Overview.sql" />
+    <Build Include="Tables\Kitchen\KOTBillDetail.sql" />
+    <Build Include="Tables\Kitchen\KitchenType.sql" />
+    <Build Include="Tables\Kitchen\Kitchen.sql" />
+    <Build Include="Tables\Dining\DiningArea.sql" />
+    <Build Include="Tables\Dining\DiningTable.sql" />
+    <Build Include="Tables\Dining\DiningAreaKitchen.sql" />
+    <Build Include="Stored Procedures\Insert\Kitchen\Insert_KOTBillDetail.sql" />
+    <Build Include="Stored Procedures\Insert\Kitchen\Insert_Kitchen.sql" />
+    <Build Include="Stored Procedures\Insert\Kitchen\Insert_KitchenType.sql" />
+    <Build Include="Stored Procedures\Insert\Dining\Insert_DiningArea.sql" />
+    <Build Include="Stored Procedures\Insert\Dining\Insert_DiningTable.sql" />
+    <Build Include="Stored Procedures\Insert\Dining\Insert_DiningAreaKitchen.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="DBPubBill.refactorlog" />

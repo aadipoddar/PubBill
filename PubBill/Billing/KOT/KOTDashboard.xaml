@@ -11,14 +11,23 @@
 		Closed="Window_Closed" Loaded="Window_Loaded">
 	<Grid>
 		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="*"/>
 			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
 
-		<ScrollViewer Grid.Row="0">
-			<StackPanel x:Name="areasStackPanel" Grid.Row="1" Orientation="Vertical" />
+		<Expander x:Name="locationExpander" Margin="10" Padding="5" Background="Goldenrod">
+			<Expander.Header>
+				<TextBlock Text="Choose Locations" FontWeight="Bold" Foreground="Black" HorizontalAlignment="Center" />
+			</Expander.Header>
+
+			<StackPanel x:Name="locationCheckBoxStackPanel" Orientation="Horizontal" Margin="10" HorizontalAlignment="Center" />
+		</Expander>
+
+		<ScrollViewer Grid.Row="1">
+			<StackPanel x:Name="areasStackPanel" Orientation="Vertical" />
 		</ScrollViewer>
 
-		<common:FooterControl Grid.Row="1"/>
+		<common:FooterControl Grid.Row="2"/>
 	</Grid>
 </Window>

@@ -1,4 +1,4 @@
-﻿namespace PubBillLibrary.Data;
+﻿namespace PubBillLibrary.Data.Dining;
 
 public static class DiningAreaData
 {

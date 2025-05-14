@@ -1,14 +1,14 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 
-namespace PubBill.Admin;
+namespace PubBill.Admin.Kitchen;
 
 /// <summary>
-/// Interaction logic for PaymentModePage.xaml
+/// Interaction logic for KitchenTypePage.xaml
 /// </summary>
-public partial class PaymentModePage : Page
+public partial class KitchenTypePage : Page
 {
-	public PaymentModePage() =>
+	public KitchenTypePage() =>
 		InitializeComponent();
 
 	private async void Page_Loaded(object sender, RoutedEventArgs e) =>
@@ -16,16 +16,16 @@ public partial class PaymentModePage : Page
 
 	private async Task LoadData()
 	{
-		if (paymentDataGrid is null) return;
+		if (kitchenTypeDataGrid is null) return;
 
 		var nameSearch = searchTextBox.Text.Trim();
 
-		var paymentModes = await CommonData.LoadTableData<PaymentModeModel>(TableNames.PaymentMode);
+		var kitchenTypes = await CommonData.LoadTableData<KitchenTypeModel>(TableNames.KitchenType);
 
 		bool showActive = showActiveCheckBox?.IsChecked ?? false;
 		bool showInactive = showInactiveCheckBox?.IsChecked ?? false;
 
-		paymentDataGrid.ItemsSource = paymentModes
+		kitchenTypeDataGrid.ItemsSource = kitchenTypes
 			.Where(item => string.IsNullOrEmpty(nameSearch) || item.Name.Contains(nameSearch, StringComparison.CurrentCultureIgnoreCase))
 			.Where(item => (showActive && item.Status) || (showInactive && !item.Status))
 			.OrderBy(item => !item.Status)
@@ -40,7 +40,7 @@ public partial class PaymentModePage : Page
 	private async void showCheckBox_CheckedChanged(object sender, RoutedEventArgs e) =>
 		await LoadData();
 
-	private void paymentDataGrid_SelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e) =>
+	private void kitchenTypeDataGrid_SelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e) =>
 		UpdateFields();
 
 	private void nameTextBox_TextChanged(object sender, TextChangedEventArgs e) =>
@@ -48,10 +48,10 @@ public partial class PaymentModePage : Page
 
 	private void UpdateFields()
 	{
-		if (paymentDataGrid.SelectedItem is PaymentModeModel selectedPayemntMode)
+		if (kitchenTypeDataGrid.SelectedItem is KitchenTypeModel selectedKitchenType)
 		{
-			nameTextBox.Text = selectedPayemntMode.Name;
-			statusCheckBox.IsChecked = selectedPayemntMode.Status;
+			nameTextBox.Text = selectedKitchenType.Name;
+			statusCheckBox.IsChecked = selectedKitchenType.Status;
 			saveButton.Content = "Update";
 			saveButton.IsEnabled = true;
 		}
@@ -69,7 +69,7 @@ public partial class PaymentModePage : Page
 
 	private void UpdateButtonField()
 	{
-		if (paymentDataGrid.SelectedItem is null) saveButton.Content = "Save";
+		if (kitchenTypeDataGrid.SelectedItem is null) saveButton.Content = "Save";
 		else saveButton.Content = "Update";
 
 		if (!string.IsNullOrEmpty(nameTextBox.Text)) saveButton.IsEnabled = true;
@@ -80,18 +80,18 @@ public partial class PaymentModePage : Page
 	{
 		if (string.IsNullOrEmpty(nameTextBox.Text.Trim()))
 		{
-			MessageBox.Show("Please enter a Payment Mode Name", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+			MessageBox.Show("Please enter a Kitchen Mode Name", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
 			return;
 		}
 
-		PaymentModeModel paymentModeModel = new()
+		KitchenTypeModel kitchenTypeModel = new()
 		{
-			Id = paymentDataGrid.SelectedItem is PaymentModeModel selectedPaymentMode ? selectedPaymentMode.Id : 0,
+			Id = kitchenTypeDataGrid.SelectedItem is KitchenTypeModel selectedKitchType ? selectedKitchType.Id : 0,
 			Name = nameTextBox.Text,
 			Status = (bool)statusCheckBox.IsChecked
 		};
 
-		await PaymentModeData.InsertPaymentMode(paymentModeModel);
+		await KitchenTypeData.InsertKitchenType(kitchenTypeModel);
 
 		await LoadData();
 	}

@@ -34,11 +34,13 @@ public partial class KOTDashboard : Window
 		_loginWindow = loginWindow;
 	}
 
-	private async void Window_Loaded(object sender, RoutedEventArgs e) => await LoadData();
+	private async void Window_Loaded(object sender, RoutedEventArgs e) =>
+		await LoadData();
 
 	private async Task LoadData()
 	{
-		await CreateKOTComponents.CreateLocationExpanders(areasStackPanel, this);
+		await CreateKOTComponents.CreateLocationCheckBoxes(locationCheckBoxStackPanel, this);
+		await CreateKOTComponents.CreateLocationExpanders(areasStackPanel, locationCheckBoxStackPanel, this);
 		await PrintOrders();
 
 		InitializeTimers();
@@ -53,7 +55,7 @@ public partial class KOTDashboard : Window
 		{
 			InactivityMonitor.Instance.BeginRefreshOperation();
 
-			await CreateKOTComponents.CreateLocationExpanders(areasStackPanel, this);
+			await CreateKOTComponents.CreateLocationExpanders(areasStackPanel, locationCheckBoxStackPanel, this);
 			await PrintOrders();
 		}
 		finally

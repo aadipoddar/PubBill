@@ -1,16 +1,18 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 
-namespace PubBill.Admin;
+namespace PubBill.Admin.Product;
 
 /// <summary>
 /// Interaction logic for ProductGroupPage.xaml
 /// </summary>
 public partial class ProductGroupPage : Page
 {
-	public ProductGroupPage() => InitializeComponent();
+	public ProductGroupPage() =>
+		InitializeComponent();
 
-	private async void Page_Loaded(object sender, RoutedEventArgs e) => await LoadData();
+	private async void Page_Loaded(object sender, RoutedEventArgs e) =>
+		await LoadData();
 
 	private async Task LoadData()
 	{
@@ -32,13 +34,17 @@ public partial class ProductGroupPage : Page
 		UpdateFields();
 	}
 
-	private async void searchTextBox_TextChanged(object sender, TextChangedEventArgs e) => await LoadData();
+	private async void searchTextBox_TextChanged(object sender, TextChangedEventArgs e) =>
+		await LoadData();
 
-	private async void showCheckBox_CheckedChanged(object sender, RoutedEventArgs e) => await LoadData();
+	private async void showCheckBox_CheckedChanged(object sender, RoutedEventArgs e) =>
+		await LoadData();
 
-	private void productGroupDataGrid_SelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e) => UpdateFields();
+	private void productGroupDataGrid_SelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e) =>
+		UpdateFields();
 
-	private void nameTextBox_TextChanged(object sender, TextChangedEventArgs e) => UpdateButtonField();
+	private void nameTextBox_TextChanged(object sender, TextChangedEventArgs e) =>
+		UpdateButtonField();
 
 	private void UpdateFields()
 	{
