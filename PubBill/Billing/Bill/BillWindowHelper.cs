@@ -4,6 +4,7 @@ namespace PubBill.Billing.Bill;
 
 internal static class BillWindowHelper
 {
+	#region BillWindow
 	internal static async Task<decimal> CalculateBillTotal(ObservableCollection<CartModel> allCart, RunningBillModel runningBillModel, int entryPaid)
 	{
 		decimal baseTotal = CalculateBaseTotal(allCart, []);
@@ -11,7 +12,7 @@ internal static class BillWindowHelper
 		decimal discountPercent = runningBillModel.DiscPercent;
 		decimal discountAmout = baseTotal * (discountPercent / 100);
 
-		decimal productTax = await CalculateProductTotalTax(allCart, []);
+		decimal productTax = await CalculateProductTotalTax(allCart, [], discountPercent);
 		decimal subTotal = baseTotal - discountAmout + productTax;
 
 		decimal servicePercent = runningBillModel.ServicePercent;
@@ -30,12 +31,12 @@ internal static class BillWindowHelper
 		return total;
 	}
 
-	internal static async Task<decimal> CalculateProductTotalTax(ObservableCollection<CartModel> allCart, ObservableCollection<CartModel> kotCart) =>
-		await CalculateProductCGST(allCart, kotCart) +
-		await CalculateProductSGST(allCart, kotCart) +
-		await CalculateProductIGST(allCart, kotCart);
+	internal static async Task<decimal> CalculateProductTotalTax(ObservableCollection<CartModel> allCart, ObservableCollection<CartModel> kotCart, decimal discountPercent) =>
+		await CalculateProductCGST(allCart, kotCart, discountPercent) +
+		await CalculateProductSGST(allCart, kotCart, discountPercent) +
+		await CalculateProductIGST(allCart, kotCart, discountPercent: discountPercent);
 
-	internal static async Task<decimal> CalculateProductCGST(ObservableCollection<CartModel> allCart, ObservableCollection<CartModel> kotCart)
+	internal static async Task<decimal> CalculateProductCGST(ObservableCollection<CartModel> allCart, ObservableCollection<CartModel> kotCart, decimal discountPercent)
 	{
 		decimal cgst = 0;
 		foreach (var item in allCart)
@@ -44,7 +45,8 @@ internal static class BillWindowHelper
 				continue;
 
 			var product = await CommonData.LoadTableDataById<ProductTaxModel>(ViewNames.ProductTax, item.ProductId);
-			cgst += product.CGSTAmount * item.Quantity;
+			var afterDiscount = item.Rate - (item.Rate * (discountPercent / 100));
+			cgst += product.CGSTPercent * afterDiscount / 100 * item.Quantity;
 		}
 
 		foreach (var item in kotCart)
@@ -53,13 +55,14 @@ internal static class BillWindowHelper
 				continue;
 
 			var product = await CommonData.LoadTableDataById<ProductTaxModel>(ViewNames.ProductTax, item.ProductId);
-			cgst += product.CGSTAmount * item.Quantity;
+			var afterDiscount = item.Rate - (item.Rate * (discountPercent / 100));
+			cgst += product.CGSTPercent * afterDiscount / 100 * item.Quantity;
 		}
 
 		return cgst;
 	}
 
-	internal static async Task<decimal> CalculateProductSGST(ObservableCollection<CartModel> allCart, ObservableCollection<CartModel> kotCart)
+	internal static async Task<decimal> CalculateProductSGST(ObservableCollection<CartModel> allCart, ObservableCollection<CartModel> kotCart, decimal discountPercent)
 	{
 		decimal sgst = 0;
 		foreach (var item in allCart)
@@ -68,7 +71,8 @@ internal static class BillWindowHelper
 				continue;
 
 			var product = await CommonData.LoadTableDataById<ProductTaxModel>(ViewNames.ProductTax, item.ProductId);
-			sgst += product.SGSTAmount * item.Quantity;
+			var afterDiscount = item.Rate - (item.Rate * (discountPercent / 100));
+			sgst += product.SGSTPercent * afterDiscount / 100 * item.Quantity;
 		}
 
 		foreach (var item in kotCart)
@@ -77,13 +81,14 @@ internal static class BillWindowHelper
 				continue;
 
 			var product = await CommonData.LoadTableDataById<ProductTaxModel>(ViewNames.ProductTax, item.ProductId);
-			sgst += product.SGSTAmount * item.Quantity;
+			var afterDiscount = item.Rate - (item.Rate * (discountPercent / 100));
+			sgst += product.SGSTPercent * afterDiscount / 100 * item.Quantity;
 		}
 
 		return sgst;
 	}
 
-	internal static async Task<decimal> CalculateProductIGST(ObservableCollection<CartModel> allCart, ObservableCollection<CartModel> kotCart)
+	internal static async Task<decimal> CalculateProductIGST(ObservableCollection<CartModel> allCart, ObservableCollection<CartModel> kotCart, decimal discountPercent)
 	{
 		decimal igst = 0;
 		foreach (var item in allCart)
@@ -92,7 +97,8 @@ internal static class BillWindowHelper
 				continue;
 
 			var product = await CommonData.LoadTableDataById<ProductTaxModel>(ViewNames.ProductTax, item.ProductId);
-			igst += product.IGSTAmount * item.Quantity;
+			var afterDiscount = item.Rate - (item.Rate * (discountPercent / 100));
+			igst += product.IGSTPercent * afterDiscount / 100 * item.Quantity;
 		}
 
 		foreach (var item in kotCart)
@@ -101,7 +107,8 @@ internal static class BillWindowHelper
 				continue;
 
 			var product = await CommonData.LoadTableDataById<ProductTaxModel>(ViewNames.ProductTax, item.ProductId);
-			igst += product.IGSTAmount * item.Quantity;
+			var afterDiscount = item.Rate - (item.Rate * (discountPercent / 100));
+			igst += product.IGSTPercent * afterDiscount / 100 * item.Quantity;
 		}
 
 		return igst;
@@ -112,13 +119,15 @@ internal static class BillWindowHelper
 		var kotOrders = await KOTData.LoadKOTBillDetailByRunningBillId(runningBillModel.Id);
 		return kotOrders.Any(k => k.Status);
 	}
+	#endregion
 
-	internal static async Task<decimal> CalculateProductTotalTax(List<BillDetailModel> billItems) =>
-		await CalculateProductCGST(billItems) +
-		await CalculateProductSGST(billItems) +
-		await CalculateProductIGST(billItems);
+	#region BillReceipt
+	internal static async Task<decimal> CalculateProductTotalTax(BillModel billModel, List<BillDetailModel> billItems) =>
+		await CalculateProductCGST(billModel, billItems) +
+		await CalculateProductSGST(billModel, billItems) +
+		await CalculateProductIGST(billModel, billItems);
 
-	internal static async Task<decimal> CalculateProductCGST(List<BillDetailModel> billItems)
+	internal static async Task<decimal> CalculateProductCGST(BillModel billModel, List<BillDetailModel> billItems)
 	{
 		decimal cgst = 0;
 		foreach (var item in billItems)
@@ -127,13 +136,14 @@ internal static class BillWindowHelper
 				continue;
 
 			var product = await CommonData.LoadTableDataById<ProductTaxModel>(ViewNames.ProductTax, item.ProductId);
-			cgst += product.CGSTAmount * item.Quantity;
+			var afterDiscount = item.Rate - (item.Rate * (billModel.DiscPercent / 100));
+			cgst += product.CGSTPercent * afterDiscount / 100 * item.Quantity;
 		}
 
 		return cgst;
 	}
 
-	internal static async Task<decimal> CalculateProductSGST(List<BillDetailModel> billItems)
+	internal static async Task<decimal> CalculateProductSGST(BillModel billModel, List<BillDetailModel> billItems)
 	{
 		decimal sgst = 0;
 		foreach (var item in billItems)
@@ -142,12 +152,13 @@ internal static class BillWindowHelper
 				continue;
 
 			var product = await CommonData.LoadTableDataById<ProductTaxModel>(ViewNames.ProductTax, item.ProductId);
-			sgst += product.SGSTAmount * item.Quantity;
+			var afterDiscount = item.Rate - (item.Rate * (billModel.DiscPercent / 100));
+			sgst += product.SGSTPercent * afterDiscount / 100 * item.Quantity;
 		}
 		return sgst;
 	}
 
-	internal static async Task<decimal> CalculateProductIGST(List<BillDetailModel> billItems)
+	internal static async Task<decimal> CalculateProductIGST(BillModel billModel, List<BillDetailModel> billItems)
 	{
 		decimal igst = 0;
 		foreach (var item in billItems)
@@ -156,10 +167,12 @@ internal static class BillWindowHelper
 				continue;
 
 			var product = await CommonData.LoadTableDataById<ProductTaxModel>(ViewNames.ProductTax, item.ProductId);
-			igst += product.IGSTAmount * item.Quantity;
+			var afterDiscount = item.Rate - (item.Rate * (billModel.DiscPercent / 100));
+			igst += product.IGSTPercent * afterDiscount / 100 * item.Quantity;
 		}
 		return igst;
 	}
+
 
 	internal static string GetDiscountString(BillModel bill, List<BillDetailModel> billItems)
 	{
@@ -168,48 +181,53 @@ internal static class BillWindowHelper
 		return discountString;
 	}
 
-	internal static async Task<string> GetSGSTString(List<BillDetailModel> billItems)
+	internal static async Task<string> GetSGSTString(BillModel billModel, List<BillDetailModel> billItems)
 	{
-		decimal sgstAmount = await CalculateProductSGST(billItems);
+		decimal sgstAmount = await CalculateProductSGST(billModel, billItems);
 
 		if (sgstAmount == 0)
 			return string.Empty;
 
-		decimal sgstPercent = sgstAmount / billItems.Where(x => !x.Cancelled).Sum(item => item.Rate * item.Quantity) * 100;
+		var sgstPercent = sgstAmount / GetTotalAfterDiscount(billModel, billItems) * 100;
 		return $"{sgstPercent:F2}% ({sgstAmount.FormatIndianCurrency()})";
 	}
 
-	internal static async Task<string> GetCGSTString(List<BillDetailModel> billItems)
+	internal static async Task<string> GetCGSTString(BillModel billModel, List<BillDetailModel> billItems)
 	{
-		decimal cgstAmount = await CalculateProductCGST(billItems);
+		decimal cgstAmount = await CalculateProductCGST(billModel, billItems);
 
 		if (cgstAmount == 0)
 			return string.Empty;
 
-		decimal cgstPercent = cgstAmount / billItems.Where(x => !x.Cancelled).Sum(item => item.Rate * item.Quantity) * 100;
+		decimal cgstPercent = cgstAmount / GetTotalAfterDiscount(billModel, billItems) * 100;
 		return $"{cgstPercent:F2}% ({cgstAmount.FormatIndianCurrency()})";
 	}
 
-	internal static async Task<string> GetIGSTString(List<BillDetailModel> billItems)
+	internal static async Task<string> GetIGSTString(BillModel billModel, List<BillDetailModel> billItems)
 	{
-		decimal igstAmount = await CalculateProductIGST(billItems);
+		decimal igstAmount = await CalculateProductIGST(billModel, billItems);
 
 		if (igstAmount == 0)
 			return string.Empty;
 
-		decimal igstPercent = igstAmount / billItems.Where(x => !x.Cancelled).Sum(item => item.Rate * item.Quantity) * 100;
+		decimal igstPercent = igstAmount / GetTotalAfterDiscount(billModel, billItems) * 100;
 
 		return $"{igstPercent:F2}% ({igstAmount.FormatIndianCurrency()})";
 	}
 
-	internal static async Task<string> GetServiceString(BillModel billModel, List<BillDetailModel> billItems)
+	private static decimal GetTotalAfterDiscount(BillModel billModel, List<BillDetailModel> billItems)
 	{
 		decimal baseTotal = billItems.Where(x => !x.Cancelled).Sum(item => item.Rate * item.Quantity);
 		decimal discountAmount = billItems.Where(x => !x.Cancelled).Sum(item => item.Rate * item.Quantity) * (billModel.DiscPercent / 100);
+		decimal total = baseTotal - discountAmount;
+		return total;
+	}
 
-		decimal subTotal = baseTotal - discountAmount;
+	internal static async Task<string> GetServiceString(BillModel billModel, List<BillDetailModel> billItems)
+	{
+		var subTotal = GetTotalAfterDiscount(billModel, billItems);
 
-		decimal productTax = await CalculateProductTotalTax(billItems);
+		decimal productTax = await CalculateProductTotalTax(billModel, billItems);
 		subTotal += productTax;
 
 		decimal servicePercent = billModel.ServicePercent;
@@ -223,12 +241,9 @@ internal static class BillWindowHelper
 
 	internal static async Task<decimal> CalculateBillTotal(BillModel billModel, List<BillDetailModel> billItems)
 	{
-		decimal baseTotal = billItems.Where(x => !x.Cancelled).Sum(item => item.Rate * item.Quantity);
-		decimal discountAmount = billItems.Where(x => !x.Cancelled).Sum(item => item.Rate * item.Quantity) * (billModel.DiscPercent / 100);
+		var subTotal = GetTotalAfterDiscount(billModel, billItems);
 
-		decimal subTotal = baseTotal - discountAmount;
-
-		decimal productTax = await CalculateProductTotalTax(billItems);
+		decimal productTax = await CalculateProductTotalTax(billModel, billItems);
 		subTotal += productTax;
 
 		decimal servicePercent = billModel.ServicePercent;
@@ -240,4 +255,5 @@ internal static class BillWindowHelper
 
 		return subTotal;
 	}
+	#endregion
 }

@@ -96,10 +96,11 @@ internal static class ThermalParagraphs
 		};
 	}
 
-	internal static Paragraph RegularParagraph(string text)
+	internal static Paragraph RegularParagraph(string text, TextAlignment alignment = TextAlignment.Left)
 	{
 		return new(new Run(text))
 		{
+			TextAlignment = alignment,
 			FontSize = RegularFontSizeThermal,
 			FontFamily = RegularFontFamilyThermal,
 			Margin = new Thickness(RegularFontPaddingLeftThermal, RegularFontPaddingTopThermal, RegularFontPaddingRightThermal, RegularFontPaddingBottomThermal),
@@ -109,11 +110,11 @@ internal static class ThermalParagraphs
 		};
 	}
 
-	internal static Paragraph TableHeaderParagraph(string text)
+	internal static Paragraph TableHeaderParagraph(string text, TextAlignment alignment = TextAlignment.Center)
 	{
 		return new(new Run(text))
 		{
-			TextAlignment = TextAlignment.Center,
+			TextAlignment = alignment,
 			FontSize = TableHeaderFontSizeThermal,
 			FontFamily = TableHeaderFontFamilyThermal,
 			Margin = new Thickness(TableHeaderFontPaddingLeftThermal, TableHeaderFontPaddingTopThermal, TableHeaderFontPaddingRightThermal, TableHeaderFontPaddingBottomThermal),
@@ -164,23 +165,22 @@ internal static class ThermalParagraphs
 		};
 	}
 
-	internal static void AddTableRow(TableRowGroup group, int itemNo, string itemName, int quantity, decimal rate, decimal amount)
+	internal static void AddTableRow(TableRowGroup group, string itemName, int quantity, int rate, int amount)
 	{
 		group.Rows.Add(new TableRow
 		{
 			Cells =
 			{
-				new TableCell(TableRowParagraph(itemNo.ToString())),
 				new TableCell(TableRowParagraph(itemName))
 				{
 					TextAlignment = TextAlignment.Left
 				},
 				new TableCell(TableRowParagraph(quantity.ToString())),
-				new TableCell(TableRowParagraph(rate.ToString("N2")))
+				new TableCell(TableRowParagraph(rate.ToString()))
 				{
 					TextAlignment = TextAlignment.Right
 				},
-				new TableCell(TableRowParagraph(amount.ToString("N2")))
+				new TableCell(TableRowParagraph(amount.ToString()))
 				{
 					TextAlignment = TextAlignment.Right
 				}
@@ -194,11 +194,8 @@ internal static class ThermalParagraphs
 		{
 			Cells =
 			{
-				new TableCell(RegularParagraph(label)),
-				new TableCell(RegularParagraph(value))
-				{
-					TextAlignment = TextAlignment.Right
-				}
+				new TableCell(RegularParagraph(label,TextAlignment.Left)),
+				new TableCell(RegularParagraph(value,TextAlignment.Right))
 			}
 		});
 	}

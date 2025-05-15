@@ -20,32 +20,28 @@ SELECT
     b.DiscReason AS DiscountReason,
     b.ServicePercent,
     b.Remarks,
+
     COUNT(DISTINCT bd.ProductId) AS TotalProducts,
     SUM(bd.Quantity) AS TotalQuantity,
-    (SUM(bd.Quantity * bd.Rate * bd.SGST / 100) / SUM(bd.Quantity * bd.Rate) * 100) AS SGSTPercent,
-    (SUM(bd.Quantity * bd.Rate * bd.CGST / 100) / SUM(bd.Quantity * bd.Rate) * 100) AS CGSTPercent,
-    (SUM(bd.Quantity * bd.Rate * bd.IGST / 100) / SUM(bd.Quantity * bd.Rate) * 100) AS IGSTPercent,
-    SUM(bd.Quantity * bd.Rate * bd.SGST / 100) AS SGSTAmount,
-    SUM(bd.Quantity * bd.Rate * bd.CGST / 100) AS CGSTAmount,
-    SUM(bd.Quantity * bd.Rate * bd.IGST / 100) AS IGSTAmount,
+
+    (SUM(bd.Quantity * bd.Rate * (1 - b.DiscPercent / 100) * bd.SGST / 100) / NULLIF(SUM(bd.Quantity * bd.Rate * (1 - b.DiscPercent / 100)), 0) * 100) AS SGSTPercent,
+    (SUM(bd.Quantity * bd.Rate * (1 - b.DiscPercent / 100) * bd.CGST / 100) / NULLIF(SUM(bd.Quantity * bd.Rate * (1 - b.DiscPercent / 100)), 0) * 100) AS CGSTPercent,
+    (SUM(bd.Quantity * bd.Rate * (1 - b.DiscPercent / 100) * bd.IGST / 100) / NULLIF(SUM(bd.Quantity * bd.Rate * (1 - b.DiscPercent / 100)), 0) * 100) AS IGSTPercent,
+
+    SUM(bd.Quantity * bd.Rate * (1 - b.DiscPercent / 100) * bd.SGST / 100) AS SGSTAmount,
+    SUM(bd.Quantity * bd.Rate * (1 - b.DiscPercent / 100) * bd.CGST / 100) AS CGSTAmount,
+    SUM(bd.Quantity * bd.Rate * (1 - b.DiscPercent / 100) * bd.IGST / 100) AS IGSTAmount,
+
     SUM(bd.Quantity * bd.Rate * (b.DiscPercent / 100)) AS DiscountAmount,
-    SUM(bd.Quantity * bd.Rate * ((bd.CGST + bd.SGST + bd.IGST) / 100)) AS TotalTaxAmount,
-    SUM(((bd.Quantity * bd.Rate) +
-        (bd.Quantity * bd.Rate * ((bd.CGST + bd.SGST + bd.IGST) / 100)) -
-        (bd.Quantity * bd.Rate * (b.DiscPercent / 100))) * (b.ServicePercent / 100)) AS ServiceAmount,
+    SUM(bd.Quantity * bd.Rate * (1 - b.DiscPercent / 100) * (bd.CGST + bd.SGST + bd.IGST) / 100) AS TotalTaxAmount,
+    SUM(bd.Quantity * bd.Rate * (1 - b.DiscPercent / 100) * (1 + (bd.CGST + bd.SGST + bd.IGST) / 100) * (b.ServicePercent / 100)) AS ServiceAmount,
+
     SUM(bd.Quantity * bd.Rate) AS BaseTotal,
     SUM(bd.Quantity * bd.Rate * (1 - b.DiscPercent / 100)) AS AfterDiscount,
-    SUM((bd.Quantity * bd.Rate) +
-        (bd.Quantity * bd.Rate * ((bd.CGST + bd.SGST + bd.IGST) / 100)) -
-        (bd.Quantity * bd.Rate * (b.DiscPercent / 100))) AS AfterTax,
-    SUM(((bd.Quantity * bd.Rate) +
-        (bd.Quantity * bd.Rate * ((bd.CGST + bd.SGST + bd.IGST) / 100)) -
-        (bd.Quantity * bd.Rate * (b.DiscPercent / 100))) * (1 + b.ServicePercent / 100)) AS AfterService,
+    SUM(bd.Quantity * bd.Rate * (1 - b.DiscPercent / 100) * (1 + (bd.CGST + bd.SGST + bd.IGST) / 100)) AS AfterTax,
+    SUM(bd.Quantity * bd.Rate * (1 - b.DiscPercent / 100) * (1 + (bd.CGST + bd.SGST + bd.IGST) / 100) * (1 + b.ServicePercent / 100)) AS AfterService,
     SUM(b.EntryPaid) AS EntryPaid,
-    SUM(((bd.Quantity * bd.Rate) +
-        (bd.Quantity * bd.Rate * ((bd.CGST + bd.SGST + bd.IGST) / 100)) -
-        (bd.Quantity * bd.Rate * (b.DiscPercent / 100))) * (1 + b.ServicePercent / 100)) -
-        SUM(b.EntryPaid) AS FinalAmount,
+    SUM(bd.Quantity * bd.Rate * (1 - b.DiscPercent / 100) * (1 + (bd.CGST + bd.SGST + bd.IGST) / 100) * (1 + b.ServicePercent / 100)) - b.EntryPaid AS FinalAmount,
 
     (SELECT Amount FROM [dbo].[BillPaymentDetail] bpd WHERE bpd.BillId = b.Id AND bpd.PaymentModeId = 1 AND bpd.Status = 1) AS [Cash],
     (SELECT Amount FROM [dbo].[BillPaymentDetail] bpd WHERE bpd.BillId = b.Id AND bpd.PaymentModeId = 2 AND bpd.Status = 1) AS [Card],
@@ -86,4 +82,5 @@ GROUP BY
     b.DiscPercent, 
     b.DiscReason,
     b.ServicePercent,
+    b.EntryPaid,
     b.Remarks;

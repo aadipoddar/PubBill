@@ -98,7 +98,6 @@ internal static class ThermalBillReceipt
 			Margin = new Thickness(0, 5, 0, 5)
 		};
 
-		itemsTable.Columns.Add(new TableColumn { Width = new GridLength(22) });
 		itemsTable.Columns.Add(new TableColumn { Width = new GridLength(1, GridUnitType.Auto) });
 		itemsTable.Columns.Add(new TableColumn { Width = new GridLength(22) });
 		itemsTable.Columns.Add(new TableColumn { Width = new GridLength(1, GridUnitType.Auto) });
@@ -107,22 +106,19 @@ internal static class ThermalBillReceipt
 		TableRowGroup itemsGroup = new();
 
 		TableRow headerRow = new();
-		headerRow.Cells.Add(new TableCell(ThermalParagraphs.TableHeaderParagraph("No.")));
-		headerRow.Cells.Add(new TableCell(ThermalParagraphs.TableHeaderParagraph("Item")));
+		headerRow.Cells.Add(new TableCell(ThermalParagraphs.TableHeaderParagraph("Item", TextAlignment.Left)));
 		headerRow.Cells.Add(new TableCell(ThermalParagraphs.TableHeaderParagraph("Qty")));
-		headerRow.Cells.Add(new TableCell(ThermalParagraphs.TableHeaderParagraph("Rate")));
-		headerRow.Cells.Add(new TableCell(ThermalParagraphs.TableHeaderParagraph("Amt")));
+		headerRow.Cells.Add(new TableCell(ThermalParagraphs.TableHeaderParagraph("Rate", TextAlignment.Right)));
+		headerRow.Cells.Add(new TableCell(ThermalParagraphs.TableHeaderParagraph("Amt", TextAlignment.Right)));
 		itemsGroup.Rows.Add(headerRow);
 
-		int i = 1;
 		foreach (var item in billItems)
 		{
 			if (item.Cancelled)
 				continue;
 
 			var product = await CommonData.LoadTableDataById<ProductModel>(TableNames.Product, item.ProductId);
-			ThermalParagraphs.AddTableRow(itemsGroup, i, product.Name, item.Quantity, product.Rate, item.Quantity * product.Rate);
-			i++;
+			ThermalParagraphs.AddTableRow(itemsGroup, product.Name, item.Quantity, (int)product.Rate, (int)(item.Quantity * product.Rate));
 		}
 
 		itemsTable.RowGroups.Add(itemsGroup);
@@ -135,6 +131,8 @@ internal static class ThermalBillReceipt
 	{
 		var billItems = await BillData.LoadBillDetailByBillId(billModel.Id);
 
+		document.Blocks.Add(ThermalParagraphs.RegularParagraph($"Total Qty: {billItems.Where(x => !x.Cancelled).Sum(x => x.Quantity)}"));
+
 		Table subTotalsTable = new()
 		{
 			Margin = new Thickness(0, 5, 0, 5)
@@ -144,27 +142,25 @@ internal static class ThermalBillReceipt
 		subTotalsTable.Columns.Add(new TableColumn { Width = new GridLength(1, GridUnitType.Star) });
 
 		TableRowGroup itemsGroup = new();
-
-		ThermalParagraphs.AddTableRow(itemsGroup, "Total Qty:", billItems.Where(x => !x.Cancelled).Sum(x => x.Quantity).ToString());
 		ThermalParagraphs.AddTableRow(itemsGroup, "Sub Total:", billItems.Where(x => !x.Cancelled).Sum(x => x.Quantity * x.Rate).FormatIndianCurrency());
 
 		if (billModel.DiscPercent > 0)
 			ThermalParagraphs.AddTableRow(itemsGroup, "Discount:", BillWindowHelper.GetDiscountString(billModel, billItems));
 
-		if (await BillWindowHelper.GetSGSTString(billItems) != "")
-			ThermalParagraphs.AddTableRow(itemsGroup, "SGST:", await BillWindowHelper.GetSGSTString(billItems));
+		if (await BillWindowHelper.GetSGSTString(billModel, billItems) != "")
+			ThermalParagraphs.AddTableRow(itemsGroup, "SGST:", await BillWindowHelper.GetSGSTString(billModel, billItems));
 
-		if (await BillWindowHelper.GetCGSTString(billItems) != "")
-			ThermalParagraphs.AddTableRow(itemsGroup, "CGST:", await BillWindowHelper.GetCGSTString(billItems));
+		if (await BillWindowHelper.GetCGSTString(billModel, billItems) != "")
+			ThermalParagraphs.AddTableRow(itemsGroup, "CGST:", await BillWindowHelper.GetCGSTString(billModel, billItems));
 
-		if (await BillWindowHelper.GetIGSTString(billItems) != "")
-			ThermalParagraphs.AddTableRow(itemsGroup, "IGST:", await BillWindowHelper.GetIGSTString(billItems));
+		if (await BillWindowHelper.GetIGSTString(billModel, billItems) != "")
+			ThermalParagraphs.AddTableRow(itemsGroup, "IGST:", await BillWindowHelper.GetIGSTString(billModel, billItems));
 
 		if (billModel.ServicePercent > 0)
 			ThermalParagraphs.AddTableRow(itemsGroup, "Service Charge:", await BillWindowHelper.GetServiceString(billModel, billItems));
 
 		if (billModel.EntryPaid > 0)
-			ThermalParagraphs.AddTableRow(itemsGroup, "Service Charge:", ((decimal)billModel.EntryPaid).FormatIndianCurrency());
+			ThermalParagraphs.AddTableRow(itemsGroup, "Entry Paid:", ((decimal)billModel.EntryPaid).FormatIndianCurrency());
 
 		subTotalsTable.RowGroups.Add(itemsGroup);
 		document.Blocks.Add(subTotalsTable);
@@ -210,7 +206,7 @@ internal static class ThermalBillReceipt
 			.Where(item => item.PaymentModeId == 3)
 			.Sum(item => item.Amount);
 
-		document.Blocks.Add(ThermalParagraphs.RegularParagraph("Scan to Pay"));
+		document.Blocks.Add(ThermalParagraphs.RegularParagraph("Scan to Pay", TextAlignment.Center));
 
 		// Generate the UPI ID
 		string upiId = amount == 0
