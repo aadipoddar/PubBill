@@ -9,7 +9,8 @@ public partial class BillItemManageWindow : Window
 {
 	private readonly CartModel _cartItem;
 	private readonly bool _kotCart;
-	private readonly decimal _discountPercent;
+	private decimal _discountPercent;
+	private readonly decimal _originalDiscountPercent;
 
 	public BillItemManageWindow(CartModel cartItem, decimal discountPercent, bool kotCart = true)
 	{
@@ -18,6 +19,7 @@ public partial class BillItemManageWindow : Window
 		_cartItem = cartItem;
 		_kotCart = kotCart;
 		_discountPercent = discountPercent;
+		_originalDiscountPercent = discountPercent;
 	}
 
 	private async void Window_Loaded(object sender, RoutedEventArgs e) =>
@@ -29,6 +31,8 @@ public partial class BillItemManageWindow : Window
 		instructionsTextBox.Text = _cartItem.Instruction;
 		discountableCheckBox.IsChecked = _cartItem.Discountable;
 		cancelledCheckBox.IsChecked = _cartItem.Cancelled;
+		selfDiscountCheckBox.IsChecked = _cartItem.SelfDiscount;
+		discountPercentTextBox.Text = _cartItem.DiscPercent.ToString("N2");
 
 		instructionsTextBox.Focus();
 
@@ -38,7 +42,7 @@ public partial class BillItemManageWindow : Window
 		await UpdateFinancialDetails();
 	}
 
-	private async Task UpdateFinancialDetails()
+	private async Task UpdateFinancialDetails(bool assignValues = false)
 	{
 		var product = await CommonData.LoadTableDataById<ProductModel>(TableNames.Product, _cartItem.ProductId);
 		var productTax = await CommonData.LoadTableDataById<ProductTaxModel>(ViewNames.ProductTax, _cartItem.ProductId);
@@ -52,6 +56,7 @@ public partial class BillItemManageWindow : Window
 
 		// Base calculations
 		decimal baseTotal = rate * quantity;
+		_discountPercent = _cartItem.SelfDiscount ? _discountPercent : _originalDiscountPercent;
 		decimal discountAmount = _cartItem.Discountable ? baseTotal * (_discountPercent / 100) : 0;
 		decimal afterDiscount = baseTotal - discountAmount;
 
@@ -69,17 +74,39 @@ public partial class BillItemManageWindow : Window
 
 		// Display all values in the UI
 		baseTotalTextBox.Text = baseTotal.FormatIndianCurrency();
-		discountPercentTextBox.Text = $"{_discountPercent:F2}%";
+		discountPercentTextBox.Text = _discountPercent.ToString();
 		discountAmountTextBox.Text = discountAmount.FormatIndianCurrency();
 		afterDiscountTextBox.Text = afterDiscount.FormatIndianCurrency();
 
-		cgstPercentTextBox.Text = $"{cgstPercent:F2}%";
-		sgstPercentTextBox.Text = $"{sgstPercent:F2}%";
+		cgstPercentTextBox.Text = $"{cgstPercent:N2}%";
+		sgstPercentTextBox.Text = $"{sgstPercent:N2}%";
 
 		cgstAmountTextBox.Text = cgstAmount.FormatIndianCurrency();
 		sgstAmountTextBox.Text = sgstAmount.FormatIndianCurrency();
 
 		finalAmountTextBox.Text = finalAmount.FormatIndianCurrency();
+
+		// Update Cart Item
+		if (assignValues)
+		{
+			_cartItem.Quantity = int.Parse(quantityTextBox.Text);
+			_cartItem.Rate = rate;
+			_cartItem.BaseTotal = baseTotal;
+			_cartItem.Instruction = instructionsTextBox.Text;
+			_cartItem.Discountable = discountableCheckBox.IsChecked ?? false;
+			_cartItem.SelfDiscount = selfDiscountCheckBox.IsChecked ?? false;
+			_cartItem.DiscPercent = _discountPercent;
+			_cartItem.DiscAmount = discountAmount;
+			_cartItem.AfterDiscount = afterDiscount;
+			_cartItem.CGSTPercent = cgstPercent;
+			_cartItem.CGSTAmount = cgstAmount;
+			_cartItem.SGSTPercent = sgstPercent;
+			_cartItem.SGSTAmount = sgstAmount;
+			_cartItem.IGSTPercent = igstPercent;
+			_cartItem.IGSTAmount = igstAmount;
+			_cartItem.Total = finalAmount;
+			_cartItem.Cancelled = cancelledCheckBox.IsChecked ?? false;
+		}
 	}
 
 	#region Quantity
@@ -112,12 +139,48 @@ public partial class BillItemManageWindow : Window
 	}
 	#endregion
 
-	private void SaveButton_Click(object sender, RoutedEventArgs e)
+	#region Discount
+	private void decimalTextBox_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e) =>
+		Helper.ValidateDecimalInput(sender, e);
+
+	private async void discountPercentTextBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
 	{
-		_cartItem.Quantity = int.Parse(quantityTextBox.Text);
-		_cartItem.Instruction = instructionsTextBox.Text;
-		_cartItem.Discountable = discountableCheckBox.IsChecked ?? false;
-		_cartItem.Cancelled = cancelledCheckBox.IsChecked ?? false;
+		selfDiscountCheckBox.IsChecked = _cartItem.SelfDiscount = true;
+
+		if (decimal.Parse(discountPercentTextBox.Text) == _originalDiscountPercent)
+			selfDiscountCheckBox.IsChecked = _cartItem.SelfDiscount = false;
+
+		if (!decimal.TryParse(discountPercentTextBox.Text, out decimal percent))
+		{
+			discountPercentTextBox.Text = "0.00";
+			percent = 0;
+		}
+
+		percent = Math.Clamp(percent, 0, 100);
+		if (percent != decimal.Parse(discountPercentTextBox.Text))
+			discountPercentTextBox.Text = percent.ToString("N2");
+
+		_discountPercent = percent;
+
+		await UpdateFinancialDetails();
+	}
+
+	private async void selfDiscountCheckBox_Checked(object sender, RoutedEventArgs e)
+	{
+		_discountPercent = _originalDiscountPercent;
+		await UpdateFinancialDetails();
+	}
+
+	private async void selfDiscountCheckBox_Unchecked(object sender, RoutedEventArgs e)
+	{
+		_discountPercent = _originalDiscountPercent;
+		await UpdateFinancialDetails();
+	}
+	#endregion
+
+	private async void SaveButton_Click(object sender, RoutedEventArgs e)
+	{
+		await UpdateFinancialDetails(true);
 
 		DialogResult = true;
 		Close();

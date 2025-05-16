@@ -175,4 +175,18 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="[PrinterName]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="ef14dddb-7b46-4d51-950f-5bc04b7e26af" ChangeDateTime="05/16/2025 14:11:18">
+    <Property Name="ElementName" Value="[dbo].[RunningBillDetail].[DiscountPercent]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[RunningBillDetail]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="DiscPercent" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="0344b49b-8593-4745-93dd-068c817f97cd" ChangeDateTime="05/16/2025 14:11:27">
+    <Property Name="ElementName" Value="[dbo].[RunningBillDetail].[DiscountAmount]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[RunningBillDetail]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="DiscAmount" />
+  </Operation>
 </Operations>

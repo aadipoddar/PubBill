@@ -118,7 +118,7 @@ internal static class ThermalBillReceipt
 				continue;
 
 			var product = await CommonData.LoadTableDataById<ProductModel>(TableNames.Product, item.ProductId);
-			ThermalParagraphs.AddTableRow(itemsGroup, product.Name, item.Quantity, (int)product.Rate, (int)(item.Quantity * product.Rate));
+			ThermalParagraphs.AddTableRow(itemsGroup, product.Name, item.Quantity, (int)product.Rate, (int)item.BaseTotal);
 		}
 
 		itemsTable.RowGroups.Add(itemsGroup);
@@ -142,22 +142,22 @@ internal static class ThermalBillReceipt
 		subTotalsTable.Columns.Add(new TableColumn { Width = new GridLength(1, GridUnitType.Star) });
 
 		TableRowGroup itemsGroup = new();
-		ThermalParagraphs.AddTableRow(itemsGroup, "Sub Total:", billItems.Where(x => !x.Cancelled).Sum(x => x.Quantity * x.Rate).FormatIndianCurrency());
+		ThermalParagraphs.AddTableRow(itemsGroup, "Sub Total:", BillWindowHelper.CalculateBaseTotal(billItems).FormatIndianCurrency());
 
-		if (billModel.DiscPercent > 0)
-			ThermalParagraphs.AddTableRow(itemsGroup, "Discount:", BillWindowHelper.GetDiscountString(billModel, billItems));
+		if (BillWindowHelper.CalculateDiscountAmount(billItems) > 0)
+			ThermalParagraphs.AddTableRow(itemsGroup, "Discount:", BillWindowHelper.GetDiscountString(billItems));
 
-		if (await BillWindowHelper.GetSGSTString(billModel, billItems) != "")
-			ThermalParagraphs.AddTableRow(itemsGroup, "SGST:", await BillWindowHelper.GetSGSTString(billModel, billItems));
+		if (BillWindowHelper.CalculateProductSGST(billItems) > 0)
+			ThermalParagraphs.AddTableRow(itemsGroup, "SGST:", BillWindowHelper.GetSGSTString(billItems));
 
-		if (await BillWindowHelper.GetCGSTString(billModel, billItems) != "")
-			ThermalParagraphs.AddTableRow(itemsGroup, "CGST:", await BillWindowHelper.GetCGSTString(billModel, billItems));
+		if (BillWindowHelper.CalculateProductCGST(billItems) > 0)
+			ThermalParagraphs.AddTableRow(itemsGroup, "CGST:", BillWindowHelper.GetCGSTString(billItems));
 
-		if (await BillWindowHelper.GetIGSTString(billModel, billItems) != "")
-			ThermalParagraphs.AddTableRow(itemsGroup, "IGST:", await BillWindowHelper.GetIGSTString(billModel, billItems));
+		if (BillWindowHelper.CalculateProductIGST(billItems) > 0)
+			ThermalParagraphs.AddTableRow(itemsGroup, "IGST:", BillWindowHelper.GetIGSTString(billItems));
 
 		if (billModel.ServicePercent > 0)
-			ThermalParagraphs.AddTableRow(itemsGroup, "Service Charge:", await BillWindowHelper.GetServiceString(billModel, billItems));
+			ThermalParagraphs.AddTableRow(itemsGroup, "Service Charge:", BillWindowHelper.GetServiceString(billItems, billModel.ServicePercent));
 
 		if (billModel.EntryPaid > 0)
 			ThermalParagraphs.AddTableRow(itemsGroup, "Entry Paid:", ((decimal)billModel.EntryPaid).FormatIndianCurrency());
@@ -179,8 +179,7 @@ internal static class ThermalBillReceipt
 
 		TableRowGroup itemsGroup1 = new();
 
-		var total = await BillWindowHelper.CalculateBillTotal(billModel, billItems);
-
+		var total = BillWindowHelper.CalculateBillTotal(billItems, billModel.ServicePercent, billModel.EntryPaid);
 		ThermalParagraphs.AddTableRow(itemsGroup1, "Total:", total.FormatIndianCurrency());
 
 		totalsTable.RowGroups.Add(itemsGroup1);

@@ -24,10 +24,20 @@ public class BillDetailModel
 	public int ProductId { get; set; }
 	public int Quantity { get; set; }
 	public decimal Rate { get; set; }
-	public decimal CGST { get; set; }
-	public decimal SGST { get; set; }
-	public decimal IGST { get; set; }
+	public decimal BaseTotal { get; set; }
 	public string Instruction { get; set; }
-	public bool Cancelled { get; set; } = false;
+	public bool Discountable { get; set; }
+	public bool SelfDiscount { get; set; }
+	public decimal DiscPercent { get; set; }
+	public decimal DiscAmount { get; set; }
+	public decimal AfterDiscount { get; set; }
+	public decimal CGSTPercent { get; set; }
+	public decimal CGSTAmount { get; set; }
+	public decimal SGSTPercent { get; set; }
+	public decimal SGSTAmount { get; set; }
+	public decimal IGSTPercent { get; set; }
+	public decimal IGSTAmount { get; set; }
+	public decimal Total { get; set; }
+	public bool Cancelled { get; set; }
 	public bool Status { get; set; } = true;
 }

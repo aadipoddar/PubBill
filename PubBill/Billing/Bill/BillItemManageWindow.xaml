@@ -7,7 +7,7 @@
         xmlns:common="clr-namespace:PubBill.Common"
         xmlns:main="clr-namespace:PubBill"
         mc:Ignorable="d" WindowStartupLocation="CenterScreen"
-        Title="Item Details" Height="650" Width="900"
+        Title="Item Details" Height="650" Width="950"
         Loaded="Window_Loaded">
 
 	<Grid>
@@ -102,6 +102,7 @@
 							<StackPanel Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Center" Orientation="Horizontal" Margin="10">
 								<CheckBox x:Name="discountableCheckBox" Content="Discountable"  Margin="10" Padding="5" />
 								<CheckBox x:Name="cancelledCheckBox" Content="Cancelled" Margin="10" Padding="5" />
+								<CheckBox x:Name="selfDiscountCheckBox" Content="Self Discount" Margin="10" Padding="5" Checked="selfDiscountCheckBox_Checked" Unchecked="selfDiscountCheckBox_Unchecked" />
 							</StackPanel>
 						</Grid>
 					</StackPanel>
@@ -156,7 +157,7 @@
 												<ColumnDefinition Width="*" />
 											</Grid.ColumnDefinitions>
 
-											<TextBox Grid.Column="0" x:Name="discountPercentTextBox" IsReadOnly="True" Margin="5" Padding="5" TextAlignment="Right"/>
+											<TextBox Grid.Column="0" x:Name="discountPercentTextBox" Margin="5" Padding="5" TextAlignment="Right" TextChanged="discountPercentTextBox_TextChanged" PreviewTextInput="decimalTextBox_PreviewTextInput" />
 											<TextBox Grid.Column="1" x:Name="discountAmountTextBox" IsReadOnly="True" Margin="5" Padding="5" TextAlignment="Right"/>
 										</Grid>
 										

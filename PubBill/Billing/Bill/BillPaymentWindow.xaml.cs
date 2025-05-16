@@ -29,7 +29,8 @@ public partial class BillPaymentWindow : Window
 		amountDataGrid.ItemsSource = _paymentModels;
 	}
 
-	private async void Window_Loaded(object sender, RoutedEventArgs e) => await LoadData();
+	private async void Window_Loaded(object sender, RoutedEventArgs e) =>
+		await LoadData();
 
 	private async Task LoadData()
 	{
@@ -38,10 +39,27 @@ public partial class BillPaymentWindow : Window
 		paymentModeComboBox.SelectedValuePath = nameof(PaymentModeModel.Id);
 		paymentModeComboBox.SelectedIndex = 0;
 
-		_totalAmount = await BillWindowHelper.CalculateBillTotal(_allCart, _runningBillModel, _billModel.EntryPaid);
+		_totalAmount = BillWindowHelper.CalculateBillTotal(_allCart, _runningBillModel.ServicePercent, _billModel.EntryPaid);
 		totalTextBox.Text = _totalAmount.FormatIndianCurrency();
 
 		CalculateTotal();
+	}
+
+	private void CalculateTotal()
+	{
+		amountDataGrid.Items.Refresh();
+
+		var collected = _paymentModels.Sum(x => x.Amount);
+		collectedTextBox.Text = collected.FormatIndianCurrency();
+
+		var remaining = _totalAmount - collected;
+
+		amountTextBox.Text = Math.Round(remaining, 2).ToString();
+
+		if (remaining == 0)
+			saveButton.IsEnabled = true;
+		else
+			saveButton.IsEnabled = false;
 	}
 
 	#region DataGridEvents
@@ -85,23 +103,6 @@ public partial class BillPaymentWindow : Window
 	}
 	#endregion
 
-	private void CalculateTotal()
-	{
-		amountDataGrid.Items.Refresh();
-
-		var collected = _paymentModels.Sum(x => x.Amount);
-		collectedTextBox.Text = collected.FormatIndianCurrency();
-
-		var remaining = _totalAmount - collected;
-
-		amountTextBox.Text = Math.Round(remaining, 2).ToString();
-
-		if (remaining == 0)
-			saveButton.IsEnabled = true;
-		else
-			saveButton.IsEnabled = false;
-	}
-
 	#region Saving
 	private async void saveButton_Click(object sender, RoutedEventArgs e)
 	{
@@ -127,8 +128,6 @@ public partial class BillPaymentWindow : Window
 	private static async Task InsertBillDetails(int billId)
 	{
 		foreach (var cart in _allCart)
-		{
-			var productDetail = await CommonData.LoadTableDataById<ProductTaxModel>(ViewNames.ProductTax, cart.ProductId);
 			await BillData.InsertBillDetail(new BillDetailModel
 			{
 				Id = 0,
@@ -136,14 +135,23 @@ public partial class BillPaymentWindow : Window
 				ProductId = cart.ProductId,
 				Quantity = cart.Quantity,
 				Rate = cart.Rate,
-				CGST = productDetail.CGSTPercent,
-				SGST = productDetail.SGSTPercent,
-				IGST = productDetail.IGSTPercent,
+				BaseTotal = cart.BaseTotal,
+				Discountable = cart.Discountable,
+				SelfDiscount = cart.SelfDiscount,
+				DiscPercent = cart.DiscPercent,
+				DiscAmount = cart.DiscAmount,
+				AfterDiscount = cart.AfterDiscount,
+				CGSTPercent = cart.CGSTPercent,
+				CGSTAmount = cart.CGSTAmount,
+				SGSTPercent = cart.SGSTPercent,
+				SGSTAmount = cart.SGSTAmount,
+				IGSTPercent = cart.IGSTPercent,
+				IGSTAmount = cart.IGSTAmount,
+				Total = cart.Total,
 				Instruction = cart.Instruction,
 				Cancelled = cart.Cancelled,
 				Status = true
 			});
-		}
 	}
 
 	private async Task InsertPaymentDetails(int billId)

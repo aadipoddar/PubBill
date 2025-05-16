@@ -76,7 +76,6 @@
     <Folder Include="Tables\Dining" />
     <Folder Include="Stored Procedures\Insert\Dining" />
     <Folder Include="Stored Procedures\Insert\Kitchen" />
-    <Folder Include="Tables\Inventory" />
     <Folder Include="Stored Procedures\LoadData\Dining" />
     <Folder Include="Stored Procedures\LoadData\Product" />
     <Folder Include="Tables\Common" />
@@ -132,8 +131,6 @@
     <Build Include="Stored Procedures\Insert\Dining\Insert_DiningArea.sql" />
     <Build Include="Stored Procedures\Insert\Dining\Insert_DiningTable.sql" />
     <Build Include="Stored Procedures\Insert\Dining\Insert_DiningAreaKitchen.sql" />
-    <Build Include="Tables\Inventory\Purchase.sql" />
-    <Build Include="Tables\Inventory\RawMaterial.sql" />
     <Build Include="Stored Procedures\LoadData\Dining\Load_DiningArea_By_Location.sql" />
     <Build Include="Stored Procedures\LoadData\Dining\Load_DIningTable_By_DiningArea.sql" />
     <Build Include="Stored Procedures\LoadData\Product\Load_Product_By_ProductCategory.sql" />
