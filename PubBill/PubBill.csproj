@@ -17,7 +17,7 @@
     <PackageReference Include="MessagingToolkit.QRCode" Version="1.3.0" />
     <PackageReference Include="NumericWordsConversion" Version="2.1.1" />
     <PackageReference Include="QRCoder" Version="1.6.0" />
-    <PackageReference Include="Syncfusion.Edit.WPF" Version="29.1.41" />
+    <PackageReference Include="Syncfusion.Edit.WPF" Version="29.2.4" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,0 +1,242 @@
+﻿<Window x:Class="PubBill.Billing.Bill.BillItemManageWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PubBill.Billing.Bill"
+        xmlns:common="clr-namespace:PubBill.Common"
+        xmlns:main="clr-namespace:PubBill"
+        mc:Ignorable="d" WindowStartupLocation="CenterScreen"
+        Title="Item Details" Height="650" Width="900"
+        Loaded="Window_Loaded">
+
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="*"/>
+			<RowDefinition Height="Auto"/>
+		</Grid.RowDefinitions>
+
+		<Grid>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="*"/>
+				<RowDefinition Height="Auto"/>
+			</Grid.RowDefinitions>
+
+			<!-- Header -->
+			<Border Grid.Row="0" Background="Goldenrod" Padding="15,10" Margin="0,0,0,15">
+				<TextBlock x:Name="headerTextBlock" Text="Item Details" 
+                      FontSize="16" FontWeight="Bold" Foreground="Black" 
+                      HorizontalAlignment="Center"/>
+			</Border>
+
+			<!-- Main Content Area -->
+			<Grid Grid.Row="1" Margin="15,0">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="*"/>
+					<ColumnDefinition Width="*"/>
+				</Grid.ColumnDefinitions>
+
+				<!-- Left Section - Basic Information -->
+				<Border Grid.Column="0" BorderBrush="Gold" BorderThickness="2" CornerRadius="5" Margin="0,0,10,0" >
+					<StackPanel Margin="5">
+						<TextBlock Text="PRODUCT DETAILS" FontSize="16" FontWeight="Bold" Margin="10" Foreground="IndianRed"/>
+
+						<!-- Basic Info Section -->
+						<Grid>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto"/>
+								<ColumnDefinition Width="*"/>
+							</Grid.ColumnDefinitions>
+							<Grid.RowDefinitions>
+								<RowDefinition Height="Auto"/>
+								<RowDefinition Height="Auto"/>
+								<RowDefinition Height="Auto"/>
+								<RowDefinition Height="Auto"/>
+								<RowDefinition Height="Auto"/>
+								<RowDefinition Height="Auto"/>
+							</Grid.RowDefinitions>
+
+							<!-- Name -->
+							<TextBlock Grid.Row="0" Grid.Column="0" Text="Name:" Margin="10" Padding="5" />
+							<TextBox Grid.Row="0" Grid.Column="1" x:Name="productNameTextBox" IsReadOnly="True" Margin="10" Padding="5" />
+
+							<!-- Code -->
+							<TextBlock Grid.Row="1" Grid.Column="0" Text="Code:" Margin="10" Padding="5" />
+							<TextBox Grid.Row="1" Grid.Column="1" x:Name="productCodeTextBox" IsReadOnly="True" Margin="10" Padding="5" />
+
+							<!-- Rate -->
+							<TextBlock Grid.Row="2" Grid.Column="0" Text="Rate:"  Margin="10" Padding="5" />
+							<TextBox Grid.Row="2" Grid.Column="1" x:Name="productRateTextBox" IsReadOnly="True" Margin="10" Padding="5" TextAlignment="Right"/>
+
+							<!-- Quantity Controls -->
+							<TextBlock Grid.Row="3" Grid.Column="0" Text="Quantity:" Margin="10" Padding="5" />
+							<Grid Grid.Row="3" Grid.Column="1">
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="Auto" />
+									<ColumnDefinition Width="*" />
+									<ColumnDefinition Width="Auto" />
+								</Grid.ColumnDefinitions>
+
+								<Button Grid.Column="0" x:Name="quantityMinusButton" 
+                                    Content="-" Width="60" FontSize="16" FontWeight="Bold" 
+                                    Background="#FF6347" Foreground="White"  Margin="10" Padding="5"
+								    Click="quantityMinusButton_Click" />
+
+								<TextBox Grid.Column="1" x:Name="quantityTextBox" Text="1"
+                                    TextAlignment="Center" Margin="10" Padding="5"
+                                    PreviewTextInput="numberTextBox_PreviewTextInput" 
+                                    TextChanged="quantityTextBox_TextChanged"/>
+
+								<Button Grid.Column="2" x:Name="quantityPlusButton" 
+                                    Content="+" Width="60" FontSize="16" FontWeight="Bold"
+                                    Background="#32CD32" Foreground="White"  Margin="10" Padding="5"
+							        Click="quantityPlusButton_Click" />
+							</Grid>
+
+							<!-- Instructions -->
+							<TextBlock Grid.Row="4" Grid.Column="0" Text="Instructions:" Margin="10" Padding="5" />
+							<TextBox Grid.Row="4" Grid.Column="1" x:Name="instructionsTextBox" Height="100" TextWrapping="Wrap" AcceptsReturn="True" Margin="10" Padding="5" />
+
+							<!-- Checkboxes -->
+							<StackPanel Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Center" Orientation="Horizontal" Margin="10">
+								<CheckBox x:Name="discountableCheckBox" Content="Discountable"  Margin="10" Padding="5" />
+								<CheckBox x:Name="cancelledCheckBox" Content="Cancelled" Margin="10" Padding="5" />
+							</StackPanel>
+						</Grid>
+					</StackPanel>
+				</Border>
+
+				<!-- Right Section - Financial Information -->
+				<Border Grid.Column="1" BorderBrush="Gold" BorderThickness="2" CornerRadius="5" Margin="10,0,0,0" >
+					<StackPanel Margin="5">
+						<TextBlock Text="FINANCIAL DETAILS" FontSize="16" FontWeight="Bold" Margin="10" Foreground="DarkCyan"/>
+
+						<!-- Financial Details Grid -->
+						<Grid>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto"/>
+								<ColumnDefinition Width="*"/>
+							</Grid.ColumnDefinitions>
+							<Grid.RowDefinitions>
+								<RowDefinition Height="Auto"/>
+								<RowDefinition Height="Auto"/>
+								<RowDefinition Height="Auto"/>
+								<RowDefinition Height="Auto"/>
+								<RowDefinition Height="Auto"/>
+								<RowDefinition Height="Auto"/>
+								<RowDefinition Height="Auto"/>
+								<RowDefinition Height="Auto"/>
+							</Grid.RowDefinitions>
+
+							<!-- Base Total -->
+							<TextBlock Grid.Row="0" Grid.Column="0" Text="Base Total:" Margin="10" Padding="5" />
+							<TextBox Grid.Row="0" Grid.Column="1" x:Name="baseTotalTextBox" IsReadOnly="True" Margin="10" Padding="5" TextAlignment="Right"/>
+
+							<!-- Discount Section -->
+							<Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="5">
+								<StackPanel>
+									<TextBlock Text="Discount Details" FontWeight="Bold" 
+                                          Foreground="#696969" Margin="0,0,0,5"/>
+									<Grid>
+										<Grid.ColumnDefinitions>
+											<ColumnDefinition Width="130"/>
+											<ColumnDefinition Width="*"/>
+										</Grid.ColumnDefinitions>
+										<Grid.RowDefinitions>
+											<RowDefinition Height="Auto"/>
+											<RowDefinition Height="Auto"/>
+										</Grid.RowDefinitions>
+
+										<!-- Discount Percentage -->
+										<TextBlock Grid.Row="0" Grid.Column="0" Text="Discount:" Margin="5" Padding="5"/>
+										<Grid Grid.Row="0" Grid.Column="1">
+											<Grid.ColumnDefinitions>
+												<ColumnDefinition Width="*" />
+												<ColumnDefinition Width="*" />
+											</Grid.ColumnDefinitions>
+
+											<TextBox Grid.Column="0" x:Name="discountPercentTextBox" IsReadOnly="True" Margin="5" Padding="5" TextAlignment="Right"/>
+											<TextBox Grid.Column="1" x:Name="discountAmountTextBox" IsReadOnly="True" Margin="5" Padding="5" TextAlignment="Right"/>
+										</Grid>
+										
+										<!-- After Discount -->
+										<TextBlock Grid.Row="1" Grid.Column="0" Text="After Discount:" Margin="5" Padding="5"/>
+										<TextBox Grid.Row="1" Grid.Column="1" x:Name="afterDiscountTextBox" IsReadOnly="True" Margin="5" Padding="5" TextAlignment="Right"/>
+									</Grid>
+								</StackPanel>
+							</Grid>
+
+							<!-- Tax Section -->
+                            <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="5">
+                                <StackPanel>
+                                    <TextBlock Text="Tax Details" FontWeight="Bold" 
+                                              Foreground="#696969" Margin="0,0,0,5"/>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="130"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+
+                                        <!-- CGST -->
+                                        <TextBlock Grid.Row="0" Grid.Column="0" Text="CGST:" Margin="5" Padding="5"/>
+                                        <Grid Grid.Row="0" Grid.Column="1">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBox Grid.Column="0" x:Name="cgstPercentTextBox" IsReadOnly="True" Margin="5" Padding="5" TextAlignment="Right"/>
+                                            <TextBox Grid.Column="1" x:Name="cgstAmountTextBox" IsReadOnly="True" Margin="5" Padding="5" TextAlignment="Right"/>
+                                        </Grid>
+
+                                        <!-- SGST -->
+                                        <TextBlock Grid.Row="1" Grid.Column="0" Text="SGST:" Margin="5" Padding="5"/>
+										<Grid Grid.Row="1" Grid.Column="1">
+											<Grid.ColumnDefinitions>
+												<ColumnDefinition Width="*" />
+												<ColumnDefinition Width="*" />
+											</Grid.ColumnDefinitions>
+											<TextBox Grid.Column="0" x:Name="sgstPercentTextBox" IsReadOnly="True" Margin="5" Padding="5" TextAlignment="Right"/>
+											<TextBox Grid.Column="1" x:Name="sgstAmountTextBox" IsReadOnly="True" Margin="5" Padding="5" TextAlignment="Right"/>
+										</Grid>
+									</Grid>
+                                </StackPanel>
+                            </Grid>
+
+							<!-- Final Total -->
+							<Border Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" 
+                               Margin="0,15" Padding="5">
+								<Grid>
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="120"/>
+										<ColumnDefinition Width="*"/>
+									</Grid.ColumnDefinitions>
+
+									<TextBlock Grid.Column="0" Text="Final Amt:" FontSize="16" Margin="5" Padding="5" />
+									<TextBox Grid.Column="1" x:Name="finalAmountTextBox" 
+                                        IsReadOnly="True" Background="Transparent" Margin="5" Padding="5"
+                                        FontSize="16" FontWeight="Bold" Foreground="LimeGreen" TextAlignment="Right"/>
+								</Grid>
+							</Border>
+						</Grid>
+					</StackPanel>
+				</Border>
+			</Grid>
+
+			<StackPanel Grid.Row="2" Margin="0,15,0,0" Orientation="Horizontal" HorizontalAlignment="Center">
+				<Button Content="Save" Width="160" Height="40" Margin="20,0" Padding="5"
+                        Click="SaveButton_Click" IsDefault="True" 
+                        Style="{DynamicResource AccentButtonStyle}"/>
+
+				<Button Content="Cancel" Width="120" Height="40" Click="CancelButton_Click" Background="IndianRed" />
+			</StackPanel>
+		</Grid>
+
+		<common:FooterControl Grid.Row="1"/>
+	</Grid>
+
+</Window>

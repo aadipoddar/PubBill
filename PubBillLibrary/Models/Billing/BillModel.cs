@@ -31,14 +31,3 @@ public class BillDetailModel
 	public bool Cancelled { get; set; } = false;
 	public bool Status { get; set; } = true;
 }
-
-public class CartModel
-{
-	public int ProductId { get; set; }
-	public string ProductName { get; set; }
-	public int Quantity { get; set; }
-	public decimal Rate { get; set; }
-	public decimal Total => Quantity * Rate;
-	public string Instruction { get; set; }
-	public bool Cancelled { get; set; }
-}

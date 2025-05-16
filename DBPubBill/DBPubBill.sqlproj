@@ -76,20 +76,17 @@
     <Folder Include="Tables\Dining" />
     <Folder Include="Stored Procedures\Insert\Dining" />
     <Folder Include="Stored Procedures\Insert\Kitchen" />
+    <Folder Include="Tables\Inventory" />
+    <Folder Include="Stored Procedures\LoadData\Dining" />
+    <Folder Include="Stored Procedures\LoadData\Product" />
+    <Folder Include="Tables\Common" />
   </ItemGroup>
   <ItemGroup>
-    <Build Include="Tables\User.sql" />
-    <Build Include="Tables\Location.sql" />
-    <Build Include="Tables\Person.sql" />
     <Build Include="Stored Procedures\Insert\Insert_Location.sql" />
     <Build Include="Stored Procedures\Insert\Insert_User.sql" />
     <Build Include="Stored Procedures\Insert\Insert_Person.sql" />
     <Build Include="Stored Procedures\LoadData\Load_Person_By_Number.sql" />
     <Build Include="Stored Procedures\LoadData\Load_User_By_Password.sql" />
-    <Build Include="Stored Procedures\LoadData\Load_DiningArea_By_Location.sql" />
-    <Build Include="Stored Procedures\LoadData\Load_DIningTable_By_DiningArea.sql" />
-    <Build Include="Stored Procedures\LoadData\Load_ProductCategory_By_ProductGroup.sql" />
-    <Build Include="Stored Procedures\LoadData\Load_Product_By_ProductCategory.sql" />
     <Build Include="Stored Procedures\Insert\Insert_PaymentMode.sql" />
     <Build Include="Stored Procedures\Insert\Billing\Insert_Bill.sql" />
     <Build Include="Stored Procedures\Insert\Billing\Insert_BillDetail.sql" />
@@ -107,7 +104,6 @@
     <Build Include="Tables\Billing\BillPaymentDetail.sql" />
     <Build Include="Stored Procedures\Insert\Billing\Insert_BillPaymentDetail.sql" />
     <Build Include="Stored Procedures\Delete\Delete_RunningBillDetail.sql" />
-    <Build Include="Tables\PaymentMode.sql" />
     <Build Include="Tables\Products\Product.sql" />
     <Build Include="Tables\Products\ProductCategory.sql" />
     <Build Include="Tables\Products\ProductGroup.sql" />
@@ -119,7 +115,6 @@
     <Build Include="Views\Product_Tax.sql" />
     <Build Include="Stored Procedures\LoadData\Billing\Load_BillDetail_By_BillId.sql" />
     <Build Include="Stored Procedures\LoadData\Billing\Load_BillPaymentDetail_By_BillId.sql" />
-    <Build Include="Tables\Settings.sql" />
     <Build Include="Stored Procedures\Settings\Load_Settings_By_Key.sql" />
     <Build Include="Stored Procedures\Settings\Reset_Settings.sql" />
     <Build Include="Stored Procedures\Settings\Update_Settings.sql" />
@@ -137,6 +132,17 @@
     <Build Include="Stored Procedures\Insert\Dining\Insert_DiningArea.sql" />
     <Build Include="Stored Procedures\Insert\Dining\Insert_DiningTable.sql" />
     <Build Include="Stored Procedures\Insert\Dining\Insert_DiningAreaKitchen.sql" />
+    <Build Include="Tables\Inventory\Purchase.sql" />
+    <Build Include="Tables\Inventory\RawMaterial.sql" />
+    <Build Include="Stored Procedures\LoadData\Dining\Load_DiningArea_By_Location.sql" />
+    <Build Include="Stored Procedures\LoadData\Dining\Load_DIningTable_By_DiningArea.sql" />
+    <Build Include="Stored Procedures\LoadData\Product\Load_Product_By_ProductCategory.sql" />
+    <Build Include="Stored Procedures\LoadData\Product\Load_ProductCategory_By_ProductGroup.sql" />
+    <Build Include="Tables\Common\Location.sql" />
+    <Build Include="Tables\Common\PaymentMode.sql" />
+    <Build Include="Tables\Common\Person.sql" />
+    <Build Include="Tables\Common\Settings.sql" />
+    <Build Include="Tables\Common\User.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="DBPubBill.refactorlog" />

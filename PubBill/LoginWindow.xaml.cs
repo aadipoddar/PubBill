@@ -7,13 +7,11 @@ namespace PubBill;
 /// </summary>
 public partial class LoginWindow : Window
 {
-	public LoginWindow() => InitializeComponent();
+	public LoginWindow() =>
+		InitializeComponent();
 
-	private async void Window_Loaded(object sender, RoutedEventArgs e)
-	{
-		await SettingsManager.LoadSettings();
+	private void Window_Loaded(object sender, RoutedEventArgs e) =>
 		userPasswordBox.Focus();
-	}
 
 	private async void userPasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
 	{

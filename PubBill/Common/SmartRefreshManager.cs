@@ -70,7 +70,7 @@ internal class SmartRefreshManager
 
 	internal void Dispose()
 	{
-		if (_timer != null)
+		if (_timer is not null)
 		{
 			_timer.Tick -= CheckAndRefresh;
 			_timer.Stop();

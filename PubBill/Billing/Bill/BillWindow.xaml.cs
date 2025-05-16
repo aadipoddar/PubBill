@@ -135,6 +135,7 @@ public partial class BillWindow : Window
 					Quantity = item.Quantity,
 					Rate = item.Rate,
 					Instruction = item.Instruction,
+					Discountable = item.Discountable,
 					Cancelled = item.Cancelled
 				});
 			}
@@ -283,135 +284,30 @@ public partial class BillWindow : Window
 	#endregion
 
 	#region DataGrid Events
-	private void cartDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e) =>
-		UpdateSelectionFields(cartDataGrid.SelectedItem as CartModel);
-
-	private void kotCartDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e) =>
-		UpdateSelectionFields(kotCartDataGrid.SelectedItem as CartModel);
-
-	private void UpdateSelectionFields(CartModel selectedSale)
+	private async void cartDataGrid_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
 	{
-		if (selectedSale is null) return;
-
-		quantityTextBox.Text = selectedSale.Quantity.ToString();
-		instructionsTextBox.Text = selectedSale.Instruction;
-		cancelledCheckBox.IsChecked = selectedSale.Cancelled;
-		instructionsTextBox.Focus();
-	}
-
-	private async void instructionsTextBox_TextChanged(object sender, TextChangedEventArgs e)
-	{
-		if (instructionsTextBox is null || allCartTabItem is null || kotCartTabItem is null) return;
-
-		if (cartTabControl.SelectedIndex == 0 && cartDataGrid?.SelectedItem is CartModel sale1)
-			sale1.Instruction = instructionsTextBox.Text;
-		else if (cartTabControl.SelectedIndex == 1 && kotCartDataGrid?.SelectedItem is CartModel sale2)
-			sale2.Instruction = instructionsTextBox.Text;
-
-		else instructionsTextBox.Clear();
-
-		await RefreshTotal();
-	}
-
-	private async void quantityTextBox_TextChanged(object sender, TextChangedEventArgs e)
-	{
-		if (quantityTextBox is null || allCartTabItem is null || kotCartTabItem is null) return;
-
-		if (cartTabControl.SelectedIndex == 0 && cartDataGrid?.SelectedItem is CartModel sale)
+		if (e.OriginalSource is FrameworkElement element && element.DataContext is CartModel model)
 		{
-			int newQuantity = int.Parse(quantityTextBox.Text);
-			int oldQuantity = sale.Quantity;
-			int quantityChange = newQuantity - oldQuantity;
+			if (cartTabControl.SelectedIndex == 0)
+			{
+				BillItemManageWindow detailWindow = new(model, decimal.Parse(discountPercentTextBox.Text), false);
+				bool? result = detailWindow.ShowDialog();
 
-			if (newQuantity > oldQuantity)
-				await AddProductToKotCart(new CartModel
-				{
-					ProductId = sale.ProductId,
-					ProductName = sale.ProductName,
-					Quantity = quantityChange,
-					Rate = sale.Rate,
-					Instruction = sale.Instruction
-				});
+				if (result == true && model.Quantity == 0)
+					_allCart.Remove(model);
+			}
 
-			else if (newQuantity < oldQuantity)
-				_kotCart.Add(new CartModel
-				{
-					ProductId = sale.ProductId,
-					ProductName = sale.ProductName,
-					Quantity = quantityChange,
-					Rate = sale.Rate,
-					Instruction = sale.Instruction,
-					Cancelled = true
-				});
+			else if (cartTabControl.SelectedIndex == 1)
+			{
+				BillItemManageWindow detailWindow = new(model, decimal.Parse(discountPercentTextBox.Text));
+				bool? result = detailWindow.ShowDialog();
 
-			if (newQuantity == 0)
-				_allCart.Remove(sale);
+				if (result == true && model.Quantity == 0)
+					_kotCart.Remove(model);
+			}
+
+			await RefreshTotal();
 		}
-
-		else if (cartTabControl.SelectedIndex == 1 && kotCartDataGrid?.SelectedItem is CartModel kotSale)
-		{
-			int quantity = int.Parse(quantityTextBox.Text);
-			if (quantity < 0) quantity = 0;
-
-			if (quantity == 0) _kotCart.Remove(kotSale);
-			else kotSale.Quantity = quantity;
-		}
-
-		else quantityTextBox.Text = "0";
-
-		await RefreshTotal();
-	}
-
-	private void quantityMinusButton_Click(object sender, RoutedEventArgs e) =>
-		UpdateQuantity(-1);
-
-	private void quantityPlusButton_Click(object sender, RoutedEventArgs e) =>
-		UpdateQuantity(1);
-
-	private void UpdateQuantity(int change)
-	{
-		if (int.TryParse(quantityTextBox.Text, out int currentQty))
-			quantityTextBox.Text = Math.Max(0, currentQty + change).ToString();
-	}
-
-	private async void cancelledCheckBox_Checked(object sender, RoutedEventArgs e)
-	{
-		if (cartTabControl.SelectedIndex == 0 && cartDataGrid?.SelectedItem is CartModel sale)
-		{
-			if (sale.Cancelled) return;
-			sale.Cancelled = true;
-			_allCart.Remove(sale);
-			_kotCart.Add(sale);
-		}
-
-		else if (cartTabControl.SelectedIndex == 1 && kotCartDataGrid?.SelectedItem is CartModel kotSale)
-		{
-			if (kotSale.Cancelled) return;
-			_kotCart.Remove(kotSale);
-			kotSale.Cancelled = true;
-			await AddProductToKotCart(kotSale);
-		}
-
-		await RefreshTotal();
-	}
-
-	private async void cancelledCheckBox_Unchecked(object sender, RoutedEventArgs e)
-	{
-		if (cartTabControl.SelectedIndex == 0 && cartDataGrid?.SelectedItem is CartModel sale)
-		{
-			if (!sale.Cancelled) return;
-			sale.Cancelled = false;
-		}
-
-		else if (cartTabControl.SelectedIndex == 1 && kotCartDataGrid?.SelectedItem is CartModel kotSale)
-		{
-			if (!kotSale.Cancelled) return;
-			kotSale.Cancelled = false;
-			_kotCart.Remove(kotSale);
-			await AddProductToKotCart(kotSale);
-		}
-
-		await RefreshTotal();
 	}
 	#endregion
 
@@ -560,6 +456,7 @@ public partial class BillWindow : Window
 				ProductName = product.Name,
 				Quantity = 1,
 				Rate = product.Rate,
+				Discountable = true,
 				Instruction = string.Empty
 			});
 		await RefreshTotal();

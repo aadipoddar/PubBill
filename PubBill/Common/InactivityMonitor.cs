@@ -16,7 +16,7 @@ public class InactivityMonitor
 	// Activity monitoring properties
 	public DateTime LastActivityTime { get; private set; } = DateTime.Now;
 	private DispatcherTimer _activityTimer;
-	private TimeSpan _inactivityThreshold = TimeSpan.FromMinutes(1);
+	private TimeSpan _inactivityThreshold = TimeSpan.FromMinutes(5);
 	private TimeSpan _warningThreshold = TimeSpan.FromSeconds(20);
 	private bool _warningDisplayed = false;
 	private Window _warningWindow;
@@ -24,16 +24,14 @@ public class InactivityMonitor
 	// Added to track programmatic refreshes
 	private bool _isRefreshInProgress = false;
 
-	private InactivityMonitor() { }
+	private InactivityMonitor() =>
+		_inactivityThreshold = TimeSpan.FromMinutes((int)Application.Current.Resources[SettingsKeys.InactivityTime]);
 
 	public static InactivityMonitor Instance
 	{
 		get
 		{
-			if (_instance == null)
-			{
-				_instance = new InactivityMonitor();
-			}
+			_instance ??= new InactivityMonitor();
 			return _instance;
 		}
 	}

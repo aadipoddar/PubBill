@@ -26,5 +26,18 @@ public class RunningBillDetailModel
 	public int Quantity { get; set; }
 	public decimal Rate { get; set; }
 	public string Instruction { get; set; }
+	public bool Discountable { get; set; }
+	public bool Cancelled { get; set; }
+}
+
+public class CartModel
+{
+	public int ProductId { get; set; }
+	public string ProductName { get; set; }
+	public int Quantity { get; set; }
+	public decimal Rate { get; set; }
+	public decimal Total => Quantity * Rate;
+	public bool Discountable { get; set; }
+	public string Instruction { get; set; }
 	public bool Cancelled { get; set; }
 }

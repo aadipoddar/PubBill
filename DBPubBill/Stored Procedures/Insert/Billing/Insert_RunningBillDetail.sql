@@ -5,6 +5,7 @@
 	@Quantity INT,
 	@Rate MONEY,
 	@Instruction VARCHAR(250),
+	@Discountable BIT,
 	@Cancelled BIT
 AS
 BEGIN
@@ -17,6 +18,7 @@ BEGIN
 			Quantity,
 			Rate,
 			Instruction,
+			Discountable,
 			Cancelled
 		) VALUES
 		(
@@ -25,6 +27,7 @@ BEGIN
 			@Quantity,
 			@Rate,
 			@Instruction,
+			@Discountable,
 			@Cancelled
 		);
 	END
@@ -38,6 +41,7 @@ BEGIN
 			Quantity = @Quantity,
 			Rate = @Rate,
 			Instruction = @Instruction,
+			Discountable = @Discountable,
 			Cancelled = @Cancelled
 		WHERE Id = @Id;
 	END

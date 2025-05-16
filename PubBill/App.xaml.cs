@@ -16,7 +16,7 @@ public partial class App : Application
 	public static bool IsLightTheme { get; private set; } = GetIsLightTheme();
 	public static string FooterVersionText { get; set; } = $"Version: {Assembly.GetExecutingAssembly().GetName().Version}";
 
-	protected override void OnStartup(StartupEventArgs e)
+	protected override async void OnStartup(StartupEventArgs e)
 	{
 		Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(Secrets.SyncfusionLicense);
 
@@ -27,7 +27,7 @@ public partial class App : Application
 		EventManager.RegisterClassHandler(typeof(TextBox), Control.MouseDoubleClickEvent,
 			new RoutedEventHandler(SelectAllText));
 
-		// Initialize activity monitoring
+		await SettingsManager.LoadSettings();
 		InactivityMonitor.Instance.Initialize();
 
 		base.OnStartup(e);
