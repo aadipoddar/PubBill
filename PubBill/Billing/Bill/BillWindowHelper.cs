@@ -109,13 +109,19 @@ internal static class BillWindowHelper
 		CalculateSubTotal(billItems) + CalculateServiceAmount(billItems, servicePercent) - entryPaid;
 
 	internal static decimal GetCGSTPercent(List<BillDetailModel> billItems) =>
-		CalculateProductCGST(billItems) / CalculateAfterDiscountTotal(billItems) * 100;
+		CalculateProductCGST(billItems) > 0
+			? billItems.Where(x => x.CGSTPercent > 0).FirstOrDefault().CGSTPercent
+			: 0;
 
 	internal static decimal GetSGSTPercent(List<BillDetailModel> billItems) =>
-		CalculateProductSGST(billItems) / CalculateAfterDiscountTotal(billItems) * 100;
+		CalculateProductSGST(billItems) > 0
+			? billItems.Where(x => x.SGSTPercent > 0).FirstOrDefault().SGSTPercent
+			: 0;
 
 	internal static decimal GetIGSTPercent(List<BillDetailModel> billItems) =>
-		CalculateProductIGST(billItems) / CalculateAfterDiscountTotal(billItems) * 100;
+		CalculateProductIGST(billItems) > 0
+			? billItems.Where(x => x.IGSTPercent > 0).FirstOrDefault().IGSTPercent
+			: 0;
 
 	internal static string GetDiscountString(List<BillDetailModel> billItems) =>
 		$"{CalculateDiscountPercent(billItems):F2}% ({CalculateDiscountAmount(billItems).FormatIndianCurrency()})";

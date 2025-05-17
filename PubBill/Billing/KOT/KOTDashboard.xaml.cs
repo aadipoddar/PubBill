@@ -67,6 +67,7 @@ public partial class KOTDashboard : Window
 	private async Task PrintOrders()
 	{
 		_refreshManager?.Stop();
+
 		var runningBills = await CommonData.LoadTableDataByStatus<RunningBillModel>(TableNames.RunningBill);
 		var selectedLocationIds = locationCheckBoxStackPanel.Children.OfType<CheckBox>()
 			.Where(c => (bool)c.IsChecked)
@@ -91,18 +92,42 @@ public partial class KOTDashboard : Window
 			var kotOrders = await KOTData.LoadKOTBillDetailByRunningBillId(bill.Id);
 			kotOrders = [.. kotOrders.Where(x => x.Status)];
 
-			foreach (var kotOrder in kotOrders)
+			if (kotOrders.Count == 0) continue;
+
+			// Group orders by RunningBillId and printer name
+			var ordersByPrinter = new Dictionary<string, List<KOTBillDetailModel>>();
+
+			foreach (var order in kotOrders)
 			{
-				await PrintKOT(kotOrder);
-				await ChangeKOTBillStatus(kotOrder);
+				var printerName = await GetPrinterName(order);
+				if (string.IsNullOrEmpty(printerName)) continue;
+
+				if (!ordersByPrinter.TryGetValue(printerName, out List<KOTBillDetailModel> value))
+				{
+					value = [];
+					ordersByPrinter[printerName] = value;
+				}
+
+				value.Add(order);
+			}
+
+			foreach (var printerGroup in ordersByPrinter)
+			{
+				string printerName = printerGroup.Key;
+				List<KOTBillDetailModel> orders = printerGroup.Value;
+
+				await PrintKOTGroup(orders, printerName);
+
+				// Mark all orders in group as processed
+				foreach (var order in orders)
+					await ChangeKOTBillStatus(order);
 			}
 		}
 		_refreshManager?.Start();
 	}
 
-	private static async Task PrintKOT(KOTBillDetailModel kotOrder)
+	private static async Task PrintKOTGroup(List<KOTBillDetailModel> kotOrders, string printerName)
 	{
-		var printerName = await GetPrinterName(kotOrder);
 		var printers = System.Drawing.Printing.PrinterSettings.InstalledPrinters.Cast<string>().ToList();
 
 		if (string.IsNullOrEmpty(printerName) || !printers.Contains(printerName))
@@ -116,7 +141,7 @@ public partial class KOTDashboard : Window
 			PrintQueue = new System.Printing.LocalPrintServer().GetPrintQueue(printerName)
 		};
 
-		IDocumentPaginatorSource idpSource = await ThermalKOTReceipt.Print(kotOrder);
+		IDocumentPaginatorSource idpSource = await ThermalKOTReceipt.Print(kotOrders);
 		printDialog.PrintDocument(idpSource.DocumentPaginator, "KOT Receipt");
 	}
 
@@ -145,8 +170,7 @@ public partial class KOTDashboard : Window
 		return string.Empty;
 	}
 
-	private static async Task ChangeKOTBillStatus(KOTBillDetailModel kOTBillDetail)
-	{
+	private static async Task ChangeKOTBillStatus(KOTBillDetailModel kOTBillDetail) =>
 		await KOTData.InsertKOTBillDetail(new KOTBillDetailModel()
 		{
 			Id = kOTBillDetail.Id,
@@ -157,7 +181,6 @@ public partial class KOTDashboard : Window
 			Status = false,
 			Cancelled = kOTBillDetail.Cancelled
 		});
-	}
 
 	private void Window_Closed(object sender, EventArgs e)
 	{

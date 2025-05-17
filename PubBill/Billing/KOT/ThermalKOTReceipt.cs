@@ -13,7 +13,7 @@ internal static class ThermalKOTReceipt
 	private static int PagePaddingRightThermal => (int)Application.Current.Resources[SettingsKeys.PagePaddingRightThermal];
 	#endregion
 
-	internal static async Task<FlowDocument> Print(KOTBillDetailModel kotOrder)
+	internal static async Task<FlowDocument> Print(List<KOTBillDetailModel> kotOrders)
 	{
 		FlowDocument document = new()
 		{
@@ -22,8 +22,8 @@ internal static class ThermalKOTReceipt
 			ColumnWidth = double.MaxValue
 		};
 
-		await AddHeader(document, kotOrder);
-		await AddProductDetails(document, kotOrder);
+		await AddHeader(document, kotOrders.FirstOrDefault());
+		await AddProductDetails(document, kotOrders);
 
 		return document;
 	}
@@ -50,19 +50,38 @@ internal static class ThermalKOTReceipt
 		document.Blocks.Add(ThermalParagraphs.SeparatorParagraph());
 	}
 
-	private static async Task AddProductDetails(FlowDocument document, KOTBillDetailModel kotOrder)
+	private static async Task AddProductDetails(FlowDocument document, List<KOTBillDetailModel> kotOrders)
 	{
-		var product = await CommonData.LoadTableDataById<ProductModel>(TableNames.Product, kotOrder.ProductId);
+		Table itemsTable = new()
+		{
+			Margin = new Thickness(0, 5, 0, 5)
+		};
 
-		document.Blocks.Add(ThermalParagraphs.RegularParagraph($"Name: {product.Name}"));
-		document.Blocks.Add(ThermalParagraphs.RegularParagraph($"Code: {product.Code}"));
-		document.Blocks.Add(ThermalParagraphs.RegularParagraph($"Quantiy: {kotOrder.Quantity}"));
+		itemsTable.Columns.Add(new TableColumn { Width = new GridLength(1, GridUnitType.Auto) });
+		itemsTable.Columns.Add(new TableColumn { Width = new GridLength(22) });
 
-		if (!string.IsNullOrEmpty(kotOrder.Instruction))
-			document.Blocks.Add(ThermalParagraphs.RegularParagraph($"Instruction: {kotOrder.Instruction}"));
+		TableRowGroup itemsGroup = new();
 
-		if (kotOrder.Cancelled)
-			document.Blocks.Add(ThermalParagraphs.SubHeaderParagraph("This Item Has Been Cancelled"));
+		TableRow headerRow = new();
+		headerRow.Cells.Add(new TableCell(ThermalParagraphs.TableHeaderParagraph("Name", TextAlignment.Left)));
+		headerRow.Cells.Add(new TableCell(ThermalParagraphs.TableHeaderParagraph("Qty", TextAlignment.Right)));
+		itemsGroup.Rows.Add(headerRow);
+
+		foreach (var order in kotOrders)
+		{
+			var product = await CommonData.LoadTableDataById<ProductModel>(TableNames.Product, order.ProductId);
+
+			ThermalParagraphs.AddTableRow(itemsGroup, product.Name, order.Quantity.ToString());
+
+			if (!string.IsNullOrEmpty(order.Instruction))
+				document.Blocks.Add(ThermalParagraphs.RegularParagraph($"Instruction: {order.Instruction}"));
+
+			if (order.Cancelled)
+				document.Blocks.Add(ThermalParagraphs.SubHeaderParagraph("This Item Has Been Cancelled"));
+		}
+
+		itemsTable.RowGroups.Add(itemsGroup);
+		document.Blocks.Add(itemsTable);
 
 		document.Blocks.Add(ThermalParagraphs.SeparatorParagraph());
 	}
