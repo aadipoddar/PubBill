@@ -72,16 +72,14 @@ internal static class ThermalKOTReceipt
 			var product = await CommonData.LoadTableDataById<ProductModel>(TableNames.Product, order.ProductId);
 
 			ThermalParagraphs.AddTableRow(itemsGroup, product.Name, order.Quantity.ToString());
-
-			if (!string.IsNullOrEmpty(order.Instruction))
-				document.Blocks.Add(ThermalParagraphs.RegularParagraph($"Instruction: {order.Instruction}"));
-
-			if (order.Cancelled)
-				document.Blocks.Add(ThermalParagraphs.SubHeaderParagraph("This Item Has Been Cancelled"));
 		}
 
 		itemsTable.RowGroups.Add(itemsGroup);
 		document.Blocks.Add(itemsTable);
+
+		foreach (var order in kotOrders)
+			if (!string.IsNullOrEmpty(order.Instruction))
+				document.Blocks.Add(ThermalParagraphs.RegularParagraph($"Instruction: {order.Instruction}"));
 
 		document.Blocks.Add(ThermalParagraphs.SeparatorParagraph());
 	}

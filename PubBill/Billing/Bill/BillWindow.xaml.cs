@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 
 namespace PubBill.Billing.Bill;
 
@@ -14,7 +15,7 @@ public partial class BillWindow : Window
 	private DiningTableModel _diningTable;
 	private DiningAreaModel _diningArea;
 	private readonly TableDashboard _tableDashboard;
-	private readonly RunningBillModel _runningBillModel;
+	private RunningBillModel _runningBillModel;
 
 	private static readonly ObservableCollection<CartModel> _allCart = [], _kotCart = [];
 	#endregion
@@ -448,7 +449,7 @@ public partial class BillWindow : Window
 	}
 	#endregion
 
-	#region KOT Processing
+	#region KOT Running Bill Processing
 	private async Task AddProductToKotCart(ProductModel product)
 	{
 		var existingProduct = _kotCart.FirstOrDefault(c => c.ProductId == product.Id && c.Cancelled == false);
@@ -515,32 +516,31 @@ public partial class BillWindow : Window
 			return;
 		}
 
-		int? personId = null;
 		if (!string.IsNullOrEmpty(personNumberTextBox.Text))
-			personId = await InsertPerson();
+			_runningBillModel.PersonId = await InsertPerson();
 
-		int runningBillId = await InsertRunningBill(personId);
-		if (runningBillId == 0)
+		await InsertRunningBill();
+		if (_runningBillModel.Id == 0)
 		{
 			MessageBox.Show("Failed to insert running bill data.", "Missing Bill Id", MessageBoxButton.OK, MessageBoxImage.Error);
 			return;
 		}
 
-		await InsertKOTBillDetails(runningBillId);
-		await InsertRunningBillDetails(runningBillId);
+		await InsertKOTBillDetails();
+		await InsertRunningBillDetails();
 		Close();
 	}
 
-	private async Task<int> InsertRunningBill(int? personId)
+	private async Task InsertRunningBill()
 	{
-		RunningBillModel runningBill = new()
+		_runningBillModel = new()
 		{
 			Id = _runningBillModel?.Id ?? 0,
 			UserId = _runningBillModel?.UserId ?? _user.Id,
 			LocationId = _diningArea.LocationId,
 			DiningAreaId = _diningArea.Id,
 			DiningTableId = _diningTable.Id,
-			PersonId = personId,
+			PersonId = _runningBillModel?.PersonId ?? null,
 			TotalPeople = int.TryParse(totalPeopleTextBox.Text, out int people) ? people : 0,
 			DiscPercent = decimal.Parse(discountPercentTextBox.Text),
 			DiscReason = discountReasonTextBox.Text,
@@ -551,16 +551,16 @@ public partial class BillWindow : Window
 			Status = true
 		};
 
-		return await RunningBillData.InsertRunningBill(runningBill);
+		_runningBillModel.Id = await RunningBillData.InsertRunningBill(_runningBillModel);
 	}
 
-	private static async Task InsertKOTBillDetails(int runningBillId)
+	private async Task InsertKOTBillDetails()
 	{
 		foreach (CartModel cart in _kotCart)
 			await KOTData.InsertKOTBillDetail(new KOTBillDetailModel
 			{
 				Id = 0,
-				RunningBillId = runningBillId,
+				RunningBillId = _runningBillModel.Id,
 				ProductId = cart.ProductId,
 				Quantity = cart.Quantity,
 				Instruction = cart.Instruction,
@@ -569,10 +569,9 @@ public partial class BillWindow : Window
 			});
 	}
 
-	private async Task InsertRunningBillDetails(int runningBillId)
+	private async Task InsertRunningBillDetails()
 	{
-		if (_runningBillModel is not null)
-			await RunningBillData.DeleteRunningBillDetail(_runningBillModel.Id);
+		await RunningBillData.DeleteRunningBillDetail(_runningBillModel.Id);
 
 		MergeCartItems();
 
@@ -580,7 +579,7 @@ public partial class BillWindow : Window
 			await RunningBillData.InsertRunningBillDetail(new RunningBillDetailModel
 			{
 				Id = 0,
-				RunningBillId = runningBillId,
+				RunningBillId = _runningBillModel.Id,
 				ProductId = cart.ProductId,
 				Quantity = cart.Quantity,
 				Rate = cart.Rate,
@@ -634,8 +633,44 @@ public partial class BillWindow : Window
 			}
 			else
 				_allCart.Add(kotCart);
-
 		}
+	}
+
+	private async void printButton_Click(object sender, RoutedEventArgs e)
+	{
+		if (_runningBillModel is null)
+		{
+			MessageBox.Show("Cart is Empty. Add Items to Cart.", "Empty Cart", MessageBoxButton.OK, MessageBoxImage.Error);
+			return;
+		}
+
+		if (_kotCart.Count > 0)
+		{
+			MessageBox.Show("KOT Cart not Empty. Push Items to KOT.", "Push KOT", MessageBoxButton.OK, MessageBoxImage.Error);
+			return;
+		}
+
+		if (await BillWindowHelper.CheckKOT(_runningBillModel))
+		{
+			MessageBox.Show("KOT Items not yet Printed.", "Print KOT", MessageBoxButton.OK, MessageBoxImage.Error);
+			return;
+		}
+
+		if (!string.IsNullOrEmpty(personNumberTextBox.Text))
+			_runningBillModel.PersonId = await InsertPerson();
+
+		await InsertRunningBill();
+		if (_runningBillModel.Id == 0)
+		{
+			MessageBox.Show("Failed to insert running bill data.", "Missing Bill Id", MessageBoxButton.OK, MessageBoxImage.Error);
+			return;
+		}
+
+		await InsertRunningBillDetails();
+
+		PrintDialog printDialog = new();
+		IDocumentPaginatorSource idpSource = await ThermalBillReceipt.Print(_runningBillModel, int.Parse(entryPaidTextBox.Text));
+		printDialog.PrintDocument(idpSource.DocumentPaginator, "Bill Receipt");
 	}
 	#endregion
 

@@ -91,6 +91,7 @@ public partial class KOTDashboard : Window
 
 			var kotOrders = await KOTData.LoadKOTBillDetailByRunningBillId(bill.Id);
 			kotOrders = [.. kotOrders.Where(x => x.Status)];
+			kotOrders = [.. kotOrders.Where(x => !x.Cancelled)];
 
 			if (kotOrders.Count == 0) continue;
 

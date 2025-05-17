@@ -68,13 +68,13 @@ internal static class BillWindowHelper
 	#endregion
 
 	#region BillReceipt
-	internal static decimal CalculateBaseTotal(List<BillDetailModel> billItems) =>
+	internal static decimal CalculateBaseTotal(List<RunningBillDetailModel> billItems) =>
 		billItems.Where(cart => !cart.Cancelled).Sum(cart => cart.BaseTotal);
 
-	internal static decimal CalculateDiscountAmount(List<BillDetailModel> billItems) =>
+	internal static decimal CalculateDiscountAmount(List<RunningBillDetailModel> billItems) =>
 		billItems.Where(cart => !cart.Cancelled).Sum(cart => cart.DiscAmount);
 
-	internal static decimal CalculateDiscountPercent(List<BillDetailModel> billItems)
+	internal static decimal CalculateDiscountPercent(List<RunningBillDetailModel> billItems)
 	{
 		var discountAmount = CalculateDiscountAmount(billItems);
 		var baseTotal = CalculateBaseTotal(billItems);
@@ -82,60 +82,60 @@ internal static class BillWindowHelper
 		return discountAmount / baseTotal * 100;
 	}
 
-	internal static decimal CalculateAfterDiscountTotal(List<BillDetailModel> billItems) =>
+	internal static decimal CalculateAfterDiscountTotal(List<RunningBillDetailModel> billItems) =>
 		billItems.Where(cart => !cart.Cancelled).Sum(cart => cart.AfterDiscount);
 
-	internal static decimal CalculateProductTotalTax(BillModel billModel, List<BillDetailModel> billItems) =>
+	internal static decimal CalculateProductTotalTax(List<RunningBillDetailModel> billItems) =>
 		CalculateProductCGST(billItems) +
 		CalculateProductSGST(billItems) +
 		CalculateProductIGST(billItems);
 
-	internal static decimal CalculateProductCGST(List<BillDetailModel> billItems) =>
+	internal static decimal CalculateProductCGST(List<RunningBillDetailModel> billItems) =>
 		billItems.Where(cart => !cart.Cancelled).Sum(cart => cart.CGSTAmount);
 
-	internal static decimal CalculateProductSGST(List<BillDetailModel> billItems) =>
+	internal static decimal CalculateProductSGST(List<RunningBillDetailModel> billItems) =>
 		billItems.Where(cart => !cart.Cancelled).Sum(cart => cart.SGSTAmount);
 
-	internal static decimal CalculateProductIGST(List<BillDetailModel> billItems) =>
+	internal static decimal CalculateProductIGST(List<RunningBillDetailModel> billItems) =>
 		billItems.Where(cart => !cart.Cancelled).Sum(cart => cart.IGSTAmount);
 
-	internal static decimal CalculateSubTotal(List<BillDetailModel> billItems) =>
+	internal static decimal CalculateSubTotal(List<RunningBillDetailModel> billItems) =>
 		billItems.Where(cart => !cart.Cancelled).Sum(cart => cart.Total);
 
-	internal static decimal CalculateServiceAmount(List<BillDetailModel> billItems, decimal servicePercent) =>
+	internal static decimal CalculateServiceAmount(List<RunningBillDetailModel> billItems, decimal servicePercent) =>
 		CalculateSubTotal(billItems) * (servicePercent / 100);
 
-	internal static decimal CalculateBillTotal(List<BillDetailModel> billItems, decimal servicePercent, int entryPaid) =>
+	internal static decimal CalculateBillTotal(List<RunningBillDetailModel> billItems, decimal servicePercent, int entryPaid) =>
 		CalculateSubTotal(billItems) + CalculateServiceAmount(billItems, servicePercent) - entryPaid;
 
-	internal static decimal GetCGSTPercent(List<BillDetailModel> billItems) =>
+	internal static decimal GetCGSTPercent(List<RunningBillDetailModel> billItems) =>
 		CalculateProductCGST(billItems) > 0
 			? billItems.Where(x => x.CGSTPercent > 0).FirstOrDefault().CGSTPercent
 			: 0;
 
-	internal static decimal GetSGSTPercent(List<BillDetailModel> billItems) =>
+	internal static decimal GetSGSTPercent(List<RunningBillDetailModel> billItems) =>
 		CalculateProductSGST(billItems) > 0
 			? billItems.Where(x => x.SGSTPercent > 0).FirstOrDefault().SGSTPercent
 			: 0;
 
-	internal static decimal GetIGSTPercent(List<BillDetailModel> billItems) =>
+	internal static decimal GetIGSTPercent(List<RunningBillDetailModel> billItems) =>
 		CalculateProductIGST(billItems) > 0
 			? billItems.Where(x => x.IGSTPercent > 0).FirstOrDefault().IGSTPercent
 			: 0;
 
-	internal static string GetDiscountString(List<BillDetailModel> billItems) =>
+	internal static string GetDiscountString(List<RunningBillDetailModel> billItems) =>
 		$"{CalculateDiscountPercent(billItems):F2}% ({CalculateDiscountAmount(billItems).FormatIndianCurrency()})";
 
-	internal static string GetCGSTString(List<BillDetailModel> billItems) =>
+	internal static string GetCGSTString(List<RunningBillDetailModel> billItems) =>
 		$"{GetCGSTPercent(billItems):F2}% ({CalculateProductCGST(billItems).FormatIndianCurrency()})";
 
-	internal static string GetSGSTString(List<BillDetailModel> billItems) =>
+	internal static string GetSGSTString(List<RunningBillDetailModel> billItems) =>
 		$"{GetSGSTPercent(billItems):F2}% ({CalculateProductSGST(billItems).FormatIndianCurrency()})";
 
-	internal static string GetIGSTString(List<BillDetailModel> billItems) =>
+	internal static string GetIGSTString(List<RunningBillDetailModel> billItems) =>
 		$"{GetIGSTPercent(billItems):F2}% ({CalculateProductIGST(billItems).FormatIndianCurrency()})";
 
-	internal static string GetServiceString(List<BillDetailModel> billItems, decimal servicePercent) =>
+	internal static string GetServiceString(List<RunningBillDetailModel> billItems, decimal servicePercent) =>
 		$"{servicePercent:F2}% ({CalculateServiceAmount(billItems, servicePercent).FormatIndianCurrency()})";
 	#endregion
 }

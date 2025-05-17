@@ -26,7 +26,7 @@ internal static class ThermalBillReceipt
 	private static string UpiId => Application.Current.Resources[SettingsKeys.UPIId].ToString();
 	#endregion
 
-	internal static async Task<FlowDocument> Print(BillModel billModel)
+	internal static async Task<FlowDocument> Print(RunningBillModel runningBillModel, int entryPaid)
 	{
 		FlowDocument document = new()
 		{
@@ -35,16 +35,15 @@ internal static class ThermalBillReceipt
 			ColumnWidth = double.MaxValue
 		};
 
-		await AddHeader(document, billModel.LocationId);
+		await AddHeader(document, runningBillModel.LocationId);
 
-		if (billModel.PersonId is not null)
-			await AddPersonInformation(document, billModel.PersonId ?? 0);
+		if (runningBillModel.PersonId is not null)
+			await AddPersonInformation(document, runningBillModel.PersonId ?? 0);
 
-		await AddBillDetails(document, billModel);
-		await AddItemDetails(document, billModel);
-		await AddTotalDetails(document, billModel);
+		await AddBillDetails(document, runningBillModel);
+		await AddItemDetails(document, runningBillModel);
+		await AddTotalDetails(document, runningBillModel, entryPaid);
 
-		await AddQRCode(document, billModel);
 		AddFooterDetails(document);
 
 		return document;
@@ -76,22 +75,22 @@ internal static class ThermalBillReceipt
 		document.Blocks.Add(ThermalParagraphs.SeparatorParagraph());
 	}
 
-	private static async Task AddBillDetails(FlowDocument document, BillModel billModel)
+	private static async Task AddBillDetails(FlowDocument document, RunningBillModel runningBillModel)
 	{
-		var user = await CommonData.LoadTableDataById<UserModel>(TableNames.User, billModel.UserId);
-		var diningTable = await CommonData.LoadTableDataById<DiningTableModel>(TableNames.DiningTable, billModel.DiningTableId);
+		var user = await CommonData.LoadTableDataById<UserModel>(TableNames.User, runningBillModel.UserId);
+		var diningTable = await CommonData.LoadTableDataById<DiningTableModel>(TableNames.DiningTable, runningBillModel.DiningTableId);
 
-		document.Blocks.Add(ThermalParagraphs.RegularParagraph($"Bill No: {billModel.Id}"));
-		document.Blocks.Add(ThermalParagraphs.RegularParagraph($"Date: {billModel.BillDateTime:dd/MM/yy HH:mm}"));
+		document.Blocks.Add(ThermalParagraphs.RegularParagraph($"Bill No: {runningBillModel.Id}"));
+		document.Blocks.Add(ThermalParagraphs.RegularParagraph($"Date: {DateTime.Now:dd/MM/yy HH:mm}"));
 		document.Blocks.Add(ThermalParagraphs.RegularParagraph($"User: {user.Name}"));
 		document.Blocks.Add(ThermalParagraphs.RegularParagraph($"Table: {diningTable.Name}"));
 
 		document.Blocks.Add(ThermalParagraphs.SeparatorParagraph());
 	}
 
-	private static async Task AddItemDetails(FlowDocument document, BillModel billModel)
+	private static async Task AddItemDetails(FlowDocument document, RunningBillModel runningBillModel)
 	{
-		var billItems = await BillData.LoadBillDetailByBillId(billModel.Id);
+		var runningBillItems = await RunningBillData.LoadRunningBillDetailByRunningBillId(runningBillModel.Id);
 
 		Table itemsTable = new()
 		{
@@ -112,7 +111,7 @@ internal static class ThermalBillReceipt
 		headerRow.Cells.Add(new TableCell(ThermalParagraphs.TableHeaderParagraph("Amt", TextAlignment.Right)));
 		itemsGroup.Rows.Add(headerRow);
 
-		foreach (var item in billItems)
+		foreach (var item in runningBillItems)
 		{
 			if (item.Cancelled)
 				continue;
@@ -127,11 +126,11 @@ internal static class ThermalBillReceipt
 		document.Blocks.Add(ThermalParagraphs.SeparatorParagraph());
 	}
 
-	private static async Task AddTotalDetails(FlowDocument document, BillModel billModel)
+	private static async Task AddTotalDetails(FlowDocument document, RunningBillModel runningBillModel, int entryPaid)
 	{
-		var billItems = await BillData.LoadBillDetailByBillId(billModel.Id);
+		var runningBillItems = await RunningBillData.LoadRunningBillDetailByRunningBillId(runningBillModel.Id);
 
-		document.Blocks.Add(ThermalParagraphs.RegularParagraph($"Total Qty: {billItems.Where(x => !x.Cancelled).Sum(x => x.Quantity)}"));
+		document.Blocks.Add(ThermalParagraphs.RegularParagraph($"Total Qty: {runningBillItems.Where(x => !x.Cancelled).Sum(x => x.Quantity)}"));
 
 		Table subTotalsTable = new()
 		{
@@ -142,25 +141,25 @@ internal static class ThermalBillReceipt
 		subTotalsTable.Columns.Add(new TableColumn { Width = new GridLength(1, GridUnitType.Star) });
 
 		TableRowGroup itemsGroup = new();
-		ThermalParagraphs.AddTableRow(itemsGroup, "Sub Total:", BillWindowHelper.CalculateBaseTotal(billItems).FormatIndianCurrency());
+		ThermalParagraphs.AddTableRow(itemsGroup, "Sub Total:", BillWindowHelper.CalculateBaseTotal(runningBillItems).FormatIndianCurrency());
 
-		if (BillWindowHelper.CalculateDiscountAmount(billItems) > 0)
-			ThermalParagraphs.AddTableRow(itemsGroup, "Discount:", BillWindowHelper.GetDiscountString(billItems));
+		if (BillWindowHelper.CalculateDiscountAmount(runningBillItems) > 0)
+			ThermalParagraphs.AddTableRow(itemsGroup, "Discount:", BillWindowHelper.GetDiscountString(runningBillItems));
 
-		if (BillWindowHelper.CalculateProductSGST(billItems) > 0)
-			ThermalParagraphs.AddTableRow(itemsGroup, "SGST:", BillWindowHelper.GetSGSTString(billItems));
+		if (BillWindowHelper.CalculateProductSGST(runningBillItems) > 0)
+			ThermalParagraphs.AddTableRow(itemsGroup, "SGST:", BillWindowHelper.GetSGSTString(runningBillItems));
 
-		if (BillWindowHelper.CalculateProductCGST(billItems) > 0)
-			ThermalParagraphs.AddTableRow(itemsGroup, "CGST:", BillWindowHelper.GetCGSTString(billItems));
+		if (BillWindowHelper.CalculateProductCGST(runningBillItems) > 0)
+			ThermalParagraphs.AddTableRow(itemsGroup, "CGST:", BillWindowHelper.GetCGSTString(runningBillItems));
 
-		if (BillWindowHelper.CalculateProductIGST(billItems) > 0)
-			ThermalParagraphs.AddTableRow(itemsGroup, "IGST:", BillWindowHelper.GetIGSTString(billItems));
+		if (BillWindowHelper.CalculateProductIGST(runningBillItems) > 0)
+			ThermalParagraphs.AddTableRow(itemsGroup, "IGST:", BillWindowHelper.GetIGSTString(runningBillItems));
 
-		if (billModel.ServicePercent > 0)
-			ThermalParagraphs.AddTableRow(itemsGroup, "Service Charge:", BillWindowHelper.GetServiceString(billItems, billModel.ServicePercent));
+		if (runningBillModel.ServicePercent > 0)
+			ThermalParagraphs.AddTableRow(itemsGroup, "Service Charge:", BillWindowHelper.GetServiceString(runningBillItems, runningBillModel.ServicePercent));
 
-		if (billModel.EntryPaid > 0)
-			ThermalParagraphs.AddTableRow(itemsGroup, "Entry Paid:", ((decimal)billModel.EntryPaid).FormatIndianCurrency());
+		if (entryPaid > 0)
+			ThermalParagraphs.AddTableRow(itemsGroup, "Entry Paid:", ((decimal)entryPaid).FormatIndianCurrency());
 
 		subTotalsTable.RowGroups.Add(itemsGroup);
 		document.Blocks.Add(subTotalsTable);
@@ -179,7 +178,7 @@ internal static class ThermalBillReceipt
 
 		TableRowGroup itemsGroup1 = new();
 
-		var total = BillWindowHelper.CalculateBillTotal(billItems, billModel.ServicePercent, billModel.EntryPaid);
+		var total = BillWindowHelper.CalculateBillTotal(runningBillItems, runningBillModel.ServicePercent, entryPaid);
 		ThermalParagraphs.AddTableRow(itemsGroup1, "Total:", total.FormatIndianCurrency());
 
 		totalsTable.RowGroups.Add(itemsGroup1);
@@ -195,22 +194,16 @@ internal static class ThermalBillReceipt
 		document.Blocks.Add(ThermalParagraphs.FooterParagraph($"{(words == "" ? "Zero " : words)}Rupees Only", true));
 
 		document.Blocks.Add(ThermalParagraphs.SeparatorParagraph());
+
+		AddQRCode(document, total);
 	}
 
-	private static async Task AddQRCode(FlowDocument document, BillModel billModel)
+	private static void AddQRCode(FlowDocument document, decimal total)
 	{
-		var paymentDetails = await BillData.LoadBillPaymentDetailByBillId(billModel.Id);
-
-		decimal amount = paymentDetails
-			.Where(item => item.PaymentModeId == 3)
-			.Sum(item => item.Amount);
-
 		document.Blocks.Add(ThermalParagraphs.RegularParagraph("Scan to Pay", TextAlignment.Center));
 
 		// Generate the UPI ID
-		string upiId = amount == 0
-			? $"{UpiId}"
-			: $"{UpiId}&am={amount}&cu=INR";
+		string upiId = $"{UpiId}&am={total}&cu=INR";
 
 		// Generate the QR code
 		QRCodeEncoder encoder = new();

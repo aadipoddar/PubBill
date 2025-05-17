@@ -1,7 +1,5 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
 
 namespace PubBill.Billing.Bill;
 
@@ -121,7 +119,6 @@ public partial class BillPaymentWindow : Window
 		_runningBillModel.BillId = _billModel.Id;
 		await RunningBillData.InsertRunningBill(_runningBillModel);
 
-		await PrintBill();
 		Close();
 	}
 
@@ -165,13 +162,6 @@ public partial class BillPaymentWindow : Window
 				Amount = payment.Amount,
 				Status = true
 			});
-	}
-
-	private async Task PrintBill()
-	{
-		PrintDialog printDialog = new();
-		IDocumentPaginatorSource idpSource = await ThermalBillReceipt.Print(_billModel);
-		printDialog.PrintDocument(idpSource.DocumentPaginator, "Bill Receipt");
 	}
 	#endregion
 
