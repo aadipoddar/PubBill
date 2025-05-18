@@ -12,10 +12,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Using Include="PubBillLibrary.Data.Inventory.Items" />
+    <Using Include="PubBillLibrary.Data.Inventory.Purchase" />
     <Using Include="PubBillLibrary.DataAccess" />
     <Using Include="PubBillLibrary.Models" />
     <Using Include="PubBillLibrary.Models.Billing" />
     <Using Include="PubBillLibrary.Models.Dining" />
+    <Using Include="PubBillLibrary.Models.Inventory.Items" />
+    <Using Include="PubBillLibrary.Models.Inventory.Purchase" />
     <Using Include="PubBillLibrary.Models.Kitchen" />
     <Using Include="PubBillLibrary.Models.Products" />
   </ItemGroup>

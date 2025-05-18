@@ -8,7 +8,7 @@
 		xmlns:main="clr-namespace:PubBill"
 		mc:Ignorable="d" WindowStartupLocation="CenterScreen"
         Closed="Window_Closed" Loaded="Window_Loaded" WindowState="Maximized"
-        Title="AdminPanel" >
+        Title="Admin Panel" >
 	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="*"/>
@@ -29,12 +29,12 @@
 						<RowDefinition Height="Auto"/>
 						<RowDefinition Height="Auto"/>
 						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
 						<RowDefinition Height="*"/>
 						<RowDefinition Height="Auto"/>
 						<RowDefinition Height="Auto"/>
 					</Grid.RowDefinitions>
 
-					<!-- Buttons set to stretch horizontally -->
 					<Expander Grid.Row="0" Margin="10" Padding="5" Background="DodgerBlue" HorizontalAlignment="Stretch">
 						<Expander.Header>
 							<TextBlock Text="Dining" FontWeight="SemiBold" Foreground="Black" HorizontalAlignment="Center" />
@@ -70,7 +70,18 @@
 						</StackPanel>
 					</Expander>
 
-					<Expander Grid.Row="3" Margin="10" Padding="5" HorizontalAlignment="Stretch">
+					<Expander Grid.Row="3" Margin="10" Padding="5" Background="Goldenrod" HorizontalAlignment="Stretch">
+						<Expander.Header>
+							<TextBlock Text="Inventory" FontWeight="SemiBold" Foreground="Black" HorizontalAlignment="Center" />
+						</Expander.Header>
+
+						<StackPanel Orientation="Vertical" Margin="10">
+							<Button Content="Raw Material Category" Margin="5" MinWidth="120" MinHeight="40" HorizontalAlignment="Stretch" Click="manageRawMaterialCategoryButton_Click" />
+							<Button Content="Raw Material" Margin="5" MinWidth="120" MinHeight="40" HorizontalAlignment="Stretch" Click="manageRawMaterialButton_Click" />
+						</StackPanel>
+					</Expander>
+
+					<Expander Grid.Row="4" Margin="10" Padding="5" HorizontalAlignment="Stretch">
 						<Expander.Header>
 							<TextBlock Text="Rest" FontWeight="SemiBold" HorizontalAlignment="Center" />
 						</Expander.Header>
@@ -84,8 +95,8 @@
 						</StackPanel>
 					</Expander>
 
-					<Button Content="SQL Editor" Grid.Row="5" Margin="10" Padding="5" MinWidth="120" HorizontalAlignment="Stretch" Click="sqlEditorButton_Click" />
-					<Button Content="Settings" Grid.Row="6" Margin="10" Padding="5" MinWidth="120" HorizontalAlignment="Stretch" Click="settingsButton_Click" VerticalAlignment="Bottom"/>
+					<Button Content="SQL Editor" Grid.Row="6" Margin="10" Padding="5" MinWidth="120" HorizontalAlignment="Stretch" Click="sqlEditorButton_Click" />
+					<Button Content="Settings" Grid.Row="7" Margin="10" Padding="5" MinWidth="120" HorizontalAlignment="Stretch" Click="settingsButton_Click" VerticalAlignment="Bottom"/>
 				</Grid>
 			</ScrollViewer>
 

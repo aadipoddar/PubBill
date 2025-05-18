@@ -79,14 +79,19 @@
     <Folder Include="Stored Procedures\LoadData\Dining" />
     <Folder Include="Stored Procedures\LoadData\Product" />
     <Folder Include="Tables\Common" />
+    <Folder Include="Tables\Inventory" />
+    <Folder Include="Tables\Inventory\Items" />
+    <Folder Include="Tables\Inventory\Purchase" />
+    <Folder Include="Stored Procedures\Insert\Common" />
+    <Folder Include="Stored Procedures\Insert\Inventory" />
+    <Folder Include="Stored Procedures\Insert\Inventory\Items" />
+    <Folder Include="Stored Procedures\Insert\Inventory\Product" />
+    <Folder Include="Stored Procedures\LoadData\Inventory" />
+    <Folder Include="Stored Procedures\LoadData\Inventory\Items" />
   </ItemGroup>
   <ItemGroup>
-    <Build Include="Stored Procedures\Insert\Insert_Location.sql" />
-    <Build Include="Stored Procedures\Insert\Insert_User.sql" />
-    <Build Include="Stored Procedures\Insert\Insert_Person.sql" />
     <Build Include="Stored Procedures\LoadData\Load_Person_By_Number.sql" />
     <Build Include="Stored Procedures\LoadData\Load_User_By_Password.sql" />
-    <Build Include="Stored Procedures\Insert\Insert_PaymentMode.sql" />
     <Build Include="Stored Procedures\Insert\Billing\Insert_Bill.sql" />
     <Build Include="Stored Procedures\Insert\Billing\Insert_BillDetail.sql" />
     <Build Include="Stored Procedures\Insert\Billing\Insert_RunningBill.sql" />
@@ -140,6 +145,24 @@
     <Build Include="Tables\Common\Person.sql" />
     <Build Include="Tables\Common\Settings.sql" />
     <Build Include="Tables\Common\User.sql" />
+    <Build Include="Tables\Inventory\Items\RawMaterial.sql" />
+    <Build Include="Tables\Inventory\Items\RawMaterialCategory.sql" />
+    <Build Include="Tables\Inventory\Purchase\Purchase.sql" />
+    <Build Include="Tables\Inventory\Purchase\PurchaseDetail.sql" />
+    <Build Include="Tables\Inventory\Purchase\Supplier.sql" />
+    <Build Include="Tables\Inventory\Items\RecipeDetail.sql" />
+    <Build Include="Tables\Inventory\Items\Recipe.sql" />
+    <Build Include="Stored Procedures\Insert\Common\Insert_Location.sql" />
+    <Build Include="Stored Procedures\Insert\Inventory\Product\Insert_Purchase.sql" />
+    <Build Include="Tables\Inventory\Purchase\PurchasePaymentDetail.sql" />
+    <Build Include="Stored Procedures\Insert\Inventory\Product\Insert_PurchaseDetail.sql" />
+    <Build Include="Stored Procedures\Insert\Inventory\Product\Insert_PurchasePaymentDetail.sql" />
+    <Build Include="Stored Procedures\Insert\Inventory\Product\Insert_Supplier.sql" />
+    <Build Include="Stored Procedures\Insert\Inventory\Items\Insert_RawMaterial.sql" />
+    <Build Include="Stored Procedures\Insert\Inventory\Items\Insert_RawMaterialCategory.sql" />
+    <Build Include="Stored Procedures\Insert\Inventory\Items\Insert_Recipe.sql" />
+    <Build Include="Stored Procedures\Insert\Inventory\Items\Insert_RecipeDetail.sql" />
+    <Build Include="Stored Procedures\LoadData\Inventory\Items\Load_RawMaterial_By_RawMaterialCategory.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="DBPubBill.refactorlog" />
@@ -150,5 +173,10 @@
     <None Include="PublishLocations\DBPubBillLocal.publish.xml" />
     <None Include="Compare\SqlSchemaCompare.scmp" />
     <None Include="Compare\SqlDataCompare.dcmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Build Include="Stored Procedures\Insert\Common\Insert_PaymentMode.sql" />
+    <Build Include="Stored Procedures\Insert\Common\Insert_Person.sql" />
+    <Build Include="Stored Procedures\Insert\Common\Insert_User.sql" />
   </ItemGroup>
 </Project>

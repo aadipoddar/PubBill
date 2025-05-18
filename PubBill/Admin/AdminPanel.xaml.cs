@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 
 using PubBill.Admin.Dining;
+using PubBill.Admin.Inventory.Items;
 using PubBill.Admin.Kitchen;
 using PubBill.Admin.Product;
 
@@ -19,11 +20,6 @@ public partial class AdminPanel : Window
 		_dashboard = dashboard;
 	}
 
-	private void Window_Closed(object sender, EventArgs e)
-	{
-		_dashboard.Show();
-	}
-
 	private void Window_Loaded(object sender, RoutedEventArgs e) => mainFrame.Content = new ProductGroupPage();
 
 	private void manageDiningAreasButton_Click(object sender, RoutedEventArgs e) => mainFrame.Content = new DiningAreaPage();
@@ -37,6 +33,9 @@ public partial class AdminPanel : Window
 	private void manageProductButton_Click(object sender, RoutedEventArgs e) => mainFrame.Content = new ProductPage();
 	private void manageProductCategoryButton_Click(object sender, RoutedEventArgs e) => mainFrame.Content = new ProductCategoryPage();
 
+	private void manageRawMaterialCategoryButton_Click(object sender, RoutedEventArgs e) => mainFrame.Content = new RawMaterialCategoryPage();
+	private void manageRawMaterialButton_Click(object sender, RoutedEventArgs e) => mainFrame.Content = new RawMaterialPage();
+
 	private void manageUsersButton_Click(object sender, RoutedEventArgs e) => mainFrame.Content = new UserPage();
 	private void manageLocationsButton_Click(object sender, RoutedEventArgs e) => mainFrame.Content = new LocationPage();
 	private void managePersonButton_Click(object sender, RoutedEventArgs e) => mainFrame.Content = new PersonPage();
@@ -45,4 +44,8 @@ public partial class AdminPanel : Window
 
 	private void sqlEditorButton_Click(object sender, RoutedEventArgs e) => mainFrame.Content = new SqlEditorPage();
 	private void settingsButton_Click(object sender, RoutedEventArgs e) => mainFrame.Content = new SettingsPage();
+
+
+	private void Window_Closed(object sender, EventArgs e) =>
+		_dashboard.Show();
 }

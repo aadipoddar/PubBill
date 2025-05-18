@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 
-namespace PubBill.Admin;
+namespace PubBill.Admin.Product;
 
 /// <summary>
 /// Interaction logic for TaxPage.xaml

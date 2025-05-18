@@ -6,6 +6,7 @@ public static class TableNames
 	public static string Person => "Person";
 	public static string User => "User";
 	public static string PaymentMode => "PaymentMode";
+	public static string Settings => "Settings";
 
 	public static string DiningArea => "DiningArea";
 	public static string DiningTable => "DiningTable";
@@ -25,12 +26,17 @@ public static class TableNames
 	public static string KOTBillDetail => "KOTBillDetail";
 	public static string Kitchen => "Kitchen";
 	public static string KitchenType => "KitchenType";
-}
 
-public static class ViewNames
-{
-	public static string ProductTax => "Product_Tax";
-	public static string BillOverview => "Bill_Overview";
+
+	public static string RawMaterial => "RawMaterial";
+	public static string RawMaterialCategory => "RawMaterialCategory";
+	public static string Recipe => "Recipe";
+	public static string RecipeDetail => "RecipeDetail";
+
+	public static string Purchase => "Purchase";
+	public static string PurchaseDetail => "PurchaseDetail";
+	public static string PurchasePaymentDetail => "PurchasePaymentDetail";
+	public static string Supplier => "Supplier";
 }
 
 public static class StoredProcedureNames
@@ -59,6 +65,22 @@ public static class StoredProcedureNames
 	public static string InsertKitchen => "Insert_Kitchen";
 	public static string InsertKitchenType => "Insert_KitchenType";
 
+	public static string InsertRawMaterial => "Insert_RawMaterial";
+	public static string InsertRawMaterialCategory => "Insert_RawMaterialCategory";
+	public static string InsertRecipe => "Insert_Recipe";
+	public static string InsertRecipeDetail => "Insert_RecipeDetail";
+
+	public static string InsertPurchase => "Insert_Purchase";
+	public static string InsertPurchaseDetail => "Insert_PurchaseDetail";
+	public static string InsertPurchasePaymentDetail => "Insert_PurchasePaymentDetail";
+	public static string InsertSupplier => "Insert_Supplier";
+
+
+	public static string DeleteRunningBillDetail => "Delete_RunningBillDetail";
+
+	public static string LoadSettingsByKey => "Load_Settings_By_Key";
+	public static string UpdateSettings => "Update_Settings";
+	public static string ResetSettings => "Reset_Settings";
 
 
 	public static string LoadTableData => "Load_TableData";
@@ -78,14 +100,16 @@ public static class StoredProcedureNames
 	public static string LoadKOTBillDetailByRunningBillId => "Load_KOTBillDetail_By_RunningBillId";
 	public static string LoadBillDetailByBillId => "Load_BillDetail_By_BillId";
 	public static string LoadBillPaymentDetailByBillId => "Load_BillPaymentDetail_By_BillId";
-
-	public static string DeleteRunningBillDetail => "Delete_RunningBillDetail";
-
-	public static string LoadSettingsByKey => "Load_Settings_By_Key";
-	public static string UpdateSettings => "Update_Settings";
-	public static string ResetSettings => "Reset_Settings";
-
 	public static string LoadBillDetailsByDateLocationId => "Load_BillDetails_By_Date_LocationId";
+
+
+	public static string LoadRawMaterialByRawMaterialCategory => "Load_RawMaterial_By_RawMaterialCategory";
+}
+
+public static class ViewNames
+{
+	public static string ProductTax => "Product_Tax";
+	public static string BillOverview => "Bill_Overview";
 }
 
 public static class PubEntryStoredProcedures

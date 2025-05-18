@@ -1,7 +1,7 @@
-﻿<Page x:Class="PubBill.Admin.TaxPage"
+﻿<Page x:Class="PubBill.Admin.Product.TaxPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:local="clr-namespace:PubBill.Admin"
+      xmlns:local="clr-namespace:PubBill.Admin.Product"
       Loaded="Page_Loaded">
 
 	<ScrollViewer HorizontalScrollBarVisibility="Visible">
