@@ -30,7 +30,8 @@ public partial class InventoryDashboard : Window
 
 	private void supplierButton_Click(object sender, RoutedEventArgs e)
 	{
-
+		SupplierWindow supplierWindow = new();
+		supplierWindow.ShowDialog();
 	}
 
 	private void Window_Closed(object sender, EventArgs e) =>
