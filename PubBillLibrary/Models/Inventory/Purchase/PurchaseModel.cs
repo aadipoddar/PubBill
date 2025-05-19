@@ -6,6 +6,8 @@ public class PurchaseModel
 	public string BillNo { get; set; }
 	public int SupplierId { get; set; }
 	public DateOnly BillDate { get; set; }
+	public decimal CDPercent { get; set; }
+	public decimal CDAmount { get; set; }
 	public string Remarks { get; set; }
 	public bool Status { get; set; }
 }

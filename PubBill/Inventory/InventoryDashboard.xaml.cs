@@ -1,5 +1,7 @@
 ﻿using System.Windows;
 
+using PubBill.Inventory.Purchase;
+
 namespace PubBill.Inventory;
 
 /// <summary>
@@ -25,7 +27,8 @@ public partial class InventoryDashboard : Window
 
 	private void purchaseButton_Click(object sender, RoutedEventArgs e)
 	{
-
+		PurchaseWindow purchase = new();
+		purchase.ShowDialog();
 	}
 
 	private void supplierButton_Click(object sender, RoutedEventArgs e)

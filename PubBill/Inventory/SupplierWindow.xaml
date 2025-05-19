@@ -4,122 +4,133 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PubBill.Inventory"
+		xmlns:common="clr-namespace:PubBill.Common"
         mc:Ignorable="d"
-        Title="Supplier Management" Height="650" Width="1000" WindowStartupLocation="CenterScreen" 
+        Title="Supplier Management" Height="700" Width="1000" WindowStartupLocation="CenterScreen" 
         Loaded="Window_Loaded">
-    <Grid Margin="10">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="350"/>
-        </Grid.ColumnDefinitions>
 
-        <!-- Left side: Supplier List -->
-        <Grid Grid.Column="0" Margin="0,0,10,0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="*"/>
+			<RowDefinition Height="Auto"/>
+		</Grid.RowDefinitions>
 
-            <!-- Search and Filter Section -->
-            <Grid Grid.Row="0" Margin="0,0,0,10">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
+		<Grid Margin="10">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*"/>
+				<ColumnDefinition Width="350"/>
+			</Grid.ColumnDefinitions>
 
-                <TextBlock Grid.Column="0" Text="Search:" VerticalAlignment="Center" Margin="0,0,5,0"/>
-                <TextBox Grid.Column="1" x:Name="searchTextBox" TextChanged="searchTextBox_TextChanged" VerticalContentAlignment="Center" Margin="0,0,10,0"/>
-                
-                <CheckBox Grid.Column="2" x:Name="showActiveCheckBox" Content="Active" IsChecked="True" Margin="5" Checked="showCheckBox_CheckedChanged" Unchecked="showCheckBox_CheckedChanged"/>
-                <CheckBox Grid.Column="3" x:Name="showInactiveCheckBox" Content="Inactive" Margin="5" Checked="showCheckBox_CheckedChanged" Unchecked="showCheckBox_CheckedChanged"/>
-            </Grid>
+			<!-- Left side: Supplier List -->
+			<Grid Grid.Column="0" Margin="0,0,10,0">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="*"/>
+				</Grid.RowDefinitions>
 
-            <!-- Suppliers DataGrid -->
-            <DataGrid Grid.Row="1" x:Name="supplierDataGrid" AutoGenerateColumns="False" IsReadOnly="True" SelectionMode="Single"
+				<!-- Search and Filter Section -->
+				<Grid Grid.Row="0" Margin="0,0,0,10">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="Auto"/>
+						<ColumnDefinition Width="*"/>
+						<ColumnDefinition Width="Auto"/>
+						<ColumnDefinition Width="Auto"/>
+					</Grid.ColumnDefinitions>
+
+					<TextBlock Grid.Column="0" Text="Search:" VerticalAlignment="Center" Margin="0,0,5,0"/>
+					<TextBox Grid.Column="1" x:Name="searchTextBox" TextChanged="searchTextBox_TextChanged" VerticalContentAlignment="Center" Margin="0,0,10,0"/>
+
+					<CheckBox Grid.Column="2" x:Name="showActiveCheckBox" Content="Active" IsChecked="True" Margin="5" Checked="showCheckBox_CheckedChanged" Unchecked="showCheckBox_CheckedChanged"/>
+					<CheckBox Grid.Column="3" x:Name="showInactiveCheckBox" Content="Inactive" Margin="5" Checked="showCheckBox_CheckedChanged" Unchecked="showCheckBox_CheckedChanged"/>
+				</Grid>
+
+				<!-- Suppliers DataGrid -->
+				<DataGrid Grid.Row="1" x:Name="supplierDataGrid" AutoGenerateColumns="False" IsReadOnly="True" SelectionMode="Single"
 					  CanUserReorderColumns="False" CanUserResizeRows="False" 
                       SelectedCellsChanged="supplierDataGrid_SelectedCellsChanged" VerticalScrollBarVisibility="Auto">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="50"/>
-                    <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*"/>
-                    <DataGridTextColumn Header="Code" Binding="{Binding Code}" Width="80"/>
-                    <DataGridTextColumn Header="GST No" Binding="{Binding GSTNo}" Width="120"/>
-                    <DataGridTextColumn Header="Phone" Binding="{Binding Phone}" Width="100"/>
-                    <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="60"/>
-                </DataGrid.Columns>
-            </DataGrid>
-        </Grid>
+					<DataGrid.Columns>
+						<DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="50"/>
+						<DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*"/>
+						<DataGridTextColumn Header="Code" Binding="{Binding Code}" Width="80"/>
+						<DataGridTextColumn Header="GST No" Binding="{Binding GSTNo}" Width="120"/>
+						<DataGridTextColumn Header="Phone" Binding="{Binding Phone}" Width="100"/>
+						<DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="60"/>
+					</DataGrid.Columns>
+				</DataGrid>
+			</Grid>
 
-        <!-- Right side: Details Form -->
-        <Border Grid.Column="1" BorderBrush="Goldenrod" BorderThickness="1" Padding="10">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
+			<!-- Right side: Details Form -->
+			<Border Grid.Column="1" BorderBrush="Goldenrod" BorderThickness="1" Padding="10">
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="*"/>
+						<RowDefinition Height="Auto"/>
+					</Grid.RowDefinitions>
 
-                <TextBlock Grid.Row="0" Text="Supplier Details" FontWeight="Bold" FontSize="16" Margin="0,0,0,15"/>
+					<TextBlock Grid.Row="0" Text="Supplier Details" FontWeight="Bold" FontSize="16" Margin="0,0,0,15"/>
 
-                <!-- Name Field -->
-                <StackPanel Grid.Row="1" Margin="0,5">
-                    <TextBlock Text="Name:" Margin="0,0,0,5"/>
-                    <TextBox x:Name="nameTextBox" TextChanged="nameTextBox_TextChanged" Padding="5"/>
-                </StackPanel>
+					<!-- Name Field -->
+					<StackPanel Grid.Row="1" Margin="0,5">
+						<TextBlock Text="Name:" Margin="0,0,0,5"/>
+						<TextBox x:Name="nameTextBox" TextChanged="nameTextBox_TextChanged" Padding="5"/>
+					</StackPanel>
 
-                <!-- Code Field -->
-                <StackPanel Grid.Row="2" Margin="0,5">
-                    <TextBlock Text="Code:" Margin="0,0,0,5"/>
-                    <TextBox x:Name="codeTextBox" Padding="5"/>
-                </StackPanel>
+					<!-- Code Field -->
+					<StackPanel Grid.Row="2" Margin="0,5">
+						<TextBlock Text="Code:" Margin="0,0,0,5"/>
+						<TextBox x:Name="codeTextBox" Padding="5"/>
+					</StackPanel>
 
-                <!-- GST Number Field -->
-                <StackPanel Grid.Row="3" Margin="0,5">
-                    <TextBlock Text="GST Number:" Margin="0,0,0,5"/>
-                    <TextBox x:Name="gstNoTextBox" Padding="5"/>
-                </StackPanel>
+					<!-- GST Number Field -->
+					<StackPanel Grid.Row="3" Margin="0,5">
+						<TextBlock Text="GST Number:" Margin="0,0,0,5"/>
+						<TextBox x:Name="gstNoTextBox" Padding="5"/>
+					</StackPanel>
 
-                <!-- Phone Field -->
-                <StackPanel Grid.Row="4" Margin="0,5">
-                    <TextBlock Text="Phone:" Margin="0,0,0,5"/>
-                    <TextBox x:Name="phoneTextBox" PreviewTextInput="phoneTextBox_PreviewTextInput" Padding="5"/>
-                </StackPanel>
+					<!-- Phone Field -->
+					<StackPanel Grid.Row="4" Margin="0,5">
+						<TextBlock Text="Phone:" Margin="0,0,0,5"/>
+						<TextBox x:Name="phoneTextBox" PreviewTextInput="phoneTextBox_PreviewTextInput" Padding="5"/>
+					</StackPanel>
 
-                <!-- Email Field -->
-                <StackPanel Grid.Row="5" Margin="0,5">
-                    <TextBlock Text="Email:" Margin="0,0,0,5"/>
-                    <TextBox x:Name="emailTextBox" Padding="5"/>
-                </StackPanel>
+					<!-- Email Field -->
+					<StackPanel Grid.Row="5" Margin="0,5">
+						<TextBlock Text="Email:" Margin="0,0,0,5"/>
+						<TextBox x:Name="emailTextBox" Padding="5"/>
+					</StackPanel>
 
-                <!-- Address Field -->
-                <StackPanel Grid.Row="6" Margin="0,5">
-                    <TextBlock Text="Address:" Margin="0,0,0,5"/>
-                    <TextBox x:Name="addressTextBox" TextWrapping="Wrap" AcceptsReturn="True" Height="80" Padding="5"/>
-                </StackPanel>
+					<!-- Address Field -->
+					<StackPanel Grid.Row="6" Margin="0,5">
+						<TextBlock Text="Address:" Margin="0,0,0,5"/>
+						<TextBox x:Name="addressTextBox" TextWrapping="Wrap" AcceptsReturn="True" Height="80" Padding="5"/>
+					</StackPanel>
 
-                <!-- Status Field -->
-                <StackPanel Grid.Row="7" Margin="0,10">
-                    <CheckBox x:Name="statusCheckBox" Content="Active" IsChecked="True"/>
-                </StackPanel>
+					<!-- Status Field -->
+					<StackPanel Grid.Row="7" Margin="0,10">
+						<CheckBox x:Name="statusCheckBox" Content="Active" IsChecked="True"/>
+					</StackPanel>
 
-                <!-- Spacer -->
-                <Rectangle Grid.Row="8" Fill="Transparent"/>
+					<!-- Spacer -->
+					<Rectangle Grid.Row="8" Fill="Transparent"/>
 
-                <!-- Buttons -->
-                <StackPanel Grid.Row="9" Orientation="Horizontal" HorizontalAlignment="Right">
-                    <Button x:Name="clearButton" Content="Clear" Width="80" Margin="0,0,10,0" Click="clearButton_Click"/>
-                    <Button x:Name="saveButton" Content="Save" Width="100" IsEnabled="False" Click="saveButton_Click"
+					<!-- Buttons -->
+					<StackPanel Grid.Row="9" Orientation="Horizontal" HorizontalAlignment="Right">
+						<Button x:Name="clearButton" Content="Clear" Width="80" Margin="0,0,10,0" Click="clearButton_Click"/>
+						<Button x:Name="saveButton" Content="Save" Width="100" IsEnabled="False" Click="saveButton_Click"
 							Style="{DynamicResource AccentButtonStyle}" IsDefault="True"/>
-                </StackPanel>
-            </Grid>
-        </Border>
-    </Grid>
+					</StackPanel>
+				</Grid>
+			</Border>
+		</Grid>
+
+		<common:FooterControl Grid.Row="1"/>
+	</Grid>
 </Window>
