@@ -69,12 +69,13 @@ public partial class BillPaymentWindow : Window
 		if (_paymentModels.Any(x => x.PaymentModeId == selectedPaymentMode.Id))
 			_paymentModels.FirstOrDefault(x => x.PaymentModeId == selectedPaymentMode.Id).Amount += decimal.Parse(amountTextBox.Text);
 
-		else _paymentModels.Add(new BillPaymentModeModel
-		{
-			PaymentModeId = selectedPaymentMode.Id,
-			PaymentModeName = selectedPaymentMode.Name,
-			Amount = decimal.Parse(amountTextBox.Text)
-		});
+		else
+			_paymentModels.Add(new BillPaymentModeModel
+			{
+				PaymentModeId = selectedPaymentMode.Id,
+				PaymentModeName = selectedPaymentMode.Name,
+				Amount = decimal.Parse(amountTextBox.Text)
+			});
 
 		CalculateTotal();
 	}

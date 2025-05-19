@@ -58,8 +58,8 @@
 				<Button x:Name="addButton" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Content="Add" HorizontalAlignment="Center" MinWidth="100" MinHeight="40" Margin="10" Padding="5" Click="addButton_Click"/>
 
 				<DataGrid x:Name="amountDataGrid" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="10" Padding="5" AutoGenerateColumns="False" MaxWidth="300" VerticalScrollBarVisibility="Auto"
-					CanUserDeleteRows="False" CanUserReorderColumns="True" CanUserSortColumns="True" CanUserResizeColumns="True" CanUserAddRows="False"
-					MouseLeftButtonUp="amountDataGrid_MouseLeftButtonUp">
+					CanUserDeleteRows="False" CanUserReorderColumns="True" CanUserSortColumns="True" CanUserResizeColumns="True" CanUserAddRows="False" SelectionMode="Single"
+					MouseLeftButtonUp="amountDataGrid_MouseLeftButtonUp" MinColumnWidth="100">
 					<DataGrid.Columns>
 						<DataGridTextColumn Header="Id" Binding="{Binding PaymentModeId}" Visibility="Hidden"/>
 						<DataGridTextColumn Header="Mode" Binding="{Binding PaymentModeName}" Width="*"/>

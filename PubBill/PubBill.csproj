@@ -43,8 +43,4 @@
     <Using Include="PubBillLibrary.Models.Products" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Admin\Inventory\Purchase\" />
-  </ItemGroup>
-
 </Project>

@@ -3,6 +3,7 @@
 using PubBill.Admin;
 using PubBill.Billing.Bill;
 using PubBill.Billing.KOT;
+using PubBill.Inventory;
 using PubBill.Reports;
 
 namespace PubBill;
@@ -77,7 +78,9 @@ public partial class Dashboard : Window
 
 			else if (isInventory && !isBill && !isKOT)
 			{
-				// TODO
+				InventoryDashboard inventoryDashboard = new(_loginWindow);
+				inventoryDashboard.Show();
+				Close();
 			}
 		}
 	}
@@ -98,22 +101,28 @@ public partial class Dashboard : Window
 
 	private void inventoryButton_Click(object sender, RoutedEventArgs e)
 	{
-
+		InventoryDashboard inventoryDashboard = new(_loginWindow);
+		inventoryDashboard.Show();
+		Close();
+		_loginWindow.Hide();
 	}
 
 	private void reportButton_Click(object sender, RoutedEventArgs e)
 	{
-		SummaryReport summaryReport = new(this);
+		SummaryReport summaryReport = new(_loginWindow);
 		summaryReport.Show();
-		Hide();
+		Close();
+		_loginWindow.Hide();
 	}
 
 	private void adminButton_Click(object sender, RoutedEventArgs e)
 	{
-		AdminPanel adminPanel = new(this);
+		AdminPanel adminPanel = new(_loginWindow);
 		adminPanel.Show();
-		Hide();
+		Close();
+		_loginWindow.Hide();
 	}
 
-	private void Window_Closed(object sender, EventArgs e) => _loginWindow.Show();
+	private void Window_Closed(object sender, EventArgs e) =>
+		_loginWindow.Show();
 }

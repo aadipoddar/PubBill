@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 
-namespace PubBill.Admin.Inventory.Items;
+namespace PubBill.Admin.Inventory;
 
 /// <summary>
 /// Interaction logic for RawMaterialCategoryPage.xaml

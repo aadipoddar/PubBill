@@ -104,6 +104,9 @@ public static class StoredProcedureNames
 
 
 	public static string LoadRawMaterialByRawMaterialCategory => "Load_RawMaterial_By_RawMaterialCategory";
+
+	public static string LoadRecipeByProduct => "Load_Recipe_By_Product";
+	public static string LoadRecipeDetailByRecipe => "Load_RecipeDetail_By_Recipe";
 }
 
 public static class ViewNames

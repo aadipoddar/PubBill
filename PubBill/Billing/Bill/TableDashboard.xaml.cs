@@ -35,7 +35,8 @@ public partial class TableDashboard : Window
 		_loginWindow = loginWindow;
 	}
 
-	private async void Window_Loaded(object sender, RoutedEventArgs e) => await LoadData();
+	private async void Window_Loaded(object sender, RoutedEventArgs e) =>
+		await LoadData();
 
 	private async Task LoadData()
 	{

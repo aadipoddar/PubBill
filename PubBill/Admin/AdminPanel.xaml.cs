@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 
 using PubBill.Admin.Dining;
-using PubBill.Admin.Inventory.Items;
+using PubBill.Admin.Inventory;
 using PubBill.Admin.Kitchen;
 using PubBill.Admin.Product;
 
@@ -12,12 +12,12 @@ namespace PubBill.Admin;
 /// </summary>
 public partial class AdminPanel : Window
 {
-	private readonly Dashboard _dashboard;
+	private readonly LoginWindow _loginWindow;
 
-	public AdminPanel(Dashboard dashboard)
+	public AdminPanel(LoginWindow loginWindow)
 	{
 		InitializeComponent();
-		_dashboard = dashboard;
+		_loginWindow = loginWindow;
 	}
 
 	private void Window_Loaded(object sender, RoutedEventArgs e) => mainFrame.Content = new ProductGroupPage();
@@ -47,5 +47,5 @@ public partial class AdminPanel : Window
 
 
 	private void Window_Closed(object sender, EventArgs e) =>
-		_dashboard.Show();
+		_loginWindow.Show();
 }

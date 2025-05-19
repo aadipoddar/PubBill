@@ -47,12 +47,12 @@ public partial class SummaryReport : Window
 
 	#endregion
 
-	private readonly Dashboard _dashboard;
+	private readonly LoginWindow _loginWindow;
 
-	public SummaryReport(Dashboard dashboard)
+	public SummaryReport(LoginWindow loginWindow)
 	{
 		InitializeComponent();
-		_dashboard = dashboard;
+		_loginWindow = loginWindow;
 	}
 
 	#region Load Data
@@ -157,11 +157,12 @@ public partial class SummaryReport : Window
 		//detailedReportWindow.Show();
 	}
 
-	private void Window_Closed(object sender, EventArgs e) => _dashboard.Show();
-
 	private void AdvanceReport(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
 	{
 		//AdvanceReportWindow advanceReportWindow = new();
 		//advanceReportWindow.Show();
 	}
+
+	private void Window_Closed(object sender, EventArgs e) =>
+		_loginWindow.Show();
 }
