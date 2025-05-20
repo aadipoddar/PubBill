@@ -88,6 +88,7 @@
     <Folder Include="Stored Procedures\Insert\Inventory\Product" />
     <Folder Include="Stored Procedures\LoadData\Inventory" />
     <Folder Include="Stored Procedures\LoadData\Inventory\Items" />
+    <Folder Include="Stored Procedures\LoadData\Inventory\Purchase" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Stored Procedures\LoadData\Load_Person_By_Number.sql" />
@@ -163,6 +164,9 @@
     <Build Include="Stored Procedures\LoadData\Inventory\Items\Load_RawMaterial_By_RawMaterialCategory.sql" />
     <Build Include="Stored Procedures\LoadData\Inventory\Items\Load_Recipe_By_Product.sql" />
     <Build Include="Stored Procedures\LoadData\Inventory\Items\Load_RecipeDetail_By_Recipe.sql" />
+    <Build Include="Views\Purchase_Overview.sql" />
+    <Build Include="Stored Procedures\LoadData\Inventory\Purchase\Load_PurchaseOverview_By_Date.sql" />
+    <Build Include="Stored Procedures\LoadData\Inventory\Purchase\Load_PurchaseDetail_By_Purchase.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="DBPubBill.refactorlog" />

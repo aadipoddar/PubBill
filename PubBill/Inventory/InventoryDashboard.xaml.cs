@@ -30,6 +30,12 @@ public partial class InventoryDashboard : Window
 		PurchaseWindow purchase = new();
 		purchase.ShowDialog();
 	}
+	
+	private void purchaseHistoryButton_OnClick(object sender, RoutedEventArgs e)
+	{
+		PurchaseHistoryWindow purchaseHistoryWindow = new();
+		purchaseHistoryWindow.ShowDialog();
+	}
 
 	private void supplierButton_Click(object sender, RoutedEventArgs e)
 	{

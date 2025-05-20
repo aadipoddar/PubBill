@@ -110,12 +110,12 @@ public partial class PurchaseItemManageWindow : Window
 	private void quantityTextBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e) =>
 		UpdateQuantity(0);
 
-	private void UpdateQuantity(int change)
+	private void UpdateQuantity(decimal change)
 	{
 		if (_cartItem is null)
 			return;
 
-		int newQty = int.Parse(quantityTextBox.Text) + change;
+		decimal newQty = decimal.Parse(quantityTextBox.Text) + change;
 
 		quantityTextBox.Text = Math.Max(0, newQty).ToString();
 

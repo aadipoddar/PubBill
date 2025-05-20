@@ -105,12 +105,17 @@ public static class StoredProcedureNames
 
 	public static string LoadRecipeByProduct => "Load_Recipe_By_Product";
 	public static string LoadRecipeDetailByRecipe => "Load_RecipeDetail_By_Recipe";
+
+
+	public static string LoadPurchaseDetailByPurchase => "Load_PurchaseDetail_By_Purchase";
+	public static string LoadPurchaseOverviewByDate => "Load_PurchaseOverview_By_Date";
 }
 
 public static class ViewNames
 {
 	public static string ProductTax => "Product_Tax";
 	public static string BillOverview => "Bill_Overview";
+	public static string PurchaseOverview => "Purchase_Overview";
 }
 
 public static class PubEntryStoredProcedures

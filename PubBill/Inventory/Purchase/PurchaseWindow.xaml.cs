@@ -10,11 +10,18 @@ namespace PubBill.Inventory.Purchase;
 public partial class PurchaseWindow : Window
 {
 	#region LoadData
+	private readonly PurchaseOverviewModel _purchaseModel = null;
 	private List<SupplierModel> _suppliers = [];
 	private static readonly ObservableCollection<PurchaseCartModel> _cart = [];
 
 	public PurchaseWindow() =>
 		InitializeComponent();
+
+	public PurchaseWindow(PurchaseOverviewModel purchaseModel)
+	{
+		_purchaseModel = purchaseModel;
+		InitializeComponent();
+	}
 
 	private async void Window_Loaded(object sender, RoutedEventArgs e) =>
 		await LoadData();
@@ -31,6 +38,50 @@ public partial class PurchaseWindow : Window
 		rawMaterialCategoryListBox.SelectedValuePath = nameof(RawMaterialCategoryModel.Id);
 		rawMaterialCategoryListBox.SelectedIndex = 0;
 
+		await LoadPurchase();
+
+		RefreshTotal();
+	}
+
+	private async Task LoadPurchase()
+	{
+		if (_purchaseModel is null)
+			return;
+
+		billDatePicker.SelectedDate = _purchaseModel.BillDate.ToDateTime(new TimeOnly(0, 0));
+		billNoTextBox.Text = _purchaseModel.BillNo;
+
+		var supplier = await CommonData.LoadTableDataById<SupplierModel>(TableNames.Supplier, _purchaseModel.SupplierId);
+		supplierNameTextBox.Text = supplier.Name;
+
+		_cart.Clear();
+
+		var purchaseDetails = await PurchaseData.LoadPurchaseDetailByPurchase(_purchaseModel.Id);
+		foreach (var item in purchaseDetails)
+		{
+			var rawMaterial = await CommonData.LoadTableDataById<RawMaterialModel>(TableNames.RawMaterial, item.RawMaterialId);
+
+			_cart.Add(new PurchaseCartModel()
+			{
+				RawMaterialId = item.RawMaterialId,
+				RawMaterialName = rawMaterial.Name,
+				Quantity = item.Quantity,
+				Rate = item.Rate,
+				BaseTotal = item.BaseTotal,
+				DiscPercent = item.DiscPercent,
+				DiscAmount = item.DiscAmount,
+				AfterDiscount = item.AfterDiscount,
+				CGSTPercent = item.CGSTPercent,
+				CGSTAmount = item.CGSTAmount,
+				SGSTPercent = item.SGSTPercent,
+				SGSTAmount = item.SGSTAmount,
+				IGSTPercent = item.IGSTPercent,
+				IGSTAmount = item.IGSTAmount,
+				Total = item.Total
+			});
+		}
+
+		cashDiscountPercentTextBox.Text = _purchaseModel.CashDiscountPercent.ToString();
 		RefreshTotal();
 	}
 
@@ -237,7 +288,7 @@ public partial class PurchaseWindow : Window
 
 		PurchaseModel purchaseModel = new()
 		{
-			Id = 0,
+			Id = _purchaseModel?.Id ?? 0,
 			SupplierId = filteredSupplier.Id,
 			BillDate = DateOnly.FromDateTime(billDatePicker.SelectedDate.Value),
 			BillNo = billNoTextBox.Text.Trim(),
@@ -253,6 +304,16 @@ public partial class PurchaseWindow : Window
 		{
 			MessageBox.Show("Failed to insert purchase data.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
 			return;
+		}
+
+		if (_purchaseModel is not null)
+		{
+			var purchaseDetails = await PurchaseData.LoadPurchaseDetailByPurchase(_purchaseModel.Id);
+			foreach (var item in purchaseDetails)
+			{
+				item.Status = false;
+				await PurchaseData.InsertPurchaseDetail(item);
+			}
 		}
 
 		foreach (var item in _cart)
