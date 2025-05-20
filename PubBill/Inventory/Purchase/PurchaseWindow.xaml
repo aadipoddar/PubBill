@@ -56,23 +56,23 @@
 
 								<TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="Supplier Information" Margin="10" Padding="5" HorizontalAlignment="Center" />
 
-								<TextBlock Grid.Row="1" Grid.Column="0" Text="Name" Margin="10" Padding="5" />
-								<TextBox x:Name="supplierNameTextBox" Grid.Row="1" Grid.Column="1" Margin="10" Padding="5" MinWidth="100" TextChanged="supplierTextBox_TextChanged" />
+								<TextBlock Grid.Row="1" Grid.Column="0" Text="Bill No" Margin="10" Padding="5" />
+								<TextBox  x:Name="billNoTextBox" Grid.Row="1" Grid.Column="1" Margin="10" Padding="5" MinWidth="100" />
 
-								<TextBlock Grid.Row="2" Grid.Column="0" Text="GST" Margin="10" Padding="5" />
-								<TextBox x:Name="supplierGSTTextBox" Grid.Row="2" Grid.Column="1" Margin="10" Padding="5" MinWidth="100" IsReadOnly="True" />
+								<TextBlock Grid.Row="2" Grid.Column="0" Text="Bill Date" Margin="10" Padding="5" />
+								<DatePicker x:Name="billDatePicker" Grid.Row="2" Grid.Column="1" Margin="10" Padding="5" MinWidth="100" />
 
-								<TextBlock Grid.Row="3" Grid.Column="0" Text="Phone" Margin="10" Padding="5" />
-								<TextBox x:Name="supplierNumberTextBox" Grid.Row="3" Grid.Column="1" Margin="10" Padding="5" MinWidth="100" MaxLength="10" IsReadOnly="True" />
+								<TextBlock Grid.Row="3" Grid.Column="0" Text="Name" Margin="10" Padding="5" />
+								<TextBox x:Name="supplierNameTextBox" Grid.Row="3" Grid.Column="1" Margin="10" Padding="5" MinWidth="100" TextChanged="supplierTextBox_TextChanged" />
 
-								<TextBlock Grid.Row="4" Grid.Column="0" Text="Email" Margin="10" Padding="5" />
-								<TextBox  x:Name="supplierEmailTextBox" Grid.Row="4" Grid.Column="1" Margin="10" Padding="5" MinWidth="100" MaxLength="5" IsReadOnly="True" />
+								<TextBlock Grid.Row="4" Grid.Column="0" Text="GST" Margin="10" Padding="5" />
+								<TextBox x:Name="supplierGSTTextBox" Grid.Row="4" Grid.Column="1" Margin="10" Padding="5" MinWidth="100" IsReadOnly="True" />
 
-								<TextBlock Grid.Row="5" Grid.Column="0" Text="Bill No" Margin="10" Padding="5" />
-								<TextBox  x:Name="billNoTextBox" Grid.Row="5" Grid.Column="1" Margin="10" Padding="5" MinWidth="100" MaxLength="5" />
+								<TextBlock Grid.Row="5" Grid.Column="0" Text="Phone" Margin="10" Padding="5" />
+								<TextBox x:Name="supplierNumberTextBox" Grid.Row="5" Grid.Column="1" Margin="10" Padding="5" MinWidth="100" MaxLength="10" IsReadOnly="True" />
 
-								<TextBlock Grid.Row="6" Grid.Column="0" Text="Bill Date" Margin="10" Padding="5" />
-								<DatePicker x:Name="billDatePicker" Grid.Row="6" Grid.Column="1" Margin="10" Padding="5" MinWidth="100" />
+								<TextBlock Grid.Row="6" Grid.Column="0" Text="Email" Margin="10" Padding="5" />
+								<TextBox  x:Name="supplierEmailTextBox" Grid.Row="6" Grid.Column="1" Margin="10" Padding="5" MinWidth="100" IsReadOnly="True" />
 							</Grid>
 						</Border>
 						<!--#endregion-->
@@ -146,7 +146,7 @@
 								<TextBlock Grid.Row="5" Grid.Column="0" Text="Total" Margin="10" Padding="5" />
 								<TextBox x:Name="totalAmountTextBox" Grid.Row="5" Grid.Column="1" Margin="10" Padding="5" MinWidth="100" TextAlignment="Right" Text="0.00" IsReadOnly="True" />
 
-								<Button x:Name="billButton" Grid.Row="6" Grid.ColumnSpan="2" HorizontalAlignment="Center" Content="Bill" Margin="10" Padding="5" MinWidth="120" MinHeight="40" Style="{DynamicResource AccentButtonStyle}" Click="billButton_Click" />
+								<Button x:Name="saveButton" Grid.Row="6" Grid.ColumnSpan="2" HorizontalAlignment="Center" Content="Save" Margin="10" Padding="5" MinWidth="120" MinHeight="40" Style="{DynamicResource AccentButtonStyle}" Click="saveButton_Click" />
 							</Grid>
 						</Border>
 						<!--#endregion-->

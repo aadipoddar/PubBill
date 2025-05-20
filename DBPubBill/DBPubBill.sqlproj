@@ -154,9 +154,7 @@
     <Build Include="Tables\Inventory\Items\Recipe.sql" />
     <Build Include="Stored Procedures\Insert\Common\Insert_Location.sql" />
     <Build Include="Stored Procedures\Insert\Inventory\Product\Insert_Purchase.sql" />
-    <Build Include="Tables\Inventory\Purchase\PurchasePaymentDetail.sql" />
     <Build Include="Stored Procedures\Insert\Inventory\Product\Insert_PurchaseDetail.sql" />
-    <Build Include="Stored Procedures\Insert\Inventory\Product\Insert_PurchasePaymentDetail.sql" />
     <Build Include="Stored Procedures\Insert\Inventory\Product\Insert_Supplier.sql" />
     <Build Include="Stored Procedures\Insert\Inventory\Items\Insert_RawMaterial.sql" />
     <Build Include="Stored Procedures\Insert\Inventory\Items\Insert_RawMaterialCategory.sql" />

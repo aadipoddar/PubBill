@@ -21,6 +21,7 @@ public partial class PurchaseWindow : Window
 
 	private async Task LoadData()
 	{
+		billDatePicker.SelectedDate = DateTime.Now;
 		cartDataGrid.ItemsSource = _cart;
 		_suppliers = await CommonData.LoadTableDataByStatus<SupplierModel>(TableNames.Supplier);
 
@@ -205,7 +206,7 @@ public partial class PurchaseWindow : Window
 	}
 	#endregion
 
-	private void billButton_Click(object sender, RoutedEventArgs e)
+	private async void saveButton_Click(object sender, RoutedEventArgs e)
 	{
 		if (string.IsNullOrEmpty(supplierGSTTextBox.Text.Trim()))
 		{
@@ -238,7 +239,7 @@ public partial class PurchaseWindow : Window
 		{
 			Id = 0,
 			SupplierId = filteredSupplier.Id,
-			BillDate = DateOnly.FromDateTime(billDatePicker.DisplayDate),
+			BillDate = DateOnly.FromDateTime(billDatePicker.SelectedDate.Value),
 			BillNo = billNoTextBox.Text.Trim(),
 			CDPercent = decimal.Parse(cashDiscountPercentTextBox.Text),
 			CDAmount = decimal.Parse(cashDiscountAmountTextBox.Text),
@@ -246,7 +247,37 @@ public partial class PurchaseWindow : Window
 			Status = true
 		};
 
-		PurchasePaymentWindow purchaseBillWindow = new(purchaseModel, _cart, this);
-		purchaseBillWindow.ShowDialog();
+		purchaseModel.Id = await PurchaseData.InsertPurchase(purchaseModel);
+
+		if (purchaseModel.Id == 0)
+		{
+			MessageBox.Show("Failed to insert purchase data.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+			return;
+		}
+
+		foreach (var item in _cart)
+			await PurchaseData.InsertPurchaseDetail(new PurchaseDetailModel
+			{
+				Id = 0,
+				PurchaseId = purchaseModel.Id,
+				RawMaterialId = item.RawMaterialId,
+				Quantity = item.Quantity,
+				Rate = item.Rate,
+				BaseTotal = item.BaseTotal,
+				DiscPercent = item.DiscPercent,
+				DiscAmount = item.DiscAmount,
+				AfterDiscount = item.AfterDiscount,
+				CGSTPercent = item.CGSTPercent,
+				CGSTAmount = item.CGSTAmount,
+				SGSTPercent = item.SGSTPercent,
+				SGSTAmount = item.SGSTAmount,
+				IGSTPercent = item.IGSTPercent,
+				IGSTAmount = item.IGSTAmount,
+				Total = item.Total,
+				Status = true
+			});
+
+		MessageBox.Show("Purchase data saved successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+		Close();
 	}
 }

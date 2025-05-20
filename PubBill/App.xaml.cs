@@ -18,6 +18,9 @@ public partial class App : Application
 
 	protected override async void OnStartup(StartupEventArgs e)
 	{
+		Dapper.SqlMapper.AddTypeHandler(new SqlDateOnlyTypeHandler());
+		Dapper.SqlMapper.AddTypeHandler(new SqlTimeOnlyTypeHandler());
+
 		Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(Secrets.SyncfusionLicense);
 
 		EventManager.RegisterClassHandler(typeof(TextBox), UIElement.PreviewMouseLeftButtonDownEvent,
