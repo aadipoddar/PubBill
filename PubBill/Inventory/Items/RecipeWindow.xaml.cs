@@ -1,7 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows;
 
-namespace PubBill.Inventory;
+namespace PubBill.Inventory.Items;
 
 /// <summary>
 /// Interaction logic for RecipeWindow.xaml

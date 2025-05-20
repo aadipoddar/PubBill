@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 
-namespace PubBill.Inventory;
+namespace PubBill.Inventory.Items;
 
 /// <summary>
 /// Interaction logic for SupplierWindow.xaml

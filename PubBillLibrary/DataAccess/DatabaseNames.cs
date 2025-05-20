@@ -36,6 +36,8 @@ public static class TableNames
 	public static string Purchase => "Purchase";
 	public static string PurchaseDetail => "PurchaseDetail";
 	public static string Supplier => "Supplier";
+
+	public static string Stock => "Stock";
 }
 
 public static class StoredProcedureNames
@@ -73,6 +75,9 @@ public static class StoredProcedureNames
 	public static string InsertPurchaseDetail => "Insert_PurchaseDetail";
 	public static string InsertSupplier => "Insert_Supplier";
 
+	public static string InsertStock => "Insert_Stock";
+
+
 
 	public static string DeleteRunningBillDetail => "Delete_RunningBillDetail";
 
@@ -105,6 +110,8 @@ public static class StoredProcedureNames
 
 	public static string LoadRecipeByProduct => "Load_Recipe_By_Product";
 	public static string LoadRecipeDetailByRecipe => "Load_RecipeDetail_By_Recipe";
+
+	public static string LoadStockByPurchase => "Load_Stock_By_Purchase";
 
 
 	public static string LoadPurchaseDetailByPurchase => "Load_PurchaseDetail_By_Purchase";

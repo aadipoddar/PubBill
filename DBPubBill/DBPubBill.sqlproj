@@ -85,7 +85,7 @@
     <Folder Include="Stored Procedures\Insert\Common" />
     <Folder Include="Stored Procedures\Insert\Inventory" />
     <Folder Include="Stored Procedures\Insert\Inventory\Items" />
-    <Folder Include="Stored Procedures\Insert\Inventory\Product" />
+    <Folder Include="Stored Procedures\Insert\Inventory\Purchase" />
     <Folder Include="Stored Procedures\LoadData\Inventory" />
     <Folder Include="Stored Procedures\LoadData\Inventory\Items" />
     <Folder Include="Stored Procedures\LoadData\Inventory\Purchase" />
@@ -154,9 +154,9 @@
     <Build Include="Tables\Inventory\Items\RecipeDetail.sql" />
     <Build Include="Tables\Inventory\Items\Recipe.sql" />
     <Build Include="Stored Procedures\Insert\Common\Insert_Location.sql" />
-    <Build Include="Stored Procedures\Insert\Inventory\Product\Insert_Purchase.sql" />
-    <Build Include="Stored Procedures\Insert\Inventory\Product\Insert_PurchaseDetail.sql" />
-    <Build Include="Stored Procedures\Insert\Inventory\Product\Insert_Supplier.sql" />
+    <Build Include="Stored Procedures\Insert\Inventory\Purchase\Insert_Purchase.sql" />
+    <Build Include="Stored Procedures\Insert\Inventory\Purchase\Insert_PurchaseDetail.sql" />
+    <Build Include="Stored Procedures\Insert\Inventory\Purchase\Insert_Supplier.sql" />
     <Build Include="Stored Procedures\Insert\Inventory\Items\Insert_RawMaterial.sql" />
     <Build Include="Stored Procedures\Insert\Inventory\Items\Insert_RawMaterialCategory.sql" />
     <Build Include="Stored Procedures\Insert\Inventory\Items\Insert_Recipe.sql" />
@@ -167,6 +167,9 @@
     <Build Include="Views\Purchase_Overview.sql" />
     <Build Include="Stored Procedures\LoadData\Inventory\Purchase\Load_PurchaseOverview_By_Date.sql" />
     <Build Include="Stored Procedures\LoadData\Inventory\Purchase\Load_PurchaseDetail_By_Purchase.sql" />
+    <Build Include="Stored Procedures\Insert\Inventory\Items\Insert_Stock.sql" />
+    <Build Include="Tables\Inventory\Items\Stock.sql" />
+    <Build Include="Stored Procedures\LoadData\Inventory\Items\Load_Stock_By_Purchase.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="DBPubBill.refactorlog" />

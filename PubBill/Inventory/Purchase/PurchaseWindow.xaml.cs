@@ -110,14 +110,6 @@ public partial class PurchaseWindow : Window
 	}
 	#endregion
 
-	#region Validation
-	private void numberTextBox_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e) =>
-		Helper.ValidateIntegerInput(sender, e);
-
-	private void decimalTextBox_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e) =>
-		Helper.ValidateDecimalInput(sender, e);
-	#endregion
-
 	#region RawMaterial
 	private async void rawMaterialCategoryListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 	{
@@ -257,55 +249,84 @@ public partial class PurchaseWindow : Window
 	}
 	#endregion
 
-	private async void saveButton_Click(object sender, RoutedEventArgs e)
+	#region Validation
+	private void numberTextBox_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e) =>
+		Helper.ValidateIntegerInput(sender, e);
+
+	private void decimalTextBox_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e) =>
+		Helper.ValidateDecimalInput(sender, e);
+
+	private bool ValidateForm()
 	{
 		if (string.IsNullOrEmpty(supplierGSTTextBox.Text.Trim()))
 		{
 			MessageBox.Show("Please select a supplier.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-			return;
+			return false;
 		}
 
 		if (_cart.Count == 0)
 		{
 			MessageBox.Show("Please add items to the cart.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-			return;
+			return false;
 		}
 
 		if (string.IsNullOrEmpty(billNoTextBox.Text.Trim()))
 		{
 			MessageBox.Show("Please enter a bill number.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+			return false;
+		}
+
+		return true;
+	}
+	#endregion
+
+	#region Saving
+	private async void saveButton_Click(object sender, RoutedEventArgs e)
+	{
+		if (!ValidateForm())
+			return;
+
+		int purchaseId = await InsertPurchase();
+		if (purchaseId == 0)
+		{
+			MessageBox.Show("Failed to save purchase data.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
 			return;
 		}
 
+		await InsertPurchaseDetail(purchaseId);
+		await InsertStock(purchaseId);
+
+		MessageBox.Show("Purchase data saved successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+		Close();
+	}
+
+	private async Task<int> InsertPurchase()
+	{
 		var filteredSupplier = _suppliers.Where(item =>
-			string.IsNullOrEmpty(supplierNameTextBox.Text.Trim()) || item.Name.Contains(supplierNameTextBox.Text.Trim(), StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault();
+					string.IsNullOrEmpty(supplierNameTextBox.Text.Trim()) || item.Name.Contains(supplierNameTextBox.Text.Trim(), StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault();
 
 		if (filteredSupplier is null)
 		{
 			MessageBox.Show("Please select a valid supplier.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-			return;
+			return 0;
 		}
 
-		PurchaseModel purchaseModel = new()
-		{
-			Id = _purchaseModel?.Id ?? 0,
-			SupplierId = filteredSupplier.Id,
-			BillDate = DateOnly.FromDateTime(billDatePicker.SelectedDate.Value),
-			BillNo = billNoTextBox.Text.Trim(),
-			CDPercent = decimal.Parse(cashDiscountPercentTextBox.Text),
-			CDAmount = decimal.Parse(cashDiscountAmountTextBox.Text),
-			Remarks = remarksTextBox.Text.Trim(),
-			Status = true
-		};
+		return
+			await PurchaseData.InsertPurchase(new()
+			{
+				Id = _purchaseModel?.Id ?? 0,
+				SupplierId = filteredSupplier.Id,
+				BillDate = DateOnly.FromDateTime(billDatePicker.SelectedDate.Value),
+				BillNo = billNoTextBox.Text.Trim(),
+				CDPercent = decimal.Parse(cashDiscountPercentTextBox.Text),
+				CDAmount = decimal.Parse(cashDiscountAmountTextBox.Text),
+				Remarks = remarksTextBox.Text.Trim(),
+				Status = true
+			});
+	}
 
-		purchaseModel.Id = await PurchaseData.InsertPurchase(purchaseModel);
-
-		if (purchaseModel.Id == 0)
-		{
-			MessageBox.Show("Failed to insert purchase data.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-			return;
-		}
-
+	private async Task InsertPurchaseDetail(int purchaseId)
+	{
 		if (_purchaseModel is not null)
 		{
 			var purchaseDetails = await PurchaseData.LoadPurchaseDetailByPurchase(_purchaseModel.Id);
@@ -320,7 +341,7 @@ public partial class PurchaseWindow : Window
 			await PurchaseData.InsertPurchaseDetail(new PurchaseDetailModel
 			{
 				Id = 0,
-				PurchaseId = purchaseModel.Id,
+				PurchaseId = purchaseId,
 				RawMaterialId = item.RawMaterialId,
 				Quantity = item.Quantity,
 				Rate = item.Rate,
@@ -337,8 +358,31 @@ public partial class PurchaseWindow : Window
 				Total = item.Total,
 				Status = true
 			});
-
-		MessageBox.Show("Purchase data saved successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-		Close();
 	}
+
+	private async Task InsertStock(int purchaseId)
+	{
+		if (_purchaseModel is not null)
+		{
+			var stockDetails = await StockData.LoadStockByPurchase(_purchaseModel.Id);
+			foreach (var stock in stockDetails)
+			{
+				stock.Status = false;
+				await StockData.InsertStock(stock);
+			}
+		}
+
+		foreach (var item in _cart)
+			await StockData.InsertStock(new()
+			{
+				Id = 0,
+				RawMaterialId = item.RawMaterialId,
+				Quantity = item.Quantity,
+				Type = "Purchase",
+				PurchaseId = purchaseId,
+				TransactionDate = DateOnly.FromDateTime(billDatePicker.SelectedDate.Value),
+				Status = true
+			});
+	}
+	#endregion
 }
