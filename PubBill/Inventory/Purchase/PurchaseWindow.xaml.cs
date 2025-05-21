@@ -366,10 +366,7 @@ public partial class PurchaseWindow : Window
 		{
 			var stockDetails = await StockData.LoadStockByPurchase(_purchaseModel.Id);
 			foreach (var stock in stockDetails)
-			{
-				stock.Status = false;
-				await StockData.InsertStock(stock);
-			}
+				await StockData.DeleteStock(stock.Id);
 		}
 
 		foreach (var item in _cart)
@@ -378,10 +375,9 @@ public partial class PurchaseWindow : Window
 				Id = 0,
 				RawMaterialId = item.RawMaterialId,
 				Quantity = item.Quantity,
-				Type = "Purchase",
+				Type = StockType.Purchase.ToString(),
 				PurchaseId = purchaseId,
-				TransactionDate = DateOnly.FromDateTime(billDatePicker.SelectedDate.Value),
-				Status = true
+				TransactionDT = billDatePicker.SelectedDate.Value
 			});
 	}
 	#endregion

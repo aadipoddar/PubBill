@@ -80,6 +80,8 @@ public static class StoredProcedureNames
 
 
 	public static string DeleteRunningBillDetail => "Delete_RunningBillDetail";
+	public static string DeleteStock => "Delete_Stock";
+
 
 	public static string LoadSettingsByKey => "Load_Settings_By_Key";
 	public static string UpdateSettings => "Update_Settings";
@@ -112,6 +114,7 @@ public static class StoredProcedureNames
 	public static string LoadRecipeDetailByRecipe => "Load_RecipeDetail_By_Recipe";
 
 	public static string LoadStockByPurchase => "Load_Stock_By_Purchase";
+	public static string LoadStockLastClosing => "Load_Stock_LastClosing";
 
 
 	public static string LoadPurchaseDetailByPurchase => "Load_PurchaseDetail_By_Purchase";

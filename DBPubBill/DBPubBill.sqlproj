@@ -170,6 +170,8 @@
     <Build Include="Stored Procedures\Insert\Inventory\Items\Insert_Stock.sql" />
     <Build Include="Tables\Inventory\Items\Stock.sql" />
     <Build Include="Stored Procedures\LoadData\Inventory\Items\Load_Stock_By_Purchase.sql" />
+    <Build Include="Stored Procedures\LoadData\Inventory\Items\Load_Stock_LastClosing.sql" />
+    <Build Include="Stored Procedures\Delete\Delete_Stock.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="DBPubBill.refactorlog" />

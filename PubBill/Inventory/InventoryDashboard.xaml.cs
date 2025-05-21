@@ -44,6 +44,12 @@ public partial class InventoryDashboard : Window
 		supplierWindow.ShowDialog();
 	}
 
+	private async void closingButton_Click(object sender, RoutedEventArgs e)
+	{
+		await StockClosing.Closing();
+		MessageBox.Show("Inventory Closed for the Night Successfully.", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
+	}
+
 	private void Window_Closed(object sender, EventArgs e) =>
 		_loginWindow.Show();
 }

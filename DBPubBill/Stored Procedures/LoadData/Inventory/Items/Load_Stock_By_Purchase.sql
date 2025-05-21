@@ -6,5 +6,4 @@ BEGIN
 		*
 	FROM [Stock]
 	WHERE PurchaseId = @PurchaseId
-		AND Status = 1
 END
