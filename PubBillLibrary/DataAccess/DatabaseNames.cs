@@ -115,6 +115,7 @@ public static class StoredProcedureNames
 
 	public static string LoadStockByPurchase => "Load_Stock_By_Purchase";
 	public static string LoadStockLastClosing => "Load_Stock_LastClosing";
+	public static string LoadStockDetailsByDate => "Load_StockDetails_By_Date";
 
 	public static string LoadItemDetailsByDate => "Load_ItemDetails_By_Date";
 

@@ -16,3 +16,15 @@ public enum StockType
 	PurchaseReturn,
 	Sale
 }
+
+public class StockDateModel
+{
+	public int RawMaterialId { get; set; }
+	public string RawMaterialName { get; set; }
+	public string RawMaterialCode { get; set; }
+	public decimal OpeningStock { get; set; }
+	public decimal PurchaseStock { get; set; }
+	public decimal SaleStock { get; set; }
+	public decimal MonthlyStock { get; set; }
+	public decimal ClosingStock { get; set; }
+}

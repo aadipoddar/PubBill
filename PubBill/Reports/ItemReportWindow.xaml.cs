@@ -15,8 +15,6 @@ public partial class ItemReportWindow : Window
 	private static int RefreshReportTimer => (int)Application.Current.Resources[SettingsKeys.RefreshReportTimer];
 
 	private DateTime _fromDateTime, _toDateTime;
-	private int _locationId;
-	private List<ItemDetailModel> _reportData;
 	#endregion
 
 	#region Timers
@@ -47,17 +45,11 @@ public partial class ItemReportWindow : Window
 	}
 	#endregion
 
-	public ItemReportWindow()
-	{
-		InitializeComponent();
-	}
-
-	public ItemReportWindow(DateTime fromDateTime, DateTime toDateTime, int locationId = 0)
+	public ItemReportWindow(DateTime fromDateTime, DateTime toDateTime)
 	{
 		InitializeComponent();
 		_fromDateTime = fromDateTime;
 		_toDateTime = toDateTime;
-		_locationId = locationId;
 	}
 
 	#region Load Data
@@ -184,13 +176,18 @@ public partial class ItemReportWindow : Window
 		_fromDateTime = fromDatePicker.SelectedDate.Value.AddHours(fromTime);
 		_toDateTime = toDatePicker.SelectedDate.Value.AddHours(toTime);
 
-		_reportData = await ProductData.LoadItemDetailsByDate(_fromDateTime, _toDateTime);
-		itemsDataGrid.ItemsSource = _reportData;
+		itemsDataGrid.ItemsSource = await ProductData.LoadItemDetailsByDate(_fromDateTime, _toDateTime);
 	}
 	#endregion
 
 	private void ExportExcel(object sender, ExecutedRoutedEventArgs e)
 	{
 
+	}
+
+	private void StockReport(object sender, ExecutedRoutedEventArgs e)
+	{
+		StockReportWindow stockReportWindow = new(_fromDateTime, _toDateTime);
+		stockReportWindow.Show();
 	}
 }

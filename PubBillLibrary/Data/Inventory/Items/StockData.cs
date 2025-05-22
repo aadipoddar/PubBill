@@ -8,6 +8,9 @@ public static class StockData
 	public static async Task<List<StockModel>> LoadStockByPurchase(int PurchaseId) =>
 		await SqlDataAccess.LoadData<StockModel, dynamic>(StoredProcedureNames.LoadStockByPurchase, new { PurchaseId });
 
+	public static async Task<List<StockDateModel>> LoadStockDetailsByDate(DateOnly FromDate, DateOnly ToDate) =>
+		await SqlDataAccess.LoadData<StockDateModel, dynamic>(StoredProcedureNames.LoadStockDetailsByDate, new { FromDate, ToDate });
+
 	public static async Task<StockModel> LoadStockLastClosing() =>
 		(await SqlDataAccess.LoadData<StockModel, dynamic>(StoredProcedureNames.LoadStockLastClosing, new { })).FirstOrDefault() ?? new StockModel();
 

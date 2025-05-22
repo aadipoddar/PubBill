@@ -165,12 +165,6 @@ public partial class SummaryReportWindow : Window
 		itemReportWindow.Show();
 	}
 
-	private void AdvanceReport(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
-	{
-		//AdvanceReportWindow advanceReportWindow = new();
-		//advanceReportWindow.Show();
-	}
-
 	private void Window_Closed(object sender, EventArgs e) =>
 		_loginWindow.Show();
 }
