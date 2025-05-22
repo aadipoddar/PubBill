@@ -8,7 +8,7 @@ internal static class CreateReportExpanders
 {
 	internal static async Task LoadExpandersData(DateTime fromDateTime, DateTime toDateTime, Grid expanderGrid, bool initialLoad = false)
 	{
-		if (initialLoad) await InitalializeExpanders(expanderGrid);
+		if (initialLoad) await InitalializeExpanders(fromDateTime, toDateTime, expanderGrid);
 
 		foreach (var location in await CommonData.LoadTableDataByStatus<LocationModel>(TableNames.Location))
 		{
@@ -227,7 +227,7 @@ internal static class CreateReportExpanders
 
 	#region CreateExpanders
 
-	private static async Task InitalializeExpanders(Grid expanderGrid)
+	private static async Task InitalializeExpanders(DateTime fromDateTime, DateTime toDateTime, Grid expanderGrid)
 	{
 		expanderGrid.Children.Clear();
 		expanderGrid.RowDefinitions.Clear();
@@ -235,19 +235,19 @@ internal static class CreateReportExpanders
 		foreach (var location in await CommonData.LoadTableDataByStatus<LocationModel>(TableNames.Location))
 		{
 			expanderGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-			var expander = CreateLocationExpander(location.Name, location.Id);
+			var expander = CreateLocationExpander(fromDateTime, toDateTime, location.Name, location.Id);
 			Grid.SetRow(expander, expanderGrid.RowDefinitions.Count - 1);
 			expanderGrid.Children.Add(expander);
 		}
 
 		expanderGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(30) });
 		expanderGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-		var totalExpander = CreateLocationExpander("Total");
+		var totalExpander = CreateLocationExpander(fromDateTime, toDateTime, "Total");
 		Grid.SetRow(totalExpander, expanderGrid.RowDefinitions.Count - 1);
 		expanderGrid.Children.Add(totalExpander);
 	}
 
-	private static Expander CreateLocationExpander(string locationName, int locationId = 0)
+	private static Expander CreateLocationExpander(DateTime fromDateTime, DateTime toDateTime, string locationName, int locationId = 0)
 	{
 		// Expander
 		var expander = new Expander
@@ -338,8 +338,8 @@ internal static class CreateReportExpanders
 			}
 			else
 			{
-				//DetailedReportWindow detailedReportWindow = new(_fromDateTime, _toDateTime, locationId);
-				//detailedReportWindow.Show();
+				DetailedReportWindow detailedReportWindow = new(fromDateTime, toDateTime, locationId);
+				detailedReportWindow.Show();
 			}
 		};
 

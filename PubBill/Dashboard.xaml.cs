@@ -109,7 +109,7 @@ public partial class Dashboard : Window
 
 	private void reportButton_Click(object sender, RoutedEventArgs e)
 	{
-		SummaryReport summaryReport = new(_loginWindow);
+		SummaryReportWindow summaryReport = new(_loginWindow);
 		summaryReport.Show();
 		Close();
 		_loginWindow.Hide();

@@ -3,6 +3,9 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
 
+using PubBill.Billing.KOT;
+using PubBill.Reports;
+
 namespace PubBill.Common;
 
 /// <summary>
@@ -96,7 +99,7 @@ public class InactivityMonitor
 		// (This allows inactivity detection to work even during refreshes)
 
 		// Skip inactivity check if the active window is the login window
-		if (IsLoginWindowActive())
+		if (IsExemtedWindowsActive())
 		{
 			ResetActivityTimer(); // Keep resetting timer while on login screen
 			return;
@@ -117,16 +120,24 @@ public class InactivityMonitor
 	}
 
 	// Check if the active window is the login window
-	private static bool IsLoginWindowActive()
+	private static bool IsExemtedWindowsActive()
 	{
 		var activeWindow = Application.Current.Windows.OfType<Window>().FirstOrDefault(w => w.IsActive);
-		return activeWindow is LoginWindow;
+
+		if (activeWindow is LoginWindow ||
+			activeWindow is KOTDashboard ||
+			activeWindow is SummaryReportWindow ||
+			activeWindow is DetailedReportWindow ||
+			activeWindow is ItemReportWindow)
+			return true;
+
+		return false;
 	}
 
 	private void DisplayInactivityWarning()
 	{
 		// Skip warning if the active window is the login window
-		if (IsLoginWindowActive())
+		if (IsExemtedWindowsActive())
 		{
 			return;
 		}
@@ -169,7 +180,7 @@ public class InactivityMonitor
 	private void HandleInactivity()
 	{
 		// Skip inactivity handling if the active window is the login window
-		if (IsLoginWindowActive())
+		if (IsExemtedWindowsActive())
 		{
 			return;
 		}
