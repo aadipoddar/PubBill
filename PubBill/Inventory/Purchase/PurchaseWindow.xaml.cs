@@ -377,7 +377,7 @@ public partial class PurchaseWindow : Window
 				Quantity = item.Quantity,
 				Type = StockType.Purchase.ToString(),
 				PurchaseId = purchaseId,
-				TransactionDT = billDatePicker.SelectedDate.Value
+				TransactionDate = DateOnly.FromDateTime(billDatePicker.SelectedDate.Value)
 			});
 	}
 	#endregion

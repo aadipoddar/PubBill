@@ -5,6 +5,6 @@ BEGIN
 	*
 	FROM Stock
 	WHERE PurchaseId IS NULL
-	AND TransactionDT = (SELECT MAX(TransactionDT) FROM Stock)
+	AND [TransactionDate] = (SELECT MAX([TransactionDate]) FROM Stock)
 
 END

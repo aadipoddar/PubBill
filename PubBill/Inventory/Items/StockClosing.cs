@@ -4,27 +4,44 @@ internal static class StockClosing
 {
 	public static async Task Closing()
 	{
-		var bills = await GetBills();
-		if (bills is null || bills.Count == 0)
+		var unsyncedDates = await GetUnsyncedDates();
+		if (unsyncedDates is null || unsyncedDates.Count == 0)
 			return;
 
-		var itemQuantities = await GetBillItemQuantities(bills);
-		var rawMaterialQuantities = await GetRawMaterialQuantities(itemQuantities);
-		await InsertStock(rawMaterialQuantities);
+		foreach (var unsysncedDate in unsyncedDates)
+		{
+			var bills = await GetBills(unsysncedDate);
+			if (bills is null || bills.Count == 0)
+				return;
+
+			var itemQuantities = await GetBillItemQuantities(bills);
+			var rawMaterialQuantities = await GetRawMaterialQuantities(itemQuantities);
+			await InsertStock(rawMaterialQuantities);
+		}
 	}
 
-	private static async Task<List<BillOverviewModel>> GetBills()
+	private static async Task<List<DateOnly>> GetUnsyncedDates()
 	{
-		var lastClosingDateTime = (await StockData.LoadStockLastClosing()).TransactionDT;
+		var lastClosingDate = (await StockData.LoadStockLastClosing()).TransactionDate;
 
-		if (lastClosingDateTime == DateTime.MinValue)
-			lastClosingDateTime = DateTime.Now.AddYears(-10);
+		if (lastClosingDate == DateOnly.MinValue)
+			lastClosingDate = DateOnly.FromDateTime(DateTime.Now.AddMonths(-1));
 
-		if (lastClosingDateTime > DateTime.Now || lastClosingDateTime.Date == DateTime.Now.Date)
+		if (lastClosingDate >= DateOnly.FromDateTime(DateTime.Now.AddDays(-1)))
 			return null;
 
-		return await BillReportData.LoadBillDetailsByDateLocationId(lastClosingDateTime, DateTime.Now.AddDays(1), 0);
+		List<DateOnly> unsyncedDates = [];
+		for (var date = lastClosingDate.AddDays(1); date < DateOnly.FromDateTime(DateTime.Now); date = date.AddDays(1))
+			unsyncedDates.Add(date);
+
+		return unsyncedDates;
 	}
+
+	private static async Task<List<BillOverviewModel>> GetBills(DateOnly unsyncDate) =>
+		await BillReportData.LoadBillDetailsByDateLocationId(
+			unsyncDate.ToDateTime(new TimeOnly()),
+			unsyncDate.AddDays(1).ToDateTime(new TimeOnly()),
+			0);
 
 	private static async Task<List<ItemQantityModel>> GetBillItemQuantities(List<BillOverviewModel> bills)
 	{
@@ -94,7 +111,7 @@ internal static class StockClosing
 				Quantity = -rawMaterial.Quantity,
 				PurchaseId = null,
 				Type = StockType.Sale.ToString(),
-				TransactionDT = DateTime.Now
+				TransactionDate = DateOnly.FromDateTime(DateTime.Now)
 			});
 	}
 

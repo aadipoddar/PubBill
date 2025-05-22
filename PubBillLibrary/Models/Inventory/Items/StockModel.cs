@@ -7,7 +7,7 @@ public class StockModel
 	public decimal Quantity { get; set; }
 	public string Type { get; set; }
 	public int? PurchaseId { get; set; }
-	public DateTime TransactionDT { get; set; }
+	public DateOnly TransactionDate { get; set; }
 }
 
 public enum StockType

@@ -4,13 +4,13 @@
 	@Quantity DECIMAL(7, 3),
 	@Type VARCHAR(20),
 	@PurchaseId INT,
-	@TransactionDT DATETIME
+	@TransactionDate DATE
 AS
 BEGIN
 	IF @Id = 0
 	BEGIN
-		INSERT INTO [dbo].[Stock] ([RawMaterialId], [Quantity], [Type], [PurchaseId], [TransactionDT])
-		VALUES (@RawMaterialId, @Quantity, @Type, @PurchaseId, @TransactionDT)
+		INSERT INTO [dbo].[Stock] ([RawMaterialId], [Quantity], [Type], [PurchaseId], [TransactionDate])
+		VALUES (@RawMaterialId, @Quantity, @Type, @PurchaseId, @TransactionDate)
 	END
 
 	ELSE
@@ -20,7 +20,7 @@ BEGIN
 			[Quantity] = @Quantity,
 			[Type] = @Type,
 			[PurchaseId] = @PurchaseId,
-			[TransactionDT] = @TransactionDT
+			[TransactionDate] = @TransactionDate
 		WHERE [Id] = @Id
 	END
 END
